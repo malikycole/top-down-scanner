@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Top Down Scanner</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111827'/%3E%3Cpath d='M6 8h20l-6 8v8l-8-4v-4z' fill='%2316a34a'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0b1120; --panel:#111827; --panel2:#1f2937; --line:#273244;
+    --text:#f1f5f9; --muted:#94a3b8; --faint:#64748b;
+    --green:#16a34a; --yellow:#ca8a04; --red:#dc2626; --chip-text:#0b0b0b;
+    --green-soft:rgba(22,163,74,.14); --accent:#38bdf8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+  .wrap{max-width:1320px;margin:0 auto;padding:20px 16px 48px}
+  header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+  h1{margin:0;font-size:26px;letter-spacing:.2px}
+  .sub{color:var(--muted);margin-top:2px}
+  .meta{color:var(--muted);font-size:13px;text-align:right}
+  .meta b{color:var(--text);font-weight:600}
+  .live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--faint);margin-right:6px;vertical-align:1px}
+  .live.on{background:var(--green);box-shadow:0 0 0 4px rgba(22,163,74,.25)}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+  .row-label{font-size:12px;font-weight:700;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;margin:0 0 8px}
+  .row-label span{color:var(--faint);font-weight:600;text-transform:none;letter-spacing:0}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:0;border-radius:6px;padding:7px 12px;font:600 14px/1.2 inherit;color:var(--chip-text);white-space:nowrap}
+  .chip small{font-weight:600;opacity:.75;margin-left:4px}
+  .g{background:var(--green)} .y{background:var(--yellow)} .r{background:var(--red)}
+  .w{background:#e5e7eb}
+  button.chip{cursor:pointer;transition:transform .08s, box-shadow .08s}
+  button.chip:hover{transform:translateY(-1px)}
+  button.chip.sel{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--accent)}
+  .market{font-size:16px;padding:9px 16px}
+  .grid3{display:grid;grid-template-columns:auto 1fr;gap:14px 22px;align-items:start}
+  .note{color:var(--muted);font-size:13px;margin-top:10px}
+  .note b{color:var(--text)}
+  .picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+  .pick{background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:10px;padding:11px 13px;text-decoration:none;color:inherit;display:block}
+  .pick:hover{border-color:var(--accent);border-left-color:var(--green)}
+  .pick .top{display:flex;justify-content:space-between;align-items:baseline}
+  .pick .sym{font-size:18px;font-weight:700}
+  .pick .rs{font-size:12px;color:var(--muted)}
+  .pick .rs b{color:var(--text)}
+  .pick .nm{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pick .nums{display:flex;gap:12px;margin-top:6px;font-size:13px}
+  .controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:12px}
+  .seg{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{background:none;border:0;color:var(--muted);padding:7px 11px;font:600 13px inherit;cursor:pointer}
+  .seg button.on{background:var(--accent);color:#04121c}
+  select,input[type=search]{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:13px inherit}
+  input[type=search]{width:150px}
+  .count{color:var(--muted);font-size:13px;margin-left:auto}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+  table{border-collapse:collapse;width:100%;min-width:980px}
+  th,td{padding:8px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+  th{position:sticky;top:0;background:var(--panel2);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;user-select:none}
+  th:hover{color:var(--text)}
+  th.l,td.l{text-align:left}
+  tbody tr:hover{background:#162033}
+  tr.best{background:var(--green-soft)}
+  td a{color:var(--text);font-weight:700;text-decoration:none}
+  td a:hover{color:var(--accent)}
+  td .nm{display:block;color:var(--faint);font-size:11px;font-weight:400;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+  .pos{color:#4ade80} .neg{color:#f87171}
+  .dots{display:inline-flex;gap:3px}
+  .dot{width:11px;height:11px;border-radius:3px}
+  .tag{display:inline-block;border-radius:5px;padding:2px 8px;font-weight:700;color:var(--chip-text);font-size:12px}
+  .secname{font-size:12px;font-weight:600}
+  .legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 20px;color:var(--muted);font-size:13px}
+  .legend b{color:var(--text)}
+  .empty{padding:30px;text-align:center;color:var(--muted)}
+  footer{color:var(--faint);font-size:12px;margin-top:20px}
+  @media (max-width:700px){
+    .grid3{grid-template-columns:1fr}
+    .meta{text-align:left}
+    h1{font-size:22px}
+    .count{margin-left:0;width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Top Down Scanner</h1>
+      <div class="sub">Strongest index, then strongest sector, then the strongest stocks inside it.</div>
+    </div>
+    <div class="meta" id="meta">Loading scan...</div>
+  </header>
+
+  <section class="panel">
+    <div class="grid3">
+      <div>
+        <p class="row-label">Market</p>
+        <div id="market"></div>
+      </div>
+      <div>
+        <p class="row-label">Indexes <span>ranked by strength, #1 is the leader</span></p>
+        <div class="chips" id="indexes"></div>
+      </div>
+    </div>
+    <p class="row-label" style="margin-top:16px">Sectors vs <span id="vsIndex" style="color:var(--text);font-weight:700"></span> <span>click a sector to filter the stocks below</span></p>
+    <div class="chips" id="sectors"></div>
+    <p class="note" id="sectorNote"></p>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">Top setups <span>all 8 checks passing, in green sectors, strongest first</span></p>
+    <div class="picks" id="picks"></div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <div>
+        <span class="row-label" style="margin-right:6px">Sector</span>
+        <select id="secSel"></select>
+      </div>
+      <div>
+        <span class="row-label" style="margin-right:6px">Setup</span>
+        <span class="seg" id="minSeg"></span>
+      </div>
+      <input type="search" id="q" placeholder="Find symbol">
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr id="head"></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">How to read it</p>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <footer>Data from Yahoo Finance, refreshed about every 15 minutes during market hours. Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months. Research tool only, not investment advice.</footer>
+</div>
+
+<script>
+const state = { data:null, sector:"green", min:7, q:"", sort:"pass", dir:-1 };
+const $ = id => document.getElementById(id);
+const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
+const pct = (v, d=2) => (v > 0 ? "+" : "") + v.toFixed(d) + "%";
+const pn = v => v > 0 ? "pos" : v < 0 ? "neg" : "";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const chart = t => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(t);
+const fmtVol = v => v >= 1e6 ? (v/1e6).toFixed(1) + "M" : Math.round(v/1e3) + "K";
+
+const COLS = [
+  ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Price", "px"], ["Day", "day"],
+  ["vs Sector", "vs_sec"], ["RS", "rs"], ["1M", "r1m"], ["3M", "r3m"], ["Off high", "off"],
+  ["Corr", "corr"], ["Avg vol", "vol"], ["Checks", null], ["Setup", "pass"]
+];
+
+async function load(){
+  try{
+    const res = await fetch("data.json?ts=" + Date.now(), {cache:"no-store"});
+    const data = await res.json();
+    if (!state.data || data.generated_at !== state.data.generated_at){ state.data = data; render(); }
+    else renderMeta();
+  }catch(e){
+    $("meta").textContent = "Could not load scan data. It will try again shortly.";
+  }
+}
+
+function marketOpen(){
+  const now = new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
+  const m = now.getHours()*60 + now.getMinutes(), d = now.getDay();
+  return d > 0 && d < 6 && m >= 570 && m < 960;
+}
+
+function renderMeta(){
+  const d = state.data, when = new Date(d.generated_at);
+  const t = when.toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+  const mins = Math.round((Date.now() - when) / 60000);
+  const open = marketOpen();
+  $("meta").innerHTML = `<span class="live ${open ? "on" : ""}"></span>${open ? "Market open" : "Market closed"}<br>
+    Updated <b>${t} ET</b> (${mins < 1 ? "just now" : mins + " min ago"})<br>
+    <b>${d.scanned.toLocaleString()}</b> stocks scanned, cap 1B+ and price $10+`;
+}
+
+function render(){
+  const d = state.data;
+  renderMeta();
+  const m = d.market, mc = m.regime === "UPTREND" ? "g" : m.regime === "CHOP" ? "y" : "r";
+  $("market").innerHTML = `<span class="chip market ${mc}">MARKET: ${m.regime}</span>
+    <div class="note">SPY ${m.spy} &middot; 50 SMA ${m.sma50} &middot; 200 SMA ${m.sma200}</div>`;
+  $("indexes").innerHTML = d.indexes.map((x,i) =>
+    `<span class="chip ${cls(x.state)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.strength)}</span>`).join("");
+  $("vsIndex").textContent = d.leader_index;
+  $("sectors").innerHTML = d.sectors.map((x,i) =>
+    `<button class="chip ${cls(x.state)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.strength)} own strength, day ${pct(x.day)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.vs_index)}<small>${x.name}</small></button>`).join("");
+  document.querySelectorAll("#sectors button").forEach(b => b.onclick = () => {
+    state.sector = state.sector === b.dataset.sec ? "green" : b.dataset.sec; syncSelect(); render();
+  });
+  const greens = d.sectors.filter(s => s.state === 2).map(s => s.ticker);
+  const yellows = d.sectors.filter(s => s.state === 1).map(s => s.ticker);
+  $("sectorNote").innerHTML = (greens.length ? `<b>Green</b> (beating ${d.leader_index} and in their own uptrend): ${greens.join(", ")}. ` : `<b>No sector</b> is beating ${d.leader_index} while in its own uptrend. `) +
+    (yellows.length ? `<b>Yellow</b> only falling less than the index, skip: ${yellows.join(", ")}.` : "");
+  if (m.regime === "DOWNTREND") $("sectorNote").innerHTML += ` <b>Market is in a downtrend:</b> size down on anything you take.`;
+
+  const picks = d.stocks.filter(s => s.pass === 8 && s.sec_state === 2)
+    .sort((a,b) => b.rs - a.rs).slice(0, 12);
+  $("picks").innerHTML = picks.length ? picks.map(s => `
+    <a class="pick" href="${chart(s.t)}" target="_blank" rel="noopener">
+      <div class="top"><span class="sym">${s.t}</span><span class="rs">RS <b>${s.rs}</b></span></div>
+      <div class="nm">${esc(s.n)}</div>
+      <div class="nums"><span>${s.etf}</span><span class="${pn(s.vs_sec)}">${pct(s.vs_sec,1)} vs sector</span></div>
+      <div class="nums"><span>$${s.px}</span><span class="${pn(s.day)}">${pct(s.day)} today</span></div>
+    </a>`).join("") : `<div class="empty">No stock passes all 8 checks in a green sector right now. Lower the setup filter below to see the closest ones.</div>`;
+  renderTable();
+}
+
+function syncSelect(){
+  const d = state.data;
+  $("secSel").innerHTML = `<option value="green">Green sectors</option><option value="all">All sectors</option>` +
+    d.sectors.map(s => `<option value="${s.ticker}">${s.ticker} ${s.name}</option>`).join("");
+  $("secSel").value = state.sector;
+}
+
+function renderTable(){
+  const d = state.data;
+  const greens = new Set(d.sectors.filter(s => s.state === 2).map(s => s.ticker));
+  const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
+  let rows = d.stocks.filter(s => s.pass >= state.min);
+  if (state.sector === "green") rows = rows.filter(s => greens.has(s.etf));
+  else if (state.sector !== "all") rows = rows.filter(s => s.etf === state.sector);
+  if (state.q) rows = rows.filter(s => s.t.includes(state.q) || s.n.toUpperCase().includes(state.q));
+  const k = state.sort;
+  rows.sort((a,b) => {
+    const av = a[k], bv = b[k];
+    const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return c !== 0 ? c * state.dir : (b.rs - a.rs);
+  });
+  $("head").innerHTML = COLS.map(([label,key,al]) =>
+    `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (state.dir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+  document.querySelectorAll("#head th").forEach(th => th.onclick = () => {
+    if (!th.dataset.k) return;
+    if (state.sort === th.dataset.k) state.dir *= -1; else { state.sort = th.dataset.k; state.dir = th.dataset.k === "off" ? 1 : -1; }
+    renderTable();
+  });
+  const shown = rows.slice(0, 400);
+  $("rows").innerHTML = shown.length ? shown.map((s,i) => `
+    <tr class="${s.pass===8 && s.sec_state===2 ? "best" : ""}">
+      <td class="l">${i+1}</td>
+      <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
+      <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
+      <td>$${s.px.toFixed(2)}</td>
+      <td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td class="${pn(s.vs_sec)}">${pct(s.vs_sec,1)}</td>
+      <td><b>${s.rs}</b></td>
+      <td class="${pn(s.r1m)}">${pct(s.r1m,1)}</td>
+      <td class="${pn(s.r3m)}">${pct(s.r3m,1)}</td>
+      <td>${s.off.toFixed(1)}%</td>
+      <td>${s.corr.toFixed(2)}</td>
+      <td>${fmtVol(s.vol)}</td>
+      <td><span class="dots">${s.chk.map((c,j) => `<span class="dot ${c?"g":"r"}" title="${d.checks[j]}: ${c?"pass":"fail"}"></span>`).join("")}</span></td>
+      <td><span class="tag ${s.pass===8?"g":s.pass>=6?"y":"r"}">${s.pass}/8</span></td>
+    </tr>`).join("") : `<tr><td colspan="14" class="empty">No stocks match these filters. Try a lower setup score or All sectors.</td></tr>`;
+  $("count").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing top 400)":""}`;
+}
+
+function legend(){
+  const items = [
+    ["Green chip", "beating the benchmark and trend is up"],
+    ["Yellow chip", "beating the benchmark but its own trend is not up, so it is only falling less"],
+    ["Red chip", "lagging the benchmark"],
+    ["vs Sector", "stock strength minus its sector ETF strength"],
+    ["RS", "1 to 99 rank of strength against every stock scanned"],
+    ["Off high", "percent below the 52 week high"],
+    ["Corr", "how closely daily moves follow the sector ETF over 60 days"],
+    ["Checks", "stronger than sector, beats sector 1M, beats sector 3M, RS line above its 50 day average, close > 21 EMA > 50 SMA > 200 SMA, corr 0.50+, within 25% of high, $10+ and 1M+ avg volume"],
+    ["Setup", "8/8 take it, 6 to 7 watch, 5 skip. Green rows are 8/8 in a green sector"],
+  ];
+  $("legend").innerHTML = items.map(([a,b]) => `<div><b>${a}</b>: ${b}</div>`).join("");
+}
+
+$("minSeg").innerHTML = [8,7,6,5].map(n => `<button data-n="${n}" class="${n===state.min?"on":""}">${n===5?"5+":n===8?"8/8":n+"+"}</button>`).join("");
+document.querySelectorAll("#minSeg button").forEach(b => b.onclick = () => {
+  state.min = +b.dataset.n;
+  document.querySelectorAll("#minSeg button").forEach(x => x.classList.toggle("on", x === b));
+  renderTable();
+});
+$("secSel").onchange = e => { state.sector = e.target.value; render(); };
+$("q").oninput = e => { state.q = e.target.value.trim().toUpperCase(); renderTable(); };
+legend();
+load().then(() => state.data && syncSelect());
+setInterval(load, 5 * 60 * 1000);
+setInterval(() => state.data && renderMeta(), 60 * 1000);
+</script>
+</body>
+</html>

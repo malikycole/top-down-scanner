@@ -1,0 +1,2068 @@
+ticker,name,etf,cap,sp500
+NVDA,NVIDIA Corporation,XLK,5114261000000.0,True
+AAPL,Apple Inc.,XLK,5081985359600.0,True
+GOOGL,Alphabet Inc.,XLC,3965210600000.0,True
+GOOG,Alphabet Inc.,XLC,3922894800000.0,True
+MSFT,Microsoft Corporation,XLK,3869762434737.0,True
+AMZN,Amazon.com Inc.,XLY,2700677192157.0,True
+SPCX,Space Exploration Technologies Corp.,XLK,1964665930219.0,False
+META,Meta Platforms Inc.,XLC,1658617196054.0,True
+AVGO,Broadcom Inc.,XLK,1543028117563.0,True
+TSLA,Tesla Inc.,XLY,1480583097230.0,True
+LLY,Eli Lilly and Company,XLV,1230061863265.0,True
+MU,Micron Technology Inc.,XLK,969052666846.0,True
+WMT,Walmart Inc.,XLP,960935344710.0,True
+JPM,JP Morgan Chase & Co.,XLF,894585982065.0,True
+AMD,Advanced Micro Devices Inc.,XLK,829183048083.0,True
+XOM,ExxonMobil Holdings Corporation,XLE,732866068631.0,True
+JNJ,Johnson & Johnson,XLV,644220300284.0,True
+MA,Mastercard Incorporated,XLF,554698254107.0,True
+ABBV,AbbVie Inc.,XLV,503964178509.0,True
+PLTR,Palantir Technologies Inc.,XLK,471258872241.0,True
+INTC,Intel Corporation,XLK,451820592495.0,True
+COST,Costco Wholesale Corporation,XLP,451198734445.0,True
+CVX,Chevron Corporation,XLE,447867832390.0,True
+CSCO,Cisco Systems Inc.,XLK,413537937109.0,True
+KO,Coca-Cola Company (The),XLP,410205044828.0,True
+PG,Procter & Gamble Company (The),XLP,384902870405.0,True
+ORCL,Oracle Corporation,XLK,379599817440.0,True
+MRK,Merck & Company Inc.,XLV,363266351979.0,True
+BAC,Bank of America Corporation,XLF,357189586484.0,True
+HD,Home Depot Inc. (The),XLY,326972821129.0,True
+CAT,Caterpillar Inc.,XLI,323634105600.0,True
+HSBC,HSBC Holdings plc.,XLF,315489461625.0,False
+PM,Philip Morris International Inc,XLP,314434675184.0,True
+GE,GE Aerospace,XLI,303330122890.0,True
+NVS,Novartis AG,XLV,298186862877.0,False
+AMAT,Applied Materials Inc.,XLK,298059327642.0,True
+PANW,Palo Alto Networks Inc.,XLK,290324560000.0,True
+MS,Morgan Stanley,XLF,288937080739.0,True
+LRCX,Lam Research Corporation,XLK,288015316914.0,True
+DELL,Dell Technologies Inc.,XLK,287991385113.0,True
+RY,Royal Bank Of Canada,XLF,279737885186.0,False
+AZN,AstraZeneca PLC,XLV,267608763213.0,False
+RTX,RTX Corporation,XLI,262749569101.0,True
+GS,Goldman Sachs Group Inc. (The),XLF,259521075950.0,True
+TM,Toyota Motor Corporation,XLI,258358599509.0,False
+TXN,Texas Instruments Incorporated,XLK,255252728237.0,True
+MUFG,Mitsubishi UFJ Financial Group Inc.,XLF,254087690797.0,False
+WFC,Wells Fargo & Company,XLF,251022184881.0,True
+TMO,Thermo Fisher Scientific Inc,XLV,250148828870.0,True
+CRWD,CrowdStrike Holdings Inc.,XLK,243635056305.0,True
+AMGN,Amgen Inc.,XLV,241813883196.0,True
+IBM,International Business Machines Corporation,XLK,237521501063.0,True
+LIN,Linde plc,XLB,235265835989.0,True
+GEV,GE Vernova Inc.,XLI,220369731591.0,True
+AXP,American Express Company,XLF,219590498397.0,True
+SHOP,Shopify Inc.,XLK,218745859130.0,False
+ANET,Arista Networks Inc.,XLK,215757700533.0,True
+CRM,Salesforce Inc.,XLK,205988670000.0,True
+C,Citigroup Inc.,XLF,205502780285.0,True
+TD,Toronto Dominion Bank (The),XLF,204337316437.0,False
+TTE,TotalEnergies SE,XLE,198462149692.0,False
+MRVL,Marvell Technology Inc.,XLK,195960843000.0,True
+DIS,Walt Disney Company (The),XLC,195340089223.0,True
+GILD,Gilead Sciences Inc.,XLV,194908550814.0,True
+KLAC,KLA Corporation,XLK,192919109712.0,True
+PEP,PepsiCo Inc.,XLP,189189345802.0,True
+VZ,Verizon Communications Inc.,XLC,187795839130.0,True
+ADI,Analog Devices Inc.,XLK,186925973778.0,True
+SNDK,Sandisk Corporation,XLK,183248034064.0,True
+QCOM,QUALCOMM Incorporated,XLK,181511928566.0,True
+APH,Amphenol Corporation,XLK,180188202406.0,True
+MCD,McDonald's Corporation,XLY,178771479977.0,True
+ABT,Abbott Laboratories,XLV,177381591673.0,True
+UNP,Union Pacific Corporation,XLI,177087965199.0,True
+BLK,BlackRock Inc.,XLF,176131259568.0,True
+COP,ConocoPhillips,XLE,174950777067.0,True
+NVO,Novo Nordisk A/S,XLV,174593300404.0,False
+DE,Deere & Company,XLI,173536307671.0,True
+PFE,Pfizer Inc.,XLV,173384070577.0,True
+ACN,Accenture plc,XLK,173025340894.0,True
+NEE,NextEra Energy Inc.,XLU,171769365413.0,True
+WELL,Welltower Inc.,XLRE,171104851367.0,True
+TMUS,T-Mobile US Inc.,XLC,170329525428.0,True
+NOW,ServiceNow Inc.,XLK,162338000000.0,True
+TJX,TJX Companies Inc. (The),XLY,162114177110.0,True
+DHR,Danaher Corporation,XLV,161636204746.0,True
+SCHW,Charles Schwab Corporation (The),XLF,158130457688.0,True
+SCCO,Southern Copper Corporation,XLB,155005037000.0,False
+ISRG,Intuitive Surgical Inc.,XLV,153857814234.0,True
+BA,Boeing Company (The),XLI,148233897251.0,True
+STX,Seagate Technology Holdings PLC,XLK,146869330339.0,True
+UBS,UBS Group AG Registered,XLF,145458010589.0,False
+ETN,Eaton Corporation PLC,XLI,143315716000.0,True
+BBVA,Banco Bilbao Vizcaya Argentaria S.A.,XLF,141889159416.0,False
+UBER,Uber Technologies Inc.,XLI,141079627557.0,True
+CB,Chubb Limited,XLF,140411858683.0,True
+LMT,Lockheed Martin Corporation,XLI,136145773102.0,True
+VRTX,Vertex Pharmaceuticals Incorporated,XLV,135644682697.0,True
+SPGI,S&P Global Inc.,XLF,133573880000.0,True
+PGR,Progressive Corporation (The),XLF,133494585827.0,True
+WDC,Western Digital Corporation,XLK,132314042836.0,True
+BP,BP p.l.c.,XLE,131027416570.0,False
+BTI,British American Tobacco  Industries p.l.c.,XLV,130635370071.0,False
+MPC,Marathon Petroleum Corporation,XLE,128977197151.0,True
+BMY,Bristol-Myers Squibb Company,XLV,128691023328.0,True
+FTNT,Fortinet Inc.,XLK,126917787696.0,True
+COF,Capital One Financial Corporation,XLF,124801220187.0,True
+MDT,Medtronic plc.,XLV,123551928795.0,True
+VLO,Valero Energy Corporation,XLE,122737718075.0,True
+ADP,Automatic Data Processing Inc.,XLI,122021701691.0,True
+BKNG,Booking Holdings Inc.,XLY,121047398550.0,True
+CVS,CVS Health Corporation,XLV,120837120463.0,True
+SPOT,Spotify Technology S.A.,XLY,120136212709.0,False
+PLD,Prologis Inc.,XLRE,120083306160.0,True
+BMO,Bank Of Montreal,XLF,118471520874.0,False
+MCK,McKesson Corporation,XLV,118029088079.0,True
+SYK,Stryker Corporation,XLV,117787610966.0,True
+SBUX,Starbucks Corporation,XLY,116177400000.0,True
+HDB,HDFC Bank Limited,XLF,115142395093.0,False
+LOW,Lowe's Companies Inc.,XLY,114662609863.0,True
+BNS,Bank Nova Scotia Halifax Pfd 3,XLF,114594207298.0,False
+PSX,Phillips 66,XLE,113573323321.0,True
+PH,Parker-Hannifin Corporation,XLI,112644870202.0,True
+CNQ,Canadian Natural Resources Limited,XLE,111551852800.0,False
+SNOW,Snowflake Inc.,XLK,110765088000.0,False
+CME,CME Group Inc.,XLF,110024062893.0,True
+NET,Cloudflare Inc.,XLK,108109362271.0,False
+SO,Southern Company (The),XLU,107927053470.0,True
+IBN,ICICI Bank Limited,XLF,107186885173.0,False
+GLW,Corning Incorporated,XLK,106803539161.0,True
+RIO,Rio Tinto Plc,XLB,105683086458.0,False
+ADBE,Adobe Inc.,XLK,105298060000.0,True
+ABNB,Airbnb Inc.,XLY,105242571468.0,True
+ENB,Enbridge Inc,XLE,104859055758.0,False
+CM,Canadian Imperial Bank of Commerce,XLF,104442194554.0,False
+MAR,Marriott International,XLY,103472063078.0,True
+HCA,HCA Healthcare Inc.,XLV,101173315965.0,True
+BNY,The Bank of New York Mellon Corporation,XLF,98600221915.0,True
+DUK,Duke Energy Corporation (Holding Company),XLU,97774655002.0,True
+ELV,Elevance Health Inc.,XLV,96205367144.0,True
+WM,Waste Management Inc.,XLI,95571900494.0,True
+CSX,CSX Corporation,XLI,95248385511.0,True
+GD,General Dynamics Corporation,XLI,94908758434.0,True
+INTU,Intuit Inc.,XLK,94842056400.0,True
+MRSH,Marsh,XLF,94755739941.0,True
+ING,ING Group N.V.,XLF,94155078599.0,False
+EQIX,Equinix Inc.,XLRE,93996621517.0,True
+BN,Brookfield Corporation,XLRE,93814697176.0,False
+E,ENI S.p.A.,XLE,93663463618.0,False
+USB,U.S. Bancorp,XLF,93514247789.0,True
+RACE,Ferrari N.V.,XLI,93030383390.0,False
+FCX,Freeport-McMoRan Inc.,XLB,92752371811.0,True
+DDOG,Datadog Inc.,XLK,92551587436.0,True
+MELI,MercadoLibre Inc.,XLY,92519382294.0,False
+ICE,Intercontinental Exchange Inc.,XLF,91978872750.0,True
+MMM,3M Company,XLI,90717044011.0,True
+SU,Suncor Energy  Inc.,XLE,90541028265.0,False
+CEG,Constellation Energy Corporation,XLU,90422786195.0,True
+PNC,PNC Financial Services Group Inc. (The),XLF,89973765219.0,True
+EMR,Emerson Electric Company,XLI,89409762000.0,True
+AEM,Agnico Eagle Mines Limited,XLB,89406869798.0,False
+BX,Blackstone Inc.,XLF,89136732288.0,True
+CTAS,Cintas Corporation,XLI,88960703836.0,True
+APP,Applovin Corporation,XLC,88441566280.0,True
+HOOD,Robinhood Markets Inc.,XLF,86833365926.0,True
+JCI,Johnson Controls International plc Ordinary Share,XLI,86621030210.0,True
+WMB,Williams Companies Inc. (The),XLE,86392318547.0,True
+CDNS,Cadence Design Systems Inc.,XLK,85275442450.0,True
+MCO,Moody's Corporation,XLF,84657020000.0,True
+AMT,American Tower Corporation (REIT),XLRE,84604365915.0,True
+REGN,Regeneron Pharmaceuticals Inc.,XLV,84329401121.0,True
+SHW,Sherwin-Williams Company (The),XLB,83904499730.0,True
+KKR,KKR & Co. Inc.,XLF,83560898097.0,True
+CI,The Cigna Group,XLV,83468284718.0,True
+MDLZ,Mondelez International Inc.,XLP,83202522236.0,True
+TRV,The Travelers Companies Inc.,XLF,83093446928.0,True
+EOG,EOG Resources Inc.,XLE,82854628641.0,True
+ECL,Ecolab Inc.,XLB,81940050657.0,True
+PWR,Quanta Services Inc.,XLI,81390863111.0,True
+CMCSA,Comcast Corporation,XLC,81050859327.0,True
+SNPS,Synopsys Inc.,XLK,80962650202.0,True
+MRNA,Moderna Inc.,XLV,80897168188.0,True
+CP,Canadian Pacific Kansas City Limited,XLI,80856954346.0,False
+HLT,Hilton Worldwide Holdings Inc.,XLY,80588992324.0,True
+DASH,DoorDash Inc.,XLY,80567418406.0,True
+ITW,Illinois Tool Works Inc.,XLI,79527552000.0,True
+MSI,Motorola Solutions Inc.,XLK,79074586844.0,True
+EPD,Enterprise Products Partners L.P.,XLU,78864106212.0,False
+NOC,Northrop Grumman Corporation,XLI,78469320499.0,True
+CL,Colgate-Palmolive Company,XLP,77636661816.0,True
+HWM,Howmet Aerospace Inc.,XLI,77084322413.0,True
+RCL,Royal Caribbean Cruises Ltd.,XLY,76526064795.0,True
+MFC,Manulife Financial Corporation,XLF,76134785249.0,False
+BAM,Brookfield Asset Management Inc,XLRE,76092371538.0,False
+NSC,Norfolk Southern Corporation,XLI,75969290000.0,True
+ROST,Ross Stores Inc.,XLY,75604967544.0,True
+CNI,Canadian National Railway Company,XLI,75470213000.0,False
+VRT,Vertiv Holdings LLC,XLI,75299836757.0,True
+KMI,Kinder Morgan Inc.,XLE,75087766441.0,True
+ORLY,O'Reilly Automotive Inc.,XLY,74424392864.0,True
+RSG,Republic Services Inc.,XLI,74072919378.0,True
+BCS,Barclays PLC,XLF,73959508474.0,False
+HPE,Hewlett Packard Enterprise Company,XLK,73634471291.0,True
+SLB,SLB Limited,XLE,73539297096.0,True
+FDX,FedEx Corporation,XLI,71928878605.0,True
+TGT,Target Corporation,XLP,71828856929.0,True
+NU,Nu Holdings Ltd.,XLF,71524072599.0,False
+CMI,Cummins Inc.,XLI,71520830931.0,True
+AEP,American Electric Power Company Inc.,XLU,71120070065.0,True
+AJG,Arthur J. Gallagher & Co.,XLF,69452174000.0,True
+HON,Honeywell International Inc.,XLI,69191173583.0,True
+APD,Air Products and Chemicals Inc.,XLB,68636134057.0,True
+SPG,Simon Property Group Inc.,XLRE,68605863241.0,True
+LITE,Lumentum Holdings Inc.,XLK,68167222454.0,True
+APO,Apollo Global Management Inc. (New),XLF,67812070948.0,True
+BSX,Boston Scientific Corporation,XLV,66679050491.0,True
+MET,MetLife Inc.,XLF,65816345329.0,True
+ALL,Allstate Corporation (The),XLF,65515494845.0,True
+GM,General Motors Company,XLY,65130450950.0,True
+AON,Aon plc,XLF,65080083151.0,True
+CVNA,Carvana Co.,XLY,64619232574.0,True
+COR,Cencora Inc.,XLV,64591178809.0,True
+BE,Bloom Energy Corporation,XLI,64139220138.0,True
+GWW,W.W. Grainger Inc.,XLI,64061049195.0,True
+IMO,Imperial Oil Limited,XLE,63756901120.0,False
+B,Barrick Mining Corporation,XLB,63613432794.0,False
+DLR,Digital Realty Trust Inc.,XLRE,63253983925.0,True
+TDG,Transdigm Group Incorporated,XLI,63111419654.0,True
+OXY,Occidental Petroleum Corporation,XLE,62477335688.0,True
+TRGP,Targa Resources Inc.,XLE,62086357820.0,True
+TRP,TC Energy Corporation,XLU,61980000000.0,False
+AFL,AFLAC Incorporated,XLF,61800588344.0,True
+MSTR,Strategy Inc,XLK,61524378986.0,False
+FAST,Fastenal Company,XLI,60497207462.0,True
+TEL,TE Connectivity plc,XLK,60340346980.0,True
+CVE,Cenovus Energy Inc,XLE,60018750000.0,False
+NXPI,NXP Semiconductors N.V.,XLK,59962118935.0,True
+LNG,Cheniere Energy Inc.,XLU,59277368688.0,False
+DB,Deutsche Bank AG,XLF,59226472000.0,False
+CAH,Cardinal Health Inc.,XLV,59195830956.0,True
+OKE,ONEOK Inc.,XLE,59191711731.0,True
+TFC,Truist Financial Corporation,XLF,59151140023.0,True
+NUE,Nucor Corporation,XLB,58547536949.0,True
+NTRA,Natera Inc.,XLV,57855145513.0,False
+CRH,CRH PLC,XLB,57851007108.0,True
+PSA,Public Storage,XLRE,57761649953.0,True
+NDAQ,Nasdaq Inc.,XLF,57742362528.0,True
+PCAR,PACCAR Inc.,XLI,57684335199.0,True
+D,Dominion Energy Inc.,XLU,57520997065.0,True
+MPWR,Monolithic Power Systems Inc.,XLK,57395583990.0,True
+GRMN,Garmin Ltd.,XLY,56968639134.0,True
+NKE,Nike Inc.,XLY,56917034327.0,True
+TEAM,Atlassian Corporation,XLK,56271263955.0,False
+WPM,Wheaton Precious Metals Corp,XLB,56102380847.0,False
+SRE,DBA Sempra,XLU,55431132500.0,True
+FANG,Diamondback Energy Inc.,XLE,55204000950.0,True
+BDX,Becton Dickinson and Company,XLV,54591762456.0,True
+EBAY,eBay Inc.,XLY,54307800000.0,True
+DVN,Devon Energy Corporation,XLE,54098000000.0,True
+O,Realty Income Corporation,XLRE,53991200963.0,True
+DEO,Diageo plc,XLP,53822483279.0,False
+TRI,Thomson Reuters Corporation,XLY,53396232000.0,False
+AZO,AutoZone Inc.,XLY,53395338599.0,True
+ADSK,Autodesk Inc.,XLK,53284550000.0,True
+BKR,Baker Hughes Company,XLE,53227183687.0,True
+KEYS,Keysight Technologies Inc.,XLK,53034642962.0,True
+VEEV,Veeva Systems Inc.,XLV,52223699568.0,True
+DAL,Delta Air Lines Inc.,XLI,52146135239.0,True
+EW,Edwards Lifesciences Corporation,XLV,51927876000.0,True
+CCEP,Coca-Cola Europacific Partners plc,XLP,51858413322.0,False
+HONA,Honeywell Aerospace Inc.,XLI,51669633230.0,True
+WDAY,Workday Inc.,XLK,50607590000.0,True
+HUM,Humana Inc.,XLV,50550207259.0,True
+ETR,Entergy Corporation,XLU,50484861769.0,True
+VMRK,Vivmark Residential,XLRE,50061375000.0,True
+XEL,Xcel Energy Inc.,XLU,49283646743.0,True
+PYPL,PayPal Holdings Inc.,XLF,49218941386.0,True
+A,Agilent Technologies Inc.,XLV,49024608422.0,True
+FITB,Fifth Third Bancorp,XLF,48273891182.0,True
+TER,Teradyne Inc.,XLK,48270206563.0,True
+KDP,Keurig Dr Pepper Inc.,XLP,47887468277.0,True
+XYZ,Block Inc.,XLF,47474820900.0,True
+VYLR,Vylor Inc.,XLP,47458584382.0,True
+LHX,L3Harris Technologies Inc.,XLI,47341341826.0,True
+VST,Vistra Corp.,XLU,47267504512.0,True
+ROK,Rockwell Automation Inc.,XLI,47165690458.0,True
+TEVA,Teva Pharmaceutical Industries Limited,XLV,46856555538.0,False
+F,Ford Motor Company,XLY,46765918477.0,True
+CARR,Carrier Global Corporation,XLI,46557879219.0,True
+WCN,Waste Connections Inc.,XLU,46467469645.0,False
+WAB,Westinghouse Air Brake Technologies Corporation,XLI,46392325104.0,True
+EXC,Exelon Corporation,XLU,46296590420.0,True
+STT,State Street Corporation,XLF,46105944238.0,True
+MDLN,Medline Inc.,XLV,45856997321.0,False
+IQV,IQVIA Holdings Inc.,XLV,45811472000.0,True
+CIEN,Ciena Corporation,XLK,45753102506.0,True
+FIX,Comfort Systems USA Inc.,XLI,45026568693.0,True
+SLF,Sun Life Financial Inc.,XLF,45000244811.0,False
+HMC,Honda Motor Company Ltd.,XLI,44868477228.0,False
+WAT,Waters Corporation,XLV,44760856890.0,True
+ALAB,Astera Labs Inc.,XLK,44727929513.0,False
+AMP,Ameriprise Financial Inc.,XLF,44663568244.0,True
+IDXX,IDEXX Laboratories Inc.,XLV,44649985304.0,True
+VTR,Ventas Inc.,XLRE,44621203769.0,True
+COIN,Coinbase Global Inc.,XLF,44612185310.0,True
+MSCI,MSCI Inc.,XLF,44347160000.0,True
+FERG,Ferguson Enterprises Inc.,XLI,43973737101.0,True
+FMX,Fomento Economico Mexicano S.A.B. de C.V.,XLP,43958129816.0,False
+AIG,American International Group Inc. New,XLF,43415819822.0,True
+NBIS,Nebius Group N.V.,XLK,43271195049.0,False
+ROP,Roper Technologies Inc.,XLK,43143528265.0,True
+AU,AngloGold Ashanti PLC,XLB,43086482919.0,False
+ED,Consolidated Edison Inc.,XLU,42996276873.0,True
+PAYX,Paychex Inc.,XLI,42294039997.0,True
+HEI,Heico Corporation,XLI,41930016648.0,False
+NTAP,NetApp Inc.,XLK,41741002753.0,True
+SYY,Sysco Corporation,XLP,41307144870.0,True
+DHI,D.R. Horton Inc.,XLY,41300689085.0,True
+LYV,Live Nation Entertainment Inc.,XLC,41118108570.0,True
+COHR,Coherent Corp.,XLK,40926960833.0,True
+ARES,Ares Management Corporation,XLF,40855293227.0,True
+PRU,Prudential Financial Inc.,XLF,40768650000.0,True
+ILMN,Illumina Inc.,XLV,40679400000.0,True
+MCHP,Microchip Technology Incorporated,XLK,40465007653.0,True
+P,Everpure Inc.,XLK,40387142821.0,True
+RVMD,Revolution Medicines Inc.,XLV,40228802294.0,False
+KR,Kroger Company (The),XLP,40083255069.0,True
+ODFL,Old Dominion Freight Line Inc.,XLI,39374948952.0,True
+STM,STMicroelectronics N.V.,XLK,39352318177.0,False
+EL,Estee Lauder Companies Inc. (The),XLP,39029409323.0,True
+TWLO,Twilio Inc.,XLK,38951283049.0,True
+TTWO,Take-Two Interactive Software Inc.,XLC,38856405860.0,True
+ZS,Zscaler Inc.,XLK,38767884996.0,False
+RBLX,Roblox Corporation,XLK,38547725776.0,False
+ADM,Archer-Daniels-Midland Company,XLP,38479653107.0,True
+KVUE,Kenvue Inc.,XLP,38184976524.0,True
+CBRE,CBRE Group Inc,XLRE,38003862110.0,True
+VIK,Viking Holdings Ltd,XLY,37891813315.0,False
+HIG,The Hartford Insurance Group Inc.,XLF,37773100679.0,True
+BIIB,Biogen Inc.,XLV,37505874852.0,True
+KMB,Kimberly-Clark Corporation,XLP,37353614653.0,True
+IBKR,Interactive Brokers Group Inc.,XLF,37279271910.0,True
+MLM,Martin Marietta Materials Inc.,XLB,36765094749.0,True
+RPRX,Royalty Pharma plc,XLV,36656326755.0,False
+CBOE,Cboe Global Markets Inc.,XLF,36645240750.0,True
+WEC,WEC Energy Group Inc.,XLU,36544008303.0,True
+CCL,Carnival Corporation Ltd.,XLY,36412042293.0,True
+PEG,Public Service Enterprise Group Incorporated,XLU,36245104582.0,True
+UI,Ubiquiti Inc.,XLK,36051914291.0,False
+FER,Ferrovial N.V.,XLI,35764244852.0,False
+CMG,Chipotle Mexican Grill Inc.,XLY,35608862520.0,True
+RMD,ResMed Inc.,XLV,35590166834.0,True
+ALC,Alcon Inc.,XLV,35293811000.0,False
+HSY,The Hershey Company,XLP,35290582395.0,True
+OKTA,Okta Inc.,XLK,35196697434.0,False
+CNC,Centene Corporation,XLV,35192203800.0,True
+ACGL,Arch Capital Group Ltd.,XLF,35040818949.0,True
+VMC,Vulcan Materials Company (Holding Company),XLB,34820398744.0,True
+PCG,Pacific Gas & Electric Co.,XLU,34787834238.0,True
+QSR,Restaurant Brands International Inc.,XLY,34729024514.0,False
+ESLT,Elbit Systems Ltd.,XLI,34566369184.0,False
+CCJ,Cameco Corporation,XLB,34376617954.0,False
+EQT,EQT Corporation,XLE,34196959720.0,True
+EXPE,Expedia Group Inc.,XLY,34175878505.0,True
+ZTS,Zoetis Inc.,XLV,33884335364.0,True
+MTD,Mettler-Toledo International Inc.,XLV,33754388754.0,True
+AXON,Axon Enterprise Inc.,XLI,33681032259.0,True
+TKO,TKO Group Holdings Inc.,XLC,33637013394.0,True
+CCI,Crown Castle Inc.,XLRE,33538652256.0,True
+NTR,Nutrien Ltd.,XLI,33298770678.0,False
+RKT,Rocket Companies Inc.,XLF,33243482023.0,False
+CTSH,Cognizant Technology Solutions Corporation,XLK,33206747087.0,True
+IRM,Iron Mountain Incorporated (Delaware)Common Stock REIT,XLRE,32943793176.0,True
+SUNB,Sunbelt Rentals Holdings Inc.,XLY,32318157426.0,False
+GEHC,GE HealthCare Technologies Inc.,XLV,32259432118.0,True
+MTB,M&T Bank Corporation,XLF,32180275661.0,True
+RKLB,Rocket Lab Corporation,XLI,32153853832.0,False
+VG,Venture Global Inc.,XLU,32026189421.0,False
+HBAN,Huntington Bancshares Incorporated,XLF,31639696175.0,True
+BSP,Bending Spoons S.p.A.,XLK,31447481217.0,False
+CLS,Celestica Inc.,XLK,30928915514.0,False
+WTW,Willis Towers Watson Public Limited Company,XLF,30850200033.0,True
+WSM,Williams-Sonoma Inc.,XLY,30716808318.0,True
+DG,Dollar General Corporation,XLP,30690001657.0,True
+CRWV,CoreWeave Inc.,XLK,30665435071.0,False
+RJF,Raymond James Financial Inc.,XLF,30622060774.0,True
+CRDO,Credo Technology Group Holding Ltd,XLK,30592933693.0,False
+HPQ,HP Inc.,XLK,30444463113.0,True
+ALNY,Alnylam Pharmaceuticals Inc.,XLV,30412136339.0,False
+NTRS,Northern Trust Corporation,XLF,30337706380.0,True
+EXR,Extra Space Storage Inc,XLRE,30251688010.0,True
+AEE,Ameren Corporation,XLU,30159303764.0,True
+PUK,Prudential Public Limited Company,XLF,30007645754.0,False
+KHC,The Kraft Heinz Company,XLP,29752318088.0,True
+FTS,Fortis Inc.,XLU,29570892000.0,False
+DXCM,DexCom Inc.,XLV,29554895115.0,True
+BAP,Credicorp Ltd.,XLF,29468537573.0,False
+ATO,Atmos Energy Corporation,XLU,29388799252.0,True
+MDB,MongoDB Inc.,XLK,29180728964.0,False
+EME,EMCOR Group Inc.,XLI,29130619719.0,True
+RDDT,Reddit Inc.,XLC,28909499593.0,True
+TECK,Teck Resources Ltd,XLI,28834072687.0,False
+FOXA,Fox Corporation,XLC,28787658174.0,True
+OTIS,Otis Worldwide Corporation,XLI,28778602028.0,True
+TDY,Teledyne Technologies Incorporated,XLK,28762304426.0,True
+IR,Ingersoll Rand Inc.,XLI,28754637683.0,True
+PBA,Pembina Pipeline Corp.,XLE,28711370350.0,False
+TW,Tradeweb Markets Inc.,XLF,28525704855.0,False
+ON,ON Semiconductor Corporation,XLK,28509802030.0,True
+AWK,American Water Works Company Inc.,XLU,28463953094.0,True
+FLEX,Flex Ltd.,XLK,28333921374.0,True
+ZM,Zoom Communications Inc.,XLK,28069592998.0,False
+SN,SharkNinja Inc.,XLY,28055978296.0,False
+WRB,W.R. Berkley Corporation,XLF,28046239816.0,True
+JBL,Jabil Inc.,XLK,28021115469.0,True
+SYF,Synchrony Financial,XLF,27937801279.0,True
+WST,West Pharmaceutical Services Inc.,XLV,27730161501.0,True
+DTE,DTE Energy Company,XLU,27688198461.0,True
+HAL,Halliburton Company,XLE,27651596881.0,True
+VRSN,VeriSign Inc.,XLK,27504477000.0,True
+CFG,Citizens Financial Group Inc.,XLF,27477573649.0,True
+CINF,Cincinnati Financial Corporation,XLF,27362065863.0,True
+CPAY,Corpay Inc.,XLF,27249390181.0,True
+ULTA,Ulta Beauty Inc.,XLY,27151421660.0,True
+CNP,CenterPoint Energy Inc (Holding Co),XLU,27139275866.0,True
+KGC,Kinross Gold Corporation,XLB,27082188000.0,False
+ROIV,Roivant Sciences Ltd.,XLV,27050996912.0,False
+FISV,Fiserv Inc.,XLF,27024384761.0,True
+CPRT,Copart Inc. (DE),XLI,26946952849.0,True
+FE,FirstEnergy Corp.,XLU,26900970439.0,True
+DGX,Quest Diagnostics Incorporated,XLV,26851631021.0,True
+LH,Labcorp Holdings Inc.,XLV,26757323000.0,True
+PPL,PPL Corporation,XLU,26602460129.0,True
+VRSK,Verisk Analytics Inc.,XLI,26464621920.0,True
+VICI,VICI Properties Inc.,XLRE,26447883039.0,True
+CASY,Casey's General Stores Inc.,XLP,26376623180.0,True
+DOV,Dover Corporation,XLI,26328637185.0,True
+FTI,TechnipFMC plc Ordinary Share,XLY,26204424406.0,False
+CBRS,Cerebras Systems Inc.,XLK,25880226627.0,False
+CHD,Church & Dwight Company Inc.,XLP,25822017316.0,True
+FOX,Fox Corporation,XLC,25646189690.0,True
+IOT,Samsara Inc.,XLK,25637796050.0,False
+VLTO,Veralto Corp,XLI,25573921786.0,True
+ES,Eversource Energy (D/B/A),XLU,25553615311.0,True
+XYL,Xylem Inc.,XLI,25510769079.0,True
+EXPD,Expeditors International of Washington Inc.,XLI,25502860130.0,True
+FFIV,F5 Inc.,XLK,25486762075.0,True
+CPNG,Coupang Inc.,XLY,25147188711.0,False
+PPG,PPG Industries Inc.,XLB,25139907000.0,True
+LPLA,LPL Financial Holdings Inc.,XLF,25106979167.0,False
+RBRK,Rubrik Inc.,XLK,25032010285.0,False
+ECHO,EchoStar  Corporation,XLC,24949091257.0,True
+BRO,Brown & Brown Inc.,XLF,24925125493.0,True
+FCNCA,First Citizens BancShares Inc.,XLF,24808274291.0,False
+DRI,Darden Restaurants Inc.,XLY,24615439813.0,True
+DLTR,Dollar Tree Inc.,XLP,24587074381.0,True
+AFRM,Affirm Holdings Inc.,XLF,24429298934.0,False
+SYM,Symbotic Inc.,XLI,24409796935.0,False
+RF,Regions Financial Corporation,XLF,24194797970.0,True
+GFS,GlobalFoundries Inc.,XLK,24175244812.0,False
+IFF,International Flavors & Fragrances Inc.,XLB,23940721028.0,True
+ROKU,Roku Inc.,XLC,23755940178.0,False
+INCY,Incyte Corp.,XLV,23701447440.0,True
+LVS,Las Vegas Sands Corp.,XLY,23660524252.0,True
+MKL,Markel Group Inc.,XLF,23607702074.0,False
+PFG,Principal Financial Group Inc,XLF,23575062021.0,True
+HUBB,Hubbell Inc,XLI,23552760152.0,True
+STZ,Constellation Brands Inc.,XLP,23515205723.0,True
+L,Loews Corporation,XLF,23239343210.0,True
+TPL,Texas Pacific Land Corporation,XLE,23014782477.0,True
+DOW,Dow Inc.,XLB,22977658017.0,True
+FWONK,Liberty Media Corporation Series C,XLI,22852078408.0,False
+AER,AerCap Holdings N.V.,XLY,22806231999.0,False
+Q,Qnity Electronics Inc.,XLK,22757705308.0,True
+RL,Ralph Lauren Corporation,XLY,22757436186.0,True
+TPR,Tapestry Inc.,XLY,22755568074.0,True
+GPN,Global Payments Inc.,XLF,22725427333.0,True
+OMC,Omnicom Group Inc.,XLC,22650003036.0,True
+STE,STERIS plc (Ireland),XLV,22641475544.0,True
+KEY,KeyCorp,XLF,22633796630.0,True
+USFD,US Foods Holding Corp.,XLY,22509211728.0,False
+PHM,PulteGroup Inc.,XLY,22396829479.0,True
+EIX,Edison International,XLU,22280729384.0,True
+SW,Smurfit WestRock plc,XLB,22255506986.0,True
+PKG,Packaging Corporation of America,XLB,22178348587.0,True
+SMCI,Super Micro Computer Inc.,XLK,22152872748.0,True
+XPO,XPO Inc.,XLY,22100070269.0,False
+TROW,T. Rowe Price Group Inc.,XLF,22067524683.0,True
+CMS,CMS Energy Corporation,XLU,22047880945.0,True
+ATI,ATI Inc.,XLI,22037814785.0,False
+CRCL,Circle Internet Group Inc.,XLF,21990728812.0,False
+EFX,Equifax Inc.,XLI,21898593942.0,True
+GH,Guardant Health Inc.,XLV,21865923940.0,False
+THC,Tenet Healthcare Corporation,XLV,21790856970.0,False
+DINO,HF Sinclair Corporation,XLE,21746520410.0,False
+JBHT,J.B. Hunt Transport Services Inc.,XLI,21655845784.0,True
+AMRZ,Amrize Ltd,XLI,21570747399.0,False
+EXE,Expand Energy Corporation,XLE,21520592225.0,True
+ARXS,Arxis Inc.,XLI,21398263098.0,False
+AMCR,Amcor plc,XLB,21397358533.0,True
+RS,Reliance Inc.,XLI,21336719626.0,False
+VTRS,Viatris Inc.,XLV,21225959167.0,True
+LYB,LyondellBasell Industries NV,XLB,21116990922.0,True
+PTC,PTC Inc.,XLK,21050214634.0,True
+BR,Broadridge Financial Solutions Inc.,XLI,21012953956.0,True
+SSNC,SS&C Technologies Holdings Inc.,XLK,21011008342.0,False
+FWONA,Liberty Media Corporation Series A,XLI,20996835619.0,False
+NI,NiSource Inc,XLU,20951980769.0,True
+BBY,Best Buy Co. Inc.,XLY,20937116091.0,True
+INSM,Insmed Incorporated,XLV,20759345675.0,False
+NVT,nVent Electric plc,XLI,20664403072.0,False
+CDW,CDW Corporation,XLK,20580368668.0,True
+LUV,Southwest Airlines Company,XLI,20561420688.0,True
+ONON,On Holding AG,XLY,20516656380.0,False
+PR,Permian Resources Corporation,XLE,20436391508.0,False
+LEN,Lennar Corporation,XLY,20090675184.0,True
+TSN,Tyson Foods Inc.,XLP,20077312290.0,True
+RGLD,Royal Gold Inc.,XLI,19887322595.0,False
+NRG,NRG Energy Inc.,XLU,19839665386.0,True
+BG,Bunge Limited,XLP,19817087537.0,True
+FIS,Fidelity National Information Services Inc.,XLF,19746379562.0,True
+SNX,TD SYNNEX Corporation,XLK,19711427418.0,False
+ENTG,Entegris Inc.,XLI,19605768000.0,False
+EVRG,Evergy Inc.,XLU,19586681261.0,True
+BCE,BCE Inc.,XLC,19405862252.0,False
+TOST,Toast Inc.,XLK,19316760000.0,False
+SOFI,SoFi Technologies Inc.,XLF,19076493685.0,False
+GIB,CGI Inc.,XLY,19049630499.0,False
+NTNX,Nutanix Inc.,XLK,18968530283.0,False
+TSEM,Tower Semiconductor Ltd.,XLK,18956429010.0,False
+SBAC,SBA Communications Corporation,XLRE,18925057943.0,True
+ZBH,Zimmer Biomet Holdings Inc.,XLV,18846791050.0,True
+GIS,General Mills Inc.,XLP,18810293726.0,True
+SNA,Snap-On Incorporated,XLI,18438650621.0,True
+FSLR,First Solar Inc.,XLK,18404201195.0,True
+NWS,News Corporation,XLC,18348141802.0,True
+DT,Dynatrace Inc.,XLK,18314064851.0,False
+MEDP,Medpace Holdings Inc.,XLV,18253105904.0,False
+DD,DuPont de Nemours Inc.,XLI,18244305923.0,True
+LNT,Alliant Energy Corporation,XLU,18227714340.0,True
+ZBRA,Zebra Technologies Corporation,XLK,18174863146.0,True
+EWBC,East West Bancorp Inc.,XLF,18174622698.0,False
+ESS,Essex Property Trust Inc.,XLRE,18152620596.0,True
+FTV,Fortive Corporation,XLI,18136123973.0,True
+TSCO,Tractor Supply Company,XLY,18095723958.0,True
+PS,Pershing Square Inc.,XLF,18016000000.0,False
+WWD,Woodward Inc.,XLE,18000118227.0,False
+CF,CF Industries Holdings Inc.,XLB,17942648693.0,True
+RCI,Rogers Communication Inc.,XLC,17935446030.0,False
+IP,International Paper Company,XLB,17835914064.0,True
+FICO,Fair Isaac Corporation,XLK,17780684966.0,True
+RGA,Reinsurance Group of America Incorporated,XLF,17765317963.0,False
+NDSN,Nordson Corporation,XLI,17751944938.0,True
+GPC,Genuine Parts Company,XLY,17642543356.0,True
+RVTY,Revvity Inc.,XLV,17559236061.0,True
+MTSI,MACOM Technology Solutions Holdings Inc.,XLK,17544693979.0,False
+RIVN,Rivian Automotive Inc.,XLI,17461199198.0,False
+TPG,TPG Inc.,XLF,17448509426.0,False
+BALL,Ball Corporation,XLB,17420127924.0,True
+APA,APA Corporation,XLE,17321378654.0,True
+MGA,Magna International Inc.,XLY,17180205273.0,False
+J,Jacobs Solutions Inc.,XLI,17118067245.0,True
+HST,Host Hotels & Resorts Inc.,XLRE,17039043803.0,True
+PAAS,Pan American Silver Corp.,XLB,17028361260.0,False
+ROL,Rollins Inc.,XLI,16989244215.0,True
+CLH,Clean Harbors Inc.,XLI,16942595118.0,False
+LDOS,Leidos Holdings Inc.,XLI,16907565319.0,True
+ITT,ITT Inc.,XLI,16830444000.0,False
+NWSA,News Corporation,XLC,16797061773.0,True
+APG,APi Group Corporation,XLY,16767819524.0,False
+IEX,IDEX Corporation,XLI,16725570004.0,True
+H,Hyatt Hotels Corporation,XLY,16669915313.0,False
+CHRW,C.H. Robinson Worldwide Inc.,XLI,16629102526.0,True
+FDXF,FedEx Freight Holding Company Inc.,XLI,16599503126.0,True
+WMG,Warner Music Group Corp.,XLY,16577348580.0,False
+HAS,Hasbro Inc.,XLY,16534642866.0,True
+VNOM,Viper Energy Inc.,XLE,16289488398.0,False
+NVR,NVR Inc.,XLY,16283973462.0,True
+INVH,Invitation Homes Inc.,XLRE,16259857412.0,True
+CRL,Charles River Laboratories International Inc.,XLV,16214985264.0,True
+EXEL,Exelixis Inc.,XLV,16182622305.0,False
+FTAI,FTAI Aviation Ltd.,XLI,16176366833.0,False
+AS,Amer Sports Inc.,XLY,16161200875.0,False
+LOGI,Logitech International S.A.,XLK,16111551117.0,False
+SQM,Sociedad Quimica y Minera S.A.,XLI,16101403237.0,False
+TYL,Tyler Technologies Inc.,XLK,16071719931.0,True
+BEN,Franklin Templeton Inc.,XLF,16014584203.0,True
+ASND,Ascendis Pharma A/S Ordinary Share,XLV,16009176487.0,False
+LAMR,Lamar Advertising Company,XLRE,15995090727.0,False
+TRU,TransUnion,XLF,15990936000.0,False
+TLN,Talen Energy Corporation,XLU,15879743718.0,False
+BURL,Burlington Stores Inc.,XLY,15868374561.0,False
+CRBG,Corebridge Financial Inc.,XLF,15865044058.0,False
+KIM,Kimco Realty Corporation (HC),XLRE,15823921309.0,True
+DOCU,DocuSign Inc.,XLK,15776435973.0,False
+WCC,WESCO International Inc.,XLY,15773850183.0,False
+EG,Everest Group Ltd.,XLF,15626964669.0,True
+GWRE,Guidewire Software Inc.,XLK,15549089749.0,False
+W,Wayfair Inc.,XLY,15544506264.0,False
+CHKP,Check Point Software Technologies Ltd.,XLK,15517254355.0,False
+PFGC,Performance Food Group Company,XLY,15445685049.0,False
+JHX,James Hardie Industries plc.,XLI,15407066832.0,False
+MAS,Masco Corporation,XLI,15390478912.0,True
+YUMC,Yum China Holdings Inc.,XLY,15328426167.0,False
+RBA,RB Global Inc.,XLY,15319865488.0,False
+XP,XP Inc.,XLF,15212455410.0,False
+SGI,Somnigroup International Inc.,XLY,15193484148.0,False
+PNFP,Pinnacle Financial Partners Inc. Common stock,XLF,15180775814.0,False
+EMA,Emera Incorporated,XLU,15163392000.0,False
+RBC,RBC Bearings Incorporated,XLI,15134068887.0,False
+ASTS,AST SpaceMobile Inc.,XLY,15088023742.0,False
+RNR,RenaissanceRe Holdings Ltd.,XLF,15066300883.0,False
+EQH,Equitable Holdings Inc.,XLF,15027855041.0,False
+ALLE,Allegion plc,XLI,15010693465.0,True
+SWK,Stanley Black & Decker Inc.,XLI,14946116960.0,True
+TRMB,Trimble Inc.,XLK,14925842070.0,True
+GEN,Gen Digital Inc.,XLK,14898831226.0,True
+SOLV,Solventum Corporation,XLV,14886065101.0,True
+ULS,UL Solutions Inc.,XLV,14865762478.0,False
+UNM,Unum Group,XLF,14841262313.0,False
+IT,Gartner Inc.,XLK,14804645933.0,True
+NBIX,Neurocrine Biosciences Inc.,XLV,14565311145.0,False
+GDDY,GoDaddy Inc.,XLK,14530291080.0,True
+CRS,Carpenter Technology Corporation,XLI,14483986499.0,False
+NLY,Annaly Capital Management Inc.,XLRE,14390909221.0,False
+CSGP,CoStar Group Inc.,XLRE,14364254495.0,True
+CNH,CNH Industrial N.V.,XLI,14332866594.0,False
+JLL,Jones Lang LaSalle Incorporated,XLF,14323141961.0,False
+FLUT,Flutter Entertainment plc,XLK,14310545203.0,False
+COKE,Coca-Cola Consolidated Inc.,XLP,14306663709.0,False
+WY,Weyerhaeuser Company,XLRE,14284987520.0,True
+CDE,Coeur Mining Inc.,XLB,14267737772.0,False
+SJM,The J.M. Smucker Company,XLP,14249144380.0,True
+AIZ,Assurant Inc.,XLF,14247170098.0,True
+ICLR,ICON plc,XLV,14197879075.0,False
+HALO,Halozyme Therapeutics Inc.,XLV,14135040920.0,False
+MANH,Manhattan Associates Inc.,XLK,14119715069.0,False
+OHI,Omega Healthcare Investors Inc.,XLRE,14029501900.0,False
+LECO,Lincoln Electric Holdings Inc.,XLI,14006889434.0,False
+CSL,Carlisle Companies Incorporated,XLI,14003203296.0,False
+AVY,Avery Dennison Corporation,XLB,13995038302.0,True
+CG,The Carlyle Group Inc.,XLF,13968245682.0,False
+JAZZ,Jazz Pharmaceuticals plc,XLV,13933913953.0,False
+PAG,Penske Automotive Group Inc.,XLY,13927751992.0,False
+SITM,SiTime Corporation,XLK,13914469778.0,False
+ARMK,Aramark,XLY,13845587311.0,False
+MTZ,MasTec Inc.,XLI,13776313829.0,False
+KEP,Korea Electric Power Corporation,XLU,13763709811.0,False
+LSCC,Lattice Semiconductor Corporation,XLK,13691718221.0,False
+CACI,CACI International Inc.,XLK,13684512454.0,False
+WSE,Wise Group plc,XLI,13622896686.0,False
+REG,Regency Centers Corporation,XLRE,13620506286.0,True
+WSO,Watsco Inc.,XLY,13618250401.0,False
+CET,Central Securities Corporation,XLF,13616337752.0,False
+BMNR,BitMine Immersion Technologies Inc.,XLF,13572593865.0,False
+ARCC,Ares Capital Corporation,XLF,13491649258.0,False
+BJ,BJ's Wholesale Club Holdings Inc.,XLY,13468935608.0,False
+TXT,Textron Inc.,XLI,13421859003.0,True
+TIGO,Millicom International Cellular S.A.,XLC,13391538462.0,False
+CNA,CNA Financial Corporation,XLF,13364979834.0,False
+DOC,Healthpeak Properties Inc.,XLRE,13335457208.0,True
+HUBS,HubSpot Inc.,XLK,13323750245.0,False
+BBIO,BridgeBio Pharma Inc.,XLV,13316606729.0,False
+BAX,Baxter International Inc.,XLV,13260947374.0,True
+MKSI,MKS Inc.,XLI,13260479299.0,False
+JBS,JBS N.V.,XLP,13247394043.0,False
+DKS,Dick's Sporting Goods Inc,XLY,13230493002.0,False
+MKC,McCormick & Company Incorporated,XLP,13106130772.0,True
+AKAM,Akamai Technologies Inc.,XLK,13096894578.0,True
+LII,Lennox International Inc.,XLI,13088818836.0,True
+TOL,Toll Brothers Inc.,XLY,13000098760.0,False
+PINS,Pinterest Inc.,XLK,12985557709.0,False
+RPM,RPM International Inc.,XLY,12972726947.0,False
+GL,Globe Life Inc.,XLF,12942215369.0,True
+BNT,Brookfield Wealth Solutions Ltd.,XLF,12932426735.0,False
+SNN,Smith & Nephew SNATS Inc.,XLV,12929720456.0,False
+PNW,Pinnacle West Capital Corporation,XLU,12920837117.0,True
+FIG,Figma Inc.,XLK,12845537795.0,False
+GME,GameStop Corporation,XLY,12809280136.0,False
+CHTR,Charter Communications Inc.,XLC,12806326281.0,True
+PEN,Penumbra Inc.,XLV,12799986573.0,False
+IONQ,IonQ Inc.,XLK,12741563246.0,False
+AFG,American Financial Group Inc.,XLF,12725128172.0,False
+AGI,Alamos Gold Inc.,XLB,12724951953.0,False
+IVZ,Invesco Ltd,XLF,12710778666.0,True
+DTM,DT Midstream Inc.,XLU,12588687526.0,False
+SEIC,SEI Investments Company,XLF,12542004519.0,False
+EMBJ,Embraer S.A.,XLI,12505661137.0,False
+AHR,American Healthcare REIT Inc.,XLRE,12452089680.0,False
+SMMT,Summit Therapeutics Inc.,XLV,12435745800.0,False
+FIVE,Five Below Inc.,XLY,12435054885.0,False
+EHC,Encompass Health Corporation,XLV,12431312918.0,False
+WTRG,Essential Utilities Inc.,XLU,12287613597.0,False
+PAYC,Paycom Software Inc.,XLK,12286974056.0,False
+CART,Maplebear Inc.,XLY,12265390112.0,False
+SWKS,Skyworks Solutions Inc.,XLK,12249726003.0,True
+EQX,Equinox Gold Corp.,XLB,12094883756.0,False
+AR,Antero Resources Corporation,XLE,12002418560.0,False
+ALLY,Ally Financial Inc.,XLF,11958089932.0,False
+WTS,Watts Water Technologies Inc.,XLI,11915745867.0,False
+BSY,Bentley Systems Incorporated,XLK,11905480755.0,False
+MLI,Mueller Industries Inc.,XLI,11886142996.0,False
+DVA,DaVita Inc.,XLV,11873180000.0,True
+MICC,The Magnum Ice Cream Company N.V.,XLP,11871716339.0,False
+ELS,Equity Lifestyle Properties Inc.,XLRE,11870932744.0,False
+ERIE,Erie Indemnity Company,XLF,11861352662.0,True
+FDS,FactSet Research Systems Inc.,XLF,11826511147.0,True
+SKM,SK Telecom Co. Ltd.,XLC,11825771400.0,False
+NXT,Nextpower Inc.,XLK,11778762638.0,False
+HRL,Hormel Foods Corporation,XLP,11755493088.0,True
+AIT,Applied Industrial Technologies Inc.,XLY,11732806063.0,False
+COO,The Cooper Companies Inc.,XLV,11723073875.0,True
+SMTC,Semtech Corporation,XLK,11676902325.0,False
+BWXT,BWX Technologies Inc.,XLI,11663478054.0,False
+GLPI,Gaming and Leisure Properties Inc.,XLRE,11642620121.0,False
+DECK,Deckers Outdoor Corporation,XLY,11633405279.0,True
+UDR,UDR Inc.,XLRE,11623339552.0,True
+CORT,Corcept Therapeutics Incorporated,XLV,11620577678.0,False
+AVTR,Avantor Inc.,XLI,11599554106.0,False
+TEM,Tempus AI Inc.,XLK,11585098251.0,False
+MAIR,Madison Air Solutions Corporation,XLI,11579757885.0,False
+FROG,JFrog Ltd.,XLK,11576760090.0,False
+AMH,American Homes 4 Rent,XLRE,11457840214.0,False
+SAIL,SailPoint Inc.,XLK,11452487358.0,False
+SCI,Service Corporation International,XLY,11433683779.0,False
+QXO,QXO Inc.,XLY,11433147613.0,False
+CHYM,Chime Financial Inc.,XLF,11418126948.0,False
+STRL,Sterling Infrastructure Inc.,XLI,11404317166.0,False
+FRO,Frontline Plc,XLY,11402744375.0,False
+TECH,Bio-Techne Corp,XLV,11388140444.0,True
+FN,Fabrinet,XLU,11383344530.0,False
+RYAN,Ryan Specialty Holdings Inc.,XLF,11381199785.0,False
+JKHY,Jack Henry & Associates Inc.,XLF,11344121438.0,True
+TXRH,Texas Roadhouse Inc.,XLY,11341439194.0,False
+ELAN,Elanco Animal Health Incorporated,XLV,11336419323.0,False
+INIO,INNIO N.V.,XLY,11332500000.0,False
+MOH,Molina Healthcare Inc,XLV,11308608000.0,False
+BWA,BorgWarner Inc.,XLY,11295335993.0,False
+FHN,First Horizon Corporation,XLF,11152714299.0,False
+NYT,New York Times Company (The),XLY,11142108680.0,False
+GGG,Graco Inc.,XLI,11110789145.0,False
+FNF,Fidelity National Financial Inc.,XLF,11097819181.0,False
+GNRC,Generac Holdlings Inc.,XLI,11094375995.0,True
+UHS,Universal Health Services Inc.,XLV,11087726567.0,True
+PSO,Pearson Plc,XLY,11065628832.0,False
+ALGN,Align Technology Inc.,XLV,11047407385.0,True
+RDY,Dr. Reddy's Laboratories Ltd,XLV,11042511713.0,False
+UHAL,U-Haul Holding Company,XLY,11041550516.0,False
+HII,Huntington Ingalls Industries Inc.,XLI,10988366198.0,True
+LULU,lululemon athletica inc.,XLY,10988118300.0,True
+GMED,Globus Medical Inc.,XLV,10963827897.0,False
+BMRN,BioMarin Pharmaceutical Inc.,XLV,10962081972.0,False
+CR,Crane Company,XLI,10927157302.0,False
+ALB,Albemarle Corporation,XLB,10920187975.0,True
+EGP,EastGroup Properties Inc.,XLRE,10900120542.0,False
+DOCN,DigitalOcean Holdings Inc.,XLK,10817318600.0,False
+CLX,Clorox Company (The),XLP,10722318927.0,True
+FRHC,Freedom Holding Corp.,XLF,10683796178.0,False
+AES,The AES Corporation,XLU,10680176291.0,True
+GSAT,Globalstar Inc.,XLY,10673432068.0,False
+ARW,Arrow Electronics Inc.,XLK,10659595576.0,False
+MTCH,Match Group Inc.,XLK,10540981231.0,False
+JEF,Jefferies Financial Group Inc.,XLF,10482122233.0,False
+MDGL,Madrigal Pharmaceuticals Inc.,XLV,10474024481.0,False
+DPZ,Domino's Pizza Inc,XLY,10451076991.0,True
+GKOS,Glaukos Corporation,XLV,10421871829.0,False
+ESTC,Elastic N.V.,XLK,10408312692.0,False
+DKNG,DraftKings Inc.,XLY,10395747765.0,False
+ENSG,The Ensign Group Inc.,XLV,10394672104.0,False
+QGEN,Qiagen N.V.,XLV,10349074096.0,False
+UMBF,UMB Financial Corporation,XLF,10341356085.0,False
+CPT,Camden Property Trust,XLRE,10329412819.0,True
+IREN,IREN Limited,XLF,10321691303.0,False
+OSCR,Oscar Health Inc.,XLV,10284051400.0,False
+PODD,Insulet Corporation,XLV,10272743956.0,True
+RRC,Range Resources Corporation,XLE,10249183528.0,False
+SF,Stifel Financial Corporation,XLF,10245467652.0,False
+AMG,Affiliated Managers Group Inc.,XLF,10228379299.0,False
+AA,Alcoa Corporation,XLI,10213295522.0,False
+SSB,SouthState Bank Corporation,XLF,10203660467.0,False
+R,Ryder System Inc.,XLY,10182243860.0,False
+BEPC,Brookfield Renewable Corporation Brookfield Renewable Corpor,XLU,10139990270.0,False
+OGE,OGE Energy Corp,XLU,10105956560.0,False
+WTFC,Wintrust Financial Corporation,XLF,10103028558.0,False
+BPOP,Popular Inc.,XLF,10054042898.0,False
+DCI,Donaldson Company Inc.,XLI,9982180309.0,False
+TTC,Toro Company (The),XLY,9969946971.0,False
+RRX,Regal Rexnord Corporation,XLI,9902876542.0,False
+PCVX,Vaxcyte Inc.,XLV,9891939691.0,False
+WMS,Advanced Drainage Systems Inc.,XLY,9872067375.0,False
+NVMI,Nova Ltd.,XLK,9856853106.0,False
+EVR,Evercore Inc.,XLF,9821731923.0,False
+BXP,BXP Inc.,XLRE,9817589078.0,True
+CFR,Cullen/Frost Bankers Inc.,XLF,9799620419.0,False
+AM,Antero Midstream Corporation,XLU,9783031140.0,False
+MUSA,Murphy USA Inc.,XLY,9780182639.0,False
+ONTO,Onto Innovation Inc.,XLI,9749580651.0,False
+HBM,Hudbay Minerals Inc.,XLB,9722328796.0,False
+BIO,Bio-Rad Laboratories Inc.,XLI,9719326613.0,False
+AMKR,Amkor Technology Inc.,XLK,9702069032.0,False
+ZION,Zions Bancorporation N.A.,XLF,9689843238.0,False
+ORI,Old Republic International Corporation,XLF,9676631514.0,False
+ENLT,Enlight Renewable Energy Ltd.,XLU,9666262239.0,False
+SYRE,Spyre Therapeutics Inc.,XLV,9640636950.0,False
+ONB,Old National Bancorp,XLF,9625461200.0,False
+HSIC,Henry Schein Inc.,XLV,9584402612.0,True
+QNT,Quantinuum Inc.,XLK,9537828353.0,False
+SOLS,Solstice Advanced Materials Inc.,XLI,9499072666.0,False
+AYI,Acuity Inc.,XLY,9496453575.0,False
+HL,Hecla Mining Company,XLI,9478652561.0,False
+KRYS,Krystal Biotech Inc.,XLV,9475475369.0,False
+PCOR,Procore Technologies Inc.,XLK,9465298004.0,False
+FRT,Federal Realty Investment Trust,XLRE,9460488801.0,True
+TFII,TFI International Inc.,XLI,9451853565.0,False
+BAH,Booz Allen Hamilton Holding Corporation,XLY,9450790329.0,False
+PCTY,Paylocity Holding Corporation,XLK,9426630616.0,False
+TTEK,Tetra Tech Inc.,XLY,9424995395.0,False
+PBF,PBF Energy Inc.,XLE,9394044412.0,False
+LTH,Life Time Group Holdings Inc.,XLY,9383167197.0,False
+MSGS,Madison Square Garden Sports Corp.,XLY,9378655421.0,False
+IAG,Iamgold Corporation,XLB,9375820000.0,False
+KLAR,Klarna Group plc,XLF,9335676722.0,False
+LLYVK,Liberty Live Holdings Inc. Series C Liberty Live Group,XLY,9313704212.0,False
+HLI,Houlihan Lokey Inc.,XLF,9311677260.0,False
+RMBS,Rambus Inc.,XLK,9298413225.0,False
+SIRI,SiriusXM Holdings Inc.,XLY,9282822178.0,False
+KYMR,Kymera Therapeutics Inc.,XLV,9217246005.0,False
+OC,Owens Corning Inc,XLI,9208381083.0,False
+SAIA,Saia Inc.,XLI,9189416925.0,False
+CGNX,Cognex Corporation,XLI,9185021773.0,False
+DRS,Leonardo DRS Inc.,XLI,9154378965.0,False
+SM,SM Energy Company,XLE,9138353293.0,False
+EDU,New Oriental Education & Technology Group Inc. Sponsored ADR,XLRE,9097135754.0,False
+APTV,Aptiv PLC,XLY,9096416231.0,True
+TXG,10x Genomics Inc.,XLI,9087808968.0,False
+GTLB,GitLab Inc.,XLK,9084698000.0,False
+NTSK,Netskope Inc.,XLK,9070648006.0,False
+ALSN,Allison Transmission Holdings Inc.,XLY,9048075624.0,False
+CUBE,CubeSmart,XLRE,9040264458.0,False
+JXN,Jackson Financial Inc.,XLF,9029596150.0,False
+PTGX,Protagonist Therapeutics Inc.,XLV,9028747006.0,False
+IESC,IES Holdings Inc.,XLI,8986878195.0,False
+TWST,Twist Bioscience Corporation,XLV,8981820042.0,False
+CHWY,Chewy Inc.,XLY,8975035470.0,False
+CAI,Caris Life Sciences Inc.,XLV,8961093348.0,False
+LLYVA,Liberty Live Holdings Inc. Series A Liberty Live Group,XLY,8946602762.0,False
+VOYA,Voya Financial Inc.,XLF,8916492669.0,False
+KNSL,Kinsale Capital Group Inc.,XLF,8898163942.0,False
+LFUS,Littelfuse Inc.,XLE,8896673099.0,False
+JAN,Janus Living Inc.,XLRE,8886727825.0,False
+KNTK,Kinetik Holdings Inc.,XLU,8872395609.0,False
+HNGE,Hinge Health Inc.,XLK,8870737261.0,False
+PNR,Pentair plc. Ordinary Share,XLI,8850327948.0,True
+PRI,Primerica Inc.,XLF,8793704442.0,False
+DAR,Darling Ingredients Inc.,XLP,8780154246.0,False
+RGEN,Repligen Corporation,XLV,8743088840.0,False
+BRKR,Bruker Corporation,XLI,8731712400.0,False
+VIRT,Virtu Financial Inc.,XLF,8730012769.0,False
+ADC,Agree Realty Corporation,XLRE,8725876149.0,False
+MHK,Mohawk Industries Inc.,XLY,8717899262.0,False
+ALV,Autoliv Inc.,XLY,8706440357.0,False
+AEIS,Advanced Energy Industries Inc.,XLK,8676527755.0,False
+BRX,Brixmor Property Group Inc.,XLRE,8672211650.0,False
+CYTK,Cytokinetics Incorporated,XLV,8665329644.0,False
+CTRE,CareTrust REIT Inc.,XLRE,8653056947.0,False
+FLS,Flowserve Corporation,XLI,8613161973.0,False
+EGO,Eldorado Gold Corporation,XLB,8600036691.0,False
+CTVA,Corteva Inc.,XLP,8580140560.0,False
+IDCC,InterDigital Inc.,,8569142684.0,False
+AOS,A.O. Smith Corporation,XLI,8490208555.0,True
+DBX,Dropbox Inc.,XLK,8459584002.0,False
+COLB,Columbia Banking System Inc.,XLF,8455948791.0,False
+VMI,Valmont Industries Inc.,XLI,8414408456.0,False
+KT,KT Corporation,XLC,8414217699.0,False
+ZETA,Zeta Global Holdings Corp.,XLK,8413976040.0,False
+PB,Prosperity Bancshares Inc.,XLF,8394347454.0,False
+MORN,Morningstar Inc.,XLF,8377905811.0,False
+WAL,Western Alliance Bancorporation,XLF,8364763243.0,False
+HQY,HealthEquity Inc.,XLY,8351763437.0,False
+AAL,American Airlines Group Inc.,XLY,8340821383.0,False
+ETSY,Etsy Inc.,XLY,8335618353.0,False
+VICR,Vicor Corporation,XLK,8298750693.0,False
+OSK,Oshkosh Corporation (Holding Company)Common Stock,XLI,8291030893.0,False
+UGI,UGI Corporation,XLU,8281650676.0,False
+SANM,Sanmina Corporation,XLK,8279183581.0,False
+ARWR,Arrowhead Pharmaceuticals Inc.,XLV,8243610694.0,False
+CBC,Central Bancompany Inc.,XLF,8238976575.0,False
+CHRD,Chord Energy Corporation,XLE,8230935779.0,False
+TTAN,ServiceTitan Inc.,XLK,8219065336.0,False
+IDA,IDACORP Inc.,XLU,8217040629.0,False
+WLK,Westlake Corporation,XLI,8196870589.0,False
+LEVI,Levi Strauss & Co,XLY,8190913625.0,False
+STN,Stantec Inc,XLY,8179326387.0,False
+AXSM,Axsome Therapeutics Inc.,XLV,8175074265.0,False
+ATR,AptarGroup Inc.,XLI,8144742625.0,False
+TGTX,TG Therapeutics Inc.,XLV,8137150857.0,False
+VSAT,ViaSat Inc.,XLY,8127592790.0,False
+CBSH,Commerce Bancshares Inc.,XLF,8105352379.0,False
+REXR,Rexford Industrial Realty Inc.,XLRE,8090009139.0,False
+NNN,NNN REIT Inc.,XLRE,8086069882.0,False
+ZWS,Zurn Elkay Water Solutions Corporation,XLI,8070946960.0,False
+ESI,Element Solutions Inc.,XLI,8068606163.0,False
+CNM,Core & Main Inc.,XLY,8063613137.0,False
+NEU,NewMarket Corp,XLI,8059086470.0,False
+GAP,Gap Inc. (The),XLY,8047598839.0,False
+CAE,CAE Inc.,,8044146673.0,False
+DSGX,Descartes Systems Group Inc. (The),XLK,8041136239.0,False
+FCFS,FirstCash Holdings Inc.,XLY,8014241204.0,False
+SPXC,SPX Technologies Inc.,XLI,8014238459.0,False
+LINE,Lineage Inc.,XLRE,7990344321.0,False
+EAT,Brinker International Inc.,XLY,7962046339.0,False
+ZG,Zillow Group Inc.,XLY,7902105884.0,False
+HUT,Hut 8 Corp.,XLF,7884908168.0,False
+LNC,Lincoln National Corporation,XLF,7870399983.0,False
+BOKF,BOK Financial Corporation,XLF,7844394861.0,False
+S,SentinelOne Inc.,XLK,7831105133.0,False
+ACM,AECOM,XLY,7828603533.0,False
+TTMI,TTM Technologies Inc.,XLK,7784227561.0,False
+TAP,Molson Coors Beverage Company,XLP,7769535388.0,False
+WYNN,Wynn Resorts Limited Common stock,XLY,7736428431.0,True
+APPF,AppFolio Inc.,XLK,7697174871.0,False
+NFG,National Fuel Gas Company,XLU,7691999862.0,False
+SSD,Simpson Manufacturing Company Inc.,XLY,7660856759.0,False
+Z,Zillow Group Inc.,XLY,7641250937.0,False
+VLY,Valley National Bancorp,XLF,7631478171.0,False
+MGM,MGM Resorts International,XLY,7620532719.0,True
+AXS,Axis Capital Holdings Limited,XLF,7610386863.0,False
+LW,Lamb Weston Holdings Inc.,XLP,7602725065.0,False
+GIL,Gildan Activewear Inc.,XLY,7598421523.0,False
+FPS,Forgent Power Solutions Inc.,XLE,7586367914.0,False
+URBN,Urban Outfitters Inc.,XLY,7562937380.0,False
+ARE,Alexandria Real Estate Equities Inc.,XLRE,7550147208.0,True
+ASR,Grupo Aeroportuario del Sureste S.A. de C.V.,XLY,7530000000.0,False
+PACS,PACS Group Inc.,XLV,7520941570.0,False
+TKR,Timken Company (The),XLI,7511777348.0,False
+VIAV,Viavi Solutions Inc.,XLK,7503495757.0,False
+AXTA,Axalta Coating Systems Ltd.,XLY,7501400895.0,False
+EMN,Eastman Chemical Company,XLI,7469989366.0,False
+AG,First Majestic Silver Corp.,XLB,7455383389.0,False
+CLF,Cleveland-Cliffs Inc.,XLB,7446133806.0,False
+AGCO,AGCO Corporation,XLI,7435268668.0,False
+FORM,FormFactor Inc. FormFactor Inc.,XLK,7423812497.0,False
+ALKS,Alkermes plc,XLV,7411781357.0,False
+SFD,Smithfield Foods Inc.,XLP,7406765377.0,False
+SLAB,Silicon Laboratories Inc.,XLK,7378058192.0,False
+FR,First Industrial Realty Trust Inc.,XLRE,7329958184.0,False
+ACA,Arcosa Inc.,XLI,7324280562.0,False
+PRMB,Primo Brands Corporation,XLP,7297810466.0,False
+IONS,Ionis Pharmaceuticals Inc.,XLV,7297153579.0,False
+BROS,Dutch Bros Inc.,XLY,7292961643.0,False
+AVT,Avnet Inc.,XLK,7289120444.0,False
+PATH,UiPath Inc.,XLK,7264906401.0,False
+RAL,Ralliant Corporation,XLI,7262410125.0,False
+AWI,Armstrong World Industries Inc,XLI,7243425748.0,False
+ANDG,Andersen Group Inc.,XLY,7240528507.0,False
+PRAX,Praxis Precision Medicines Inc.,XLV,7229043293.0,False
+ESE,ESCO Technologies Inc.,XLC,7224453035.0,False
+SOBO,South Bow Corporation,XLE,7210770555.0,False
+QLYS,Qualys Inc.,XLK,7202679208.0,False
+CAG,ConAgra Brands Inc.,XLP,7194591561.0,False
+MOD,Modine Manufacturing Company,XLY,7190627406.0,False
+SARO,StandardAero Inc.,XLI,7187570041.0,False
+KTOS,Kratos Defense & Security Solutions Inc.,XLI,7184207889.0,False
+CELH,Celsius Holdings Inc.,XLP,7176073933.0,False
+POOL,Pool Corporation,XLY,7166758716.0,False
+EPAM,EPAM Systems Inc.,XLK,7153566655.0,False
+TRNO,Terreno Realty Corporation,XLF,7152811148.0,False
+NCLH,Norwegian Cruise Line Holdings Ltd.,XLY,7135779127.0,True
+AMRX,Amneal Pharmaceuticals Inc.,XLV,7133102428.0,False
+MSA,MSA Safety Incorporated,XLV,7115379623.0,False
+FSS,Federal Signal Corporation,XLI,7052747735.0,False
+VSXY,Victorias Secret & Co.,XLY,7052736328.0,False
+STAG,Stag Industrial Inc.,XLRE,7039432092.0,False
+MTDR,Matador Resources Company,XLE,7028001927.0,False
+NE,Noble Corporation plc A,XLE,7016275481.0,False
+CMC,Commercial Metals Company,XLI,7015489794.0,False
+OTEX,Open Text Corporation,XLK,7001841589.0,False
+G,Genpact Limited,XLY,6986744311.0,False
+CVLT,Commvault Systems Inc.,XLK,6954812285.0,False
+KEX,Kirby Corporation,XLY,6943200000.0,False
+GLBE,Global-E Online Ltd.,XLK,6925597343.0,False
+SNEX,StoneX Group Inc.,XLF,6911338916.0,False
+VFC,V.F. Corporation,XLI,6871992284.0,False
+MP,MP Materials Corp.,XLB,6867597233.0,False
+DOX,Amdocs Limited,XLK,6862352194.0,False
+ANF,Abercrombie & Fitch Company,XLY,6852727542.0,False
+MATX,Matson Inc.,XLY,6802438626.0,False
+HIMS,Hims & Hers Health Inc.,XLV,6796419721.0,False
+MAC,Macerich Company (The),XLRE,6791247031.0,False
+DY,Dycom Industries Inc.,XLI,6791041078.0,False
+TBBB,BBB Foods Inc.,XLP,6788571782.0,False
+ELF,e.l.f. Beauty Inc.,XLY,6785329460.0,False
+NAVN,Navan Inc.,XLK,6778485133.0,False
+MGY,Magnolia Oil & Gas Corporation,XLE,6772519757.0,False
+RUSHB,Rush Enterprises Inc.,XLY,6757520367.0,False
+WEX,WEX Inc. common stock,XLY,6752930404.0,False
+PPC,Pilgrim's Pride Corporation,XLP,6688468439.0,False
+NOV,NOV Inc.,XLY,6687529625.0,False
+FAF,First American Corporation (New),XLF,6643647000.0,False
+RNG,RingCentral Inc.,XLK,6632059386.0,False
+DUOL,Duolingo Inc.,XLK,6615110574.0,False
+VCTR,Victory Capital Holdings Inc.,XLF,6605512937.0,False
+SWX,Southwest Gas Holdings Inc.,XLU,6598368291.0,False
+LYFT,Lyft Inc.,XLY,6597956540.0,False
+AUGO,Aura Minerals Inc.,XLB,6581643467.0,False
+OMF,OneMain Holdings Inc.,XLF,6570018295.0,False
+LNTH,Lantheus Holdings Inc.,XLV,6533764137.0,False
+ACI,Albertsons Companies Inc.,XLP,6525591207.0,False
+EXLS,ExlService Holdings Inc.,XLY,6505692332.0,False
+TXNM,TXNM Energy Inc.,XLU,6467685709.0,False
+ACT,Enact Holdings Inc.,XLF,6450733843.0,False
+FSV,FirstService Corporation,XLF,6429063539.0,False
+SFM,Sprouts Farmers Market Inc.,XLP,6421031458.0,False
+FNB,F.N.B. Corporation,XLF,6417557671.0,False
+VNO,Vornado Realty Trust,XLRE,6411983035.0,False
+IOVA,Iovance Biotherapeutics Inc.,XLV,6405016048.0,False
+VAL,Valaris Limited,XLE,6401287047.0,False
+LAD,Lithia Motors Inc.,XLY,6398625574.0,False
+CAVA,CAVA Group Inc.,XLY,6386962907.0,False
+GTES,Gates Industrial Corporation Ltd.,XLI,6354094367.0,False
+INGM,Ingram Micro Holding Corporation,XLK,6343202360.0,False
+CPB,The Campbell's Company,XLP,6340469573.0,False
+M,Macy's Inc,XLY,6312639534.0,False
+KNSA,Kiniksa Pharmaceuticals International plc,XLV,6303560010.0,False
+MSM,MSC Industrial Direct Company Inc.,XLI,6278799284.0,False
+RYTM,Rhythm Pharmaceuticals Inc.,XLV,6258654254.0,False
+OR,OR Royalties Inc.,XLB,6249237147.0,False
+BLCO,Bausch + Lomb Corporation,XLV,6225390238.0,False
+TTD,The Trade Desk Inc.,XLK,6221983569.0,False
+BLDR,Builders FirstSource Inc.,XLY,6191100136.0,False
+YOU,Clear Secure Inc.,XLK,6171842301.0,False
+CWST,Casella Waste Systems Inc.,XLU,6166084057.0,False
+HXL,Hexcel Corporation,XLI,6152294876.0,False
+RLI,RLI Corp.,XLF,6146963464.0,False
+HR,Healthcare Realty Trust Incorporated,XLRE,6144965297.0,False
+HRB,H&R Block Inc.,XLY,6137657765.0,False
+LGND,Ligand Pharmaceuticals Incorporated,XLV,6136579162.0,False
+INGR,Ingredion Incorporated,XLP,6128557479.0,False
+ENS,EnerSys,,6083121332.0,False
+MUR,Murphy Oil Corporation,XLE,6075058266.0,False
+LOAR,Loar Holdings Inc.,XLI,6072886690.0,False
+TFPM,Triple Flag Precious Metals Corp.,XLI,6067956895.0,False
+BKH,Black Hills Corporation,XLU,6047636613.0,False
+HOMB,Home BancShares Inc.,XLF,6031496345.0,False
+SAIC,Science Applications International Corporation,XLK,6013777040.0,False
+IMVT,Immunovant Inc.,XLV,6010683046.0,False
+DOCS,Doximity Inc.,XLK,6003324606.0,False
+PEGA,Pegasystems Inc.,XLK,5998268924.0,False
+GBCI,Glacier Bancorp Inc.,XLF,5988447718.0,False
+AVAV,AeroVironment Inc.,XLI,5981596625.0,False
+GLXY,Galaxy Digital Inc.,XLF,5976694186.0,False
+TEX,Terex Corporation,XLI,5956173000.0,False
+SSRM,SSR Mining Inc.,XLI,5954151910.0,False
+LB,LandBridge Corporation,XLE,5932493308.0,False
+DLB,Dolby Laboratories,,5927361348.0,False
+FTDR,Frontdoor Inc.,XLY,5926891975.0,False
+ST,Sensata Technologies Holding plc,XLI,5923309583.0,False
+CZR,Caesars Entertainment Inc.,XLY,5922151214.0,False
+MXL,MaxLinear Inc.,XLK,5920451508.0,False
+GATX,GATX Corporation,XLY,5912750000.0,False
+MCY,Mercury General Corporation,XLF,5910520387.0,False
+ALGM,Allegro MicroSystems Inc.,XLK,5907080838.0,False
+ESNT,Essent Group Ltd.,XLF,5904885590.0,False
+HWC,Hancock Whitney Corporation,XLF,5894790302.0,False
+CVI,CVR Energy Inc.,XLE,5894109019.0,False
+CHDN,Churchill Downs Incorporated,XLY,5886185521.0,False
+PLXS,Plexus Corp.,XLK,5884250417.0,False
+WFRD,Weatherford International plc,XLY,5883137655.0,False
+BOX,Box Inc.,XLK,5869449069.0,False
+KVYO,Klaviyo Inc. Series A,XLK,5862537928.0,False
+NIQ,NIQ Global Intelligence plc,XLK,5860773018.0,False
+PJT,PJT Partners Inc.,XLF,5858508346.0,False
+LEA,Lear Corporation,XLY,5850410258.0,False
+BBUC,Brookfield Business Corporation,XLY,5831595000.0,False
+FLR,Fluor Corporation,XLI,5807037129.0,False
+CACC,Credit Acceptance Corporation,XLF,5801706162.0,False
+CROX,Crocs Inc.,XLY,5800874624.0,False
+MKTX,MarketAxess Holdings Inc.,XLF,5794861432.0,False
+TFX,Teleflex Incorporated,XLV,5787221982.0,False
+MANE,Veradermics Incorporated,XLV,5786131035.0,False
+EPRT,Essential Properties Realty Trust Inc.,XLRE,5784425938.0,False
+AAOI,Applied Optoelectronics Inc.,XLK,5779571092.0,False
+APLD,Applied Digital Corporation,XLK,5772570503.0,False
+SGHC,Super Group (SGHC) Limited,XLY,5766671544.0,False
+LSTR,Landstar System Inc.,XLI,5748575726.0,False
+AAON,AAON Inc.,XLI,5740422347.0,False
+HGTY,Hagerty Inc.,XLF,5717505156.0,False
+IFS,Intercorp Financial Services Inc.,XLF,5700937486.0,False
+JBTM,JBT Marel Corporation,XLI,5690368057.0,False
+MTG,MGIC Investment Corporation,XLF,5690163062.0,False
+LKQ,LKQ Corporation,XLY,5684956872.0,False
+MBGL,Mobility Global Inc.,XLY,5684155050.0,False
+GRAL,GRAIL Inc.,XLV,5675291692.0,False
+ACIW,ACI Worldwide Inc.,XLK,5672674992.0,False
+OGC,OceanaGold Corporation,,5665989441.0,False
+OCTV,Octave Intelligence plc,XLK,5658668571.0,False
+NPO,Enpro Inc.,XLI,5656216040.0,False
+WULF,TeraWulf Inc.,XLF,5648325424.0,False
+AUB,Atlantic Union Bankshares Corporation,XLF,5631855969.0,False
+ASB,Associated Banc-Corp,XLF,5629608335.0,False
+OZK,Bank OZK,XLF,5619471676.0,False
+JMKE,Jersey Mike's Subs Inc.,XLY,5619032141.0,False
+VRNS,Varonis Systems Inc.,XLK,5615529112.0,False
+GXO,GXO Logistics Inc.,XLY,5609222759.0,False
+MMSI,Merit Medical Systems Inc.,XLV,5609196855.0,False
+CAKE,Cheesecake Factory Incorporated (The),XLY,5595085687.0,False
+SXT,Sensient Technologies Corporation,XLI,5573174472.0,False
+WH,Wyndham Hotels & Resorts Inc.,XLY,5571028929.0,False
+RYN,Rayonier Inc. REIT,XLRE,5570459688.0,False
+CAMT,Camtek Ltd.,XLK,5561627564.0,False
+BIRK,Birkenstock Holding plc,XLY,5561450551.0,False
+WAY,Waystar Holding Corp.,XLK,5556869096.0,False
+CPA,Copa Holdings S.A.,XLY,5547945258.0,False
+INSW,International Seaways Inc.,XLY,5546262722.0,False
+CGON,CG Oncology Inc. Common stock,XLV,5543569053.0,False
+BGC,BGC Group Inc.,XLF,5542833175.0,False
+CRUS,Cirrus Logic Inc.,XLK,5537489315.0,False
+OUT,OUTFRONT Media Inc.,XLRE,5530646881.0,False
+HAFN,Hafnia Limited,XLY,5529970821.0,False
+RDNT,RadNet Inc.,XLV,5529269277.0,False
+ABCB,Ameris Bancorp,XLF,5527623276.0,False
+MAAS,Maase Inc.,XLF,5522772969.0,False
+BCPC,Balchem Corporation,XLI,5522229578.0,False
+OLLI,Ollie's Bargain Outlet Holdings Inc.,XLY,5502444590.0,False
+POWL,Powell Industries Inc.,XLE,5490751720.0,False
+MOS,Mosaic Company (The),XLB,5490057806.0,True
+EXP,Eagle Materials Inc,XLI,5482907591.0,False
+SIGI,Selective Insurance Group Inc.,XLF,5464870977.0,False
+WFG,West Fraser Timber Co. Ltd Common stock,XLB,5456210317.0,False
+SNDR,Schneider National Inc.,XLI,5455363977.0,False
+NJR,NewJersey Resources Corporation,XLU,5441725944.0,False
+COGT,Cogent Biosciences Inc.,XLV,5433067186.0,False
+ORA,Ormat Technologies Inc.,XLU,5417880502.0,False
+MIRM,Mirum Pharmaceuticals Inc.,XLV,5395866069.0,False
+FIGR,Figure Technology Solutions Inc.,XLF,5394044043.0,False
+KOD,Kodiak Sciences Inc,XLV,5391226421.0,False
+ORKA,Oruka Therapeutics Inc.,XLV,5372917074.0,False
+WTM,White Mountains Insurance Group Ltd.,XLF,5364203182.0,False
+RELY,Remitly Global Inc.,XLY,5359840247.0,False
+AN,AutoNation Inc.,XLY,5350560843.0,False
+LAUR,Laureate Education Inc.,XLRE,5343297674.0,False
+STVN,Stevanato Group S.p.A.,XLV,5323572033.0,False
+RUSHA,Rush Enterprises Inc.,XLY,5315900458.0,False
+RRR,Red Rock Resorts Inc.,XLY,5295966411.0,False
+PSMT,PriceSmart Inc.,XLY,5295357313.0,False
+CNX,CNX Resources Corporation,XLE,5286026150.0,False
+HAE,Haemonetics Corporation,XLV,5284937444.0,False
+MTN,Vail Resorts Inc.,XLY,5282220223.0,False
+POR,Portland General Electric Co,XLU,5280587526.0,False
+IBP,Installed Building Products Inc.,XLY,5266132339.0,False
+PTCT,PTC Therapeutics Inc.,XLV,5261368958.0,False
+AX,Axos Financial Inc.,XLF,5261071018.0,False
+BYD,Boyd Gaming Corporation,XLY,5250806770.0,False
+GHC,Graham Holdings Company,XLRE,5249574400.0,False
+CMBT,CMB.TECH NV,XLY,5246269424.0,False
+STEP,StepStone Group Inc.,XLF,5245814758.0,False
+LPX,Louisiana-Pacific Corporation,XLB,5233767239.0,False
+FBIN,Fortune Brands Innovations Inc.,XLB,5227276978.0,False
+BRZE,Braze Inc.,XLK,5208981822.0,False
+AMTM,Amentum Holdings Inc.,XLY,5205541533.0,False
+TREX,Trex Company Inc.,XLB,5202255253.0,False
+NXST,Nexstar Media Group Inc.,XLI,5199208877.0,False
+CE,Celanese Corporation,XLI,5182344286.0,False
+SHC,Sotera Health Company,XLV,5173845033.0,False
+NOVT,Novanta Inc.,,5168176448.0,False
+CWEN,Clearway Energy Inc.,XLU,5151807905.0,False
+MMED,MiniMed Group Inc.,XLV,5145890238.0,False
+CNO,CNO Financial Group Inc.,XLF,5134936091.0,False
+FND,Floor & Decor Holdings Inc.,XLY,5129621614.0,False
+XMTR,Xometry Inc.,XLY,5110969769.0,False
+SRRK,Scholar Rock Holding Corporation,XLV,5110110433.0,False
+PSN,Parsons Corporation,XLK,5105297833.0,False
+MIDD,Middleby Corporation (The),XLI,5098819850.0,False
+CON,Concentra Group Holdings Parent Inc.,XLV,5096883908.0,False
+MRX,Marex Group Limited,XLF,5081064648.0,False
+CHH,Choice Hotels International Inc.,XLY,5059193691.0,False
+MAIN,Main Street Capital Corporation,XLF,5058807740.0,False
+SR,Spire Inc.,XLU,5057691767.0,False
+EBC,Eastern Bankshares Inc.,XLF,5052390415.0,False
+UNF,Unifirst Corporation,XLY,5045303425.0,False
+NSIT,Insight Enterprises Inc.,XLY,5026577540.0,False
+OKLO,Oklo Inc.,XLU,5024336727.0,False
+OBDC,Blue Owl Capital Corporation,XLF,5015259927.0,False
+SBRA,Sabra Health Care REIT Inc.,XLRE,5007070018.0,False
+BLLN,BillionToOne Inc.,XLV,4986726176.0,False
+KBR,KBR Inc.,XLI,4983458355.0,False
+AROC,Archrock Inc.,XLU,4977851072.0,False
+REYN,Reynolds Consumer Products Inc.,XLY,4976775085.0,False
+PI,Impinj Inc.,XLK,4971202995.0,False
+SON,Sonoco Products Company,XLY,4970446401.0,False
+KRG,Kite Realty Group Trust,XLRE,4962593530.0,False
+ECG,Everus Construction Group Inc.,XLY,4955745284.0,False
+TVTX,Travere Therapeutics Inc.,XLV,4942108529.0,False
+PECO,Phillips Edison & Company Inc.,XLRE,4927923000.0,False
+OGS,ONE Gas Inc.,XLU,4918503128.0,False
+ERAS,Erasca Inc.,XLV,4910658971.0,False
+DAVE,Dave Inc.,XLF,4877578322.0,False
+WHD,Cactus Inc.,XLY,4841233198.0,False
+MAT,Mattel Inc.,XLY,4839758000.0,False
+DFTX,Definium Therapeutics Inc.,XLV,4837210200.0,False
+RIOT,Riot Platforms Inc.,XLF,4837087672.0,False
+CRSP,CRISPR Therapeutics AG,XLV,4833665723.0,False
+HTFL,Heartflow Inc.,XLV,4819839545.0,False
+ROAD,Construction Partners Inc.,XLI,4815446401.0,False
+CSW,CSW Industrials Inc.,XLI,4801527684.0,False
+LFST,LifeStance Health Group Inc.,XLV,4799856086.0,False
+GOLF,Acushnet Holdings Corp.,XLY,4787461457.0,False
+RXO,RXO Inc.,XLY,4769663622.0,False
+PL,Planet Labs PBC,XLK,4759131696.0,False
+FLG,Flagstar Bank N.A.,XLF,4748662044.0,False
+NWE,NorthWestern Energy Group Inc.,XLU,4744871771.0,False
+CUZ,Cousins Properties Incorporated,XLRE,4719141003.0,False
+SEZL,Sezzle Inc.,XLF,4706027899.0,False
+CRC,California Resources Corporation,XLE,4703901533.0,False
+GVA,Granite Construction Incorporated,XLI,4702496600.0,False
+HLNE,Hamilton Lane Incorporated,XLF,4701488528.0,False
+MEOH,Methanex Corporation,XLI,4699105335.0,False
+HASI,HA Sustainable Infrastructure Capital Inc.,XLF,4695236167.0,False
+OPCH,Option Care Health Inc.,XLV,4686780253.0,False
+TFSL,TFS Financial Corporation,XLF,4670774085.0,False
+VNT,Vontier Corporation,XLI,4669808000.0,False
+CHEF,The Chefs' Warehouse Inc.,XLY,4663589343.0,False
+BLSH,Bullish,XLF,4659927270.0,False
+IRDM,Iridium Communications Inc,XLY,4648679795.0,False
+SYNA,Synaptics Incorporated,XLK,4645600018.0,False
+OPLN,OPENLANE Inc.,XLY,4644758363.0,False
+DK,Delek US Holdings Inc.,XLE,4640786467.0,False
+AGX,Argan Inc.,XLY,4634056813.0,False
+PIPR,Piper Sandler Companies,XLF,4631730872.0,False
+WK,Workiva Inc.,XLK,4627578140.0,False
+TENB,Tenable Holdings Inc.,XLK,4625879286.0,False
+UFPI,UFP Industries Inc.,XLB,4618120027.0,False
+MRCY,Mercury Systems Inc,XLK,4598852558.0,False
+CNK,Cinemark Holdings Inc Cinemark Holdings Inc.,XLY,4591268577.0,False
+RDN,Radian Group Inc.,XLF,4590855735.0,False
+MNDY,monday.com Ltd.,XLK,4585036036.0,False
+KRMN,Karman Holdings Inc.,XLI,4583015623.0,False
+BCO,Brinks Company (The),XLI,4581111093.0,False
+GNTX,Gentex Corporation,XLY,4580255616.0,False
+SFBS,ServisFirst Bancshares Inc.,XLF,4515949326.0,False
+SITE,SiteOne Landscape Supply Inc.,XLY,4503926586.0,False
+NNI,Nelnet Inc.,XLF,4502842272.0,False
+SEI,Solaris Energy Infrastructure Inc.,XLY,4487556235.0,False
+VSNT,Versant Media Group Inc.,XLI,4481603464.0,False
+SIG,Signet Jewelers Limited,XLY,4480818396.0,False
+LIVN,LivaNova PLC,XLV,4477449314.0,False
+KGS,Kodiak Gas Services Inc.,XLU,4467705323.0,False
+HRI,Herc Holdings Inc.,XLI,4464769346.0,False
+FULT,Fulton Financial Corporation,XLF,4457855046.0,False
+CVSA,Covista Inc.,XLRE,4456680577.0,False
+BWIN,The Baldwin Insurance Group Inc.,XLF,4448601871.0,False
+PRM,Perimeter Solutions SA,XLI,4444099959.0,False
+BC,Brunswick Corporation,XLI,4425016358.0,False
+QBTS,D-Wave Quantum Inc.,XLK,4415057684.0,False
+CRGY,Crescent Energy Company,XLE,4404987918.0,False
+ENVA,Enova International Inc.,XLF,4401534025.0,False
+GFF,Griffon Corporation,XLI,4393587452.0,False
+DNTH,Dianthus Therapeutics Inc.,XLV,4392526704.0,False
+FELE,Franklin Electric Co. Inc.,XLY,4386219343.0,False
+CNR,Core Natural Resources Inc.,XLE,4385363306.0,False
+HCC,Warrior Met Coal Inc.,XLE,4382573221.0,False
+DLO,DLocal Limited,XLY,4376790227.0,False
+MWH,SOLV Energy Inc.,XLI,4357386125.0,False
+FCN,FTI Consulting Inc.,XLY,4351308104.0,False
+BETA,Beta Technologies Inc.,XLI,4351303716.0,False
+FFIN,First Financial Bankshares Inc.,XLF,4347123287.0,False
+MDA,MDA Space Ltd.,XLY,4345105360.0,False
+EWTX,Edgewise Therapeutics Inc.,XLV,4343079119.0,False
+BMI,Badger Meter Inc.,XLI,4337591785.0,False
+CLMT,Calumet Inc.,XLE,4335140901.0,False
+SKY,Champion Homes Inc.,XLY,4327212282.0,False
+PTEN,Patterson-UTI Energy Inc.,XLE,4324904471.0,False
+QTWO,Q2 Holdings Inc.,XLK,4323674551.0,False
+BILL,BILL Holdings Inc.,XLK,4320974544.0,False
+XE,X-Energy Inc.,XLI,4319671728.0,False
+EPR,EPR Properties,XLRE,4317678844.0,False
+LOPE,Grand Canyon Education Inc.,XLRE,4312721022.0,False
+MC,Moelis & Company,XLF,4309494884.0,False
+FHI,Federated Hermes Inc.,XLF,4305658405.0,False
+ITGR,Integer Holdings Corporation,XLV,4302033595.0,False
+ARX,Accelerant Holdings,XLF,4291645788.0,False
+PAY,Paymentus Holdings Inc.,XLY,4290763773.0,False
+APLE,Apple Hospitality REIT Inc.,XLRE,4287261796.0,False
+CATY,Cathay General Bancorp,XLF,4285695797.0,False
+STNG,Scorpio Tankers Inc.,XLY,4267324408.0,False
+MMYT,MakeMyTrip Limited,XLY,4264619735.0,False
+ALH,Alliance Laundry Holdings Inc.,XLI,4262038218.0,False
+KTB,Kontoor Brands Inc.,XLI,4250958564.0,False
+CORZ,Core Scientific Inc.,XLF,4241693821.0,False
+CRVL,CorVel Corp.,XLF,4237329975.0,False
+CVCO,Cavco Industries Inc.,XLY,4209486231.0,False
+ICUI,ICU Medical Inc.,XLV,4209434707.0,False
+SLGN,Silgan Holdings Inc.,XLI,4201917115.0,False
+KRC,Kilroy Realty Corporation,XLRE,4182471208.0,False
+INDV,Indivior Pharmaceuticals Inc.,XLV,4170068228.0,False
+FBP,First BanCorp. New,XLF,4169370399.0,False
+KFY,Korn Ferry,XLY,4165568274.0,False
+ESAB,ESAB Corporation,XLI,4158404811.0,False
+VSEC,VSE Corporation,XLY,4157825602.0,False
+HHH,Howard Hughes Holdings Inc.,XLRE,4150014792.0,False
+SKT,Tanger Inc.,XLRE,4148280293.0,False
+MTH,Meritage Homes Corporation,XLY,4147027538.0,False
+VSH,Vishay Intertechnology Inc.,XLK,4145838884.0,False
+ENPH,Enphase Energy Inc.,XLK,4142734715.0,False
+VVV,Valvoline Inc.,XLI,4138903400.0,False
+EQPT,EquipmentShare.com Inc,XLY,4137629476.0,False
+GTX,Garrett Motion Inc.,XLY,4102855108.0,False
+CRK,Comstock Resources Inc.,XLE,4101879056.0,False
+CGAU,Centerra Gold Inc.,XLB,4094061581.0,False
+LBTYB,Liberty Global Ltd.,XLC,4093050792.0,False
+SLM,SLM Corporation,XLF,4089725806.0,False
+MDU,MDU Resources Group Inc.,XLI,4074468963.0,False
+COLD,Americold Realty Trust Inc.,XLRE,4059533435.0,False
+CVBF,CVB Financial Corporation,XLF,4056740877.0,False
+ARQT,Arcutis Biotherapeutics Inc.,XLV,4047281144.0,False
+BDC,Belden Inc,XLI,4043029641.0,False
+TPC,Tutor Perini Corporation,XLY,4041513715.0,False
+CAAP,Corporacion America Airports SA,XLY,4037955928.0,False
+BMA,Banco Macro S.A.  ADR (representing Ten,XLF,4024961939.0,False
+OLED,Universal Display Corporation,XLK,4019799721.0,False
+RLAY,Relay Therapeutics Inc.,XLV,4019057513.0,False
+PARR,Par Pacific Holdings Inc.,XLE,4016988093.0,False
+SPHR,Sphere Entertainment Co.,XLY,4008317677.0,False
+PLNT,Planet Fitness Inc.,XLY,4006807726.0,False
+TDS,Telephone and Data Systems Inc.,XLC,4003178000.0,False
+FRSH,Freshworks Inc.,XLK,3997306227.0,False
+LGN,Legence Corp.,XLY,3983662193.0,False
+MRP,Millrose Properties Inc.,XLF,3980168810.0,False
+MYRG,MYR Group Inc.,XLI,3969691673.0,False
+TDW,Tidewater Inc.,XLY,3961093550.0,False
+WSFS,WSFS Financial Corporation,XLF,3960032794.0,False
+TRMD,TORM plc,XLY,3955134438.0,False
+JOE,St. Joe Company (The),XLRE,3953819822.0,False
+TAC,TransAlta Corporation,XLU,3953160000.0,False
+INDB,Independent Bank Corp.,XLF,3952003930.0,False
+ALK,Alaska Air Group Inc.,XLY,3948518386.0,False
+IRTC,iRhythm Holdings Inc.,XLV,3943693679.0,False
+NP,Neptune Insurance Holdings Inc.,XLF,3941334345.0,False
+BWLP,BW LPG Limited,XLY,3939043860.0,False
+BFH,Bread Financial Holdings Inc.,XLY,3936054007.0,False
+TGS,Transportadora de Gas del Sur SA TGS,XLU,3905324379.0,False
+ADPT,Adaptive Biotechnologies Corporation,XLV,3895734503.0,False
+PVH,PVH Corp.,XLI,3887573809.0,False
+DPC,DPC Holdings PLC,XLC,3885712346.0,False
+AIR,AAR Corp.,XLI,3885574377.0,False
+VAC,Marriott Vacations Worldwide Corporation,XLF,3884263488.0,False
+BRC,Brady Corporation,XLY,3876220037.0,False
+ITRI,Itron Inc.,XLI,3860678012.0,False
+RHI,Robert Half Inc.,XLY,3856993679.0,False
+HESM,Hess Midstream LP,XLE,3855660465.0,False
+NVST,Envista Holdings Corporation,XLV,3850006485.0,False
+KLIC,Kulicke and Soffa Industries Inc.,XLK,3840957041.0,False
+GEF,Greif Inc.,,3837972525.0,False
+CBT,Cabot Corporation,XLI,3837732750.0,False
+CDP,COPT Defense Properties,XLRE,3836675794.0,False
+RGTI,Rigetti Computing Inc.,XLK,3831665216.0,False
+OTTR,Otter Tail Corporation,XLU,3811450952.0,False
+NHC,National HealthCare Corporation,XLV,3806815283.0,False
+ASO,Academy Sports and Outdoors Inc.,XLY,3804343886.0,False
+PLMR,Palomar Holdings Inc. Common stock,XLF,3803694724.0,False
+RSI,Rush Street Interactive Inc.,XLY,3791812137.0,False
+RNST,Renasant Corporation,XLF,3787801030.0,False
+LIF,Life360 Inc.,XLK,3785577944.0,False
+DORM,Dorman Products Inc.,XLY,3783344539.0,False
+LION,Lionsgate Studios Corp,XLY,3779007936.0,False
+BANF,BancFirst Corporation,XLF,3775154988.0,False
+DIOD,Diodes Incorporated,XLK,3759661196.0,False
+PLSE,Pulse Biosciences Inc,XLV,3757274937.0,False
+WSBC,WesBanco Inc.,XLF,3752797437.0,False
+SRAD,Sportradar Group AG,XLK,3737970794.0,False
+AVNT,Avient Corporation,XLI,3721979339.0,False
+IPAR,Interparfums Inc.,XLY,3717232401.0,False
+SKYW,SkyWest Inc.,XLY,3717035552.0,False
+ZGN,Ermenegildo Zegna N.V.,XLY,3716121893.0,False
+MIR,Mirion Technologies Inc.,XLI,3715641693.0,False
+HP,Helmerich & Payne Inc.,XLE,3710733028.0,False
+MSGE,Madison Square Garden Entertainment Corp.,XLY,3709203398.0,False
+CNS,Cohen & Steers Inc,XLF,3705949883.0,False
+VCYT,Veracyte Inc.,XLV,3701189255.0,False
+SEB,Seaboard Corporation,XLI,3700513743.0,False
+ABCL,AbCellera Biologics Inc.,XLV,3682805865.0,False
+EXPO,Exponent Inc.,XLY,3666278537.0,False
+APPN,Appian Corporation,XLK,3663751587.0,False
+ATMU,Atmus Filtration Technologies Inc.,XLY,3651399833.0,False
+THO,Thor Industries Inc.,XLI,3649651466.0,False
+OII,Oceaneering International Inc.,XLE,3644775600.0,False
+FA,First Advantage Corporation,XLK,3644613323.0,False
+GPGI,GPGI Inc.,XLF,3638120529.0,False
+LAZ,Lazard Inc.,XLF,3634906336.0,False
+BOOT,Boot Barn Holdings Inc.,XLY,3626912917.0,False
+INTA,Intapp Inc.,XLK,3618459956.0,False
+OGN,Organon & Co.,XLV,3610879704.0,False
+SKE,Skeena Resources Limited,XLB,3605798142.0,False
+POST,Post Holdings Inc.,XLP,3604458010.0,False
+PRIM,Primoris Services Corporation,XLI,3603535969.0,False
+LXP,LXP Industrial Trust,XLRE,3601699258.0,False
+ASST,Strive Inc.,XLF,3601581578.0,False
+CAR,Avis Budget Group Inc.,XLY,3587330319.0,False
+AMLX,Amylyx Pharmaceuticals Inc.,XLV,3584343145.0,False
+CDNA,CareDx Inc.,XLV,3577938863.0,False
+FSLY,Fastly Inc.,XLK,3576285000.0,False
+IRT,Independence Realty Trust Inc.,XLRE,3576245081.0,False
+EE,Excelerate Energy Inc.,XLU,3574434350.0,False
+NIC,Nicolet Bankshares Inc.,XLF,3555232505.0,False
+TARS,Tarsus Pharmaceuticals Inc.,XLV,3553790009.0,False
+LQDA,Liquidia Corporation,XLV,3552607884.0,False
+XENE,Xenon Pharmaceuticals Inc.,XLV,3534675768.0,False
+ECO,Okeanis Eco Tankers Corp.,XLY,3515971183.0,False
+FIBK,First Interstate BancSystem Inc.,XLF,3514833906.0,False
+LMND,Lemonade Inc.,XLF,3514580287.0,False
+BATRA,Atlanta Braves Holdings Inc. Series A,XLY,3509342287.0,False
+WBI,WaterBridge Infrastructure LLC,XLE,3503477781.0,False
+ZIM,ZIM Integrated Shipping Services Ltd.,XLY,3503148605.0,False
+ACAD,ACADIA Pharmaceuticals Inc.,XLV,3499525071.0,False
+NATL,NCR Atleos Corporation,,3487196315.0,False
+IDYA,IDEAYA Biosciences Inc.,XLV,3485200162.0,False
+SLG,SL Green Realty Corp,XLRE,3485106925.0,False
+HNI,HNI Corporation,XLY,3479884578.0,False
+MWA,MUELLER WATER PRODUCTS,XLI,3476918871.0,False
+MIAX,Miami International Holdings Inc.,XLF,3472089121.0,False
+FIZZ,National Beverage Corp.,XLP,3470319245.0,False
+COCO,The Vita Coco Company Inc.,XLP,3462957682.0,False
+WIX,Wix.com Ltd.,XLK,3454677133.0,False
+SMG,Scotts Miracle-Gro Company (The),XLI,3443729207.0,False
+AYA,Aya Gold & Silver Inc.,XLB,3436702968.0,False
+TNET,TriNet Group Inc.,XLY,3425411550.0,False
+ACMR,ACM Research Inc.,XLK,3421168508.0,False
+FFBC,First Financial Bancorp.,XLF,3414770087.0,False
+AVPT,AvePoint Inc.,XLK,3401972050.0,False
+FIGS,FIGS Inc.,XLY,3399229351.0,False
+LRN,Stride Inc.,XLRE,3392501460.0,False
+KEN,Kenon Holdings Ltd.,XLU,3387566889.0,False
+AGYS,Agilysys Inc.,XLK,3386668965.0,False
+AXTI,AXT Inc,XLK,3380954811.0,False
+AWR,American States Water Company,XLU,3371009991.0,False
+SFNC,Simmons First National Corporation,XLF,3370061559.0,False
+ASH,Ashland Inc.,XLY,3369018231.0,False
+BNL,Broadstone Net Lease Inc.,XLRE,3367721641.0,False
+HIW,Highwoods Properties Inc.,XLRE,3361030249.0,False
+PK,Park Hotels & Resorts Inc.,XLY,3354296578.0,False
+CXT,Crane NXT Co.,XLI,3351794732.0,False
+MCHB,Mechanics Bancorp,XLF,3346540207.0,False
+CURB,Curbline Properties Corp.,XLF,3319997402.0,False
+MMS,Maximus Inc.,XLY,3318435019.0,False
+PRK,Park National Corporation,XLF,3318025092.0,False
+MGNI,Magnite Inc.,XLK,3317400751.0,False
+KD,Kyndryl Holdings Inc.,XLK,3310837598.0,False
+SPSC,SPS Commerce Inc.,XLK,3309855998.0,False
+AAMI,Acadian Asset Management Inc.,XLF,3293128977.0,False
+WING,Wingstop Inc.,XLY,3292806535.0,False
+PFSI,PennyMac Financial Services Inc.,XLF,3291651602.0,False
+NHI,National Health Investors Inc.,XLRE,3288434661.0,False
+PBLS,Parabilis Medicines Inc.,XLV,3282948648.0,False
+PAGS,PagSeguro Digital Ltd.,XLK,3278844558.0,False
+SBCF,Seacoast Banking Corporation of Florida,XLF,3258087186.0,False
+CSTM,Constellium SE,XLI,3251310195.0,False
+SHOO,Steven Madden Ltd.,XLY,3250526560.0,False
+VKTX,Viking Therapeutics Inc.,XLV,3246537855.0,False
+SLDE,Slide Insurance Holdings Inc.,XLF,3241525202.0,False
+ACLS,Axcelis Technologies Inc.,XLK,3234527158.0,False
+CPK,Chesapeake Utilities Corporation,XLU,3234363067.0,False
+CENX,Century Aluminum Company,XLI,3232131082.0,False
+ARIS,Aris Mining Corporation,,3230160000.0,False
+PII,Polaris Inc.,XLY,3225860776.0,False
+FRPT,Freshpet Inc.,XLP,3219890958.0,False
+YETI,YETI Holdings Inc.,XLY,3213696688.0,False
+WT,WisdomTree Inc.,XLF,3213571874.0,False
+CELC,Celcuity Inc.,XLV,3208465208.0,False
+OSIS,OSI Systems Inc.,XLK,3196205164.0,False
+SBLK,Star Bulk Carriers Corp.,XLY,3195338798.0,False
+BATRK,Atlanta Braves Holdings Inc. Series C,XLY,3189786160.0,False
+TDC,Teradata Corporation,XLK,3181530000.0,False
+FHB,First Hawaiian Inc.,XLF,3179533728.0,False
+COLM,Columbia Sportswear Company,XLY,3177561552.0,False
+WOR,Worthington Enterprises Inc.,XLI,3174295712.0,False
+WRBY,Warby Parker Inc.,XLV,3173018746.0,False
+FOUR,Shift4 Payments Inc.,XLY,3171828020.0,False
+GBDC,Golub Capital BDC Inc.,XLF,3165152870.0,False
+AVA,Avista Corporation,XLU,3160831804.0,False
+KAI,Kadant Inc,XLI,3158938798.0,False
+ABM,ABM Industries Incorporated,XLY,3158154217.0,False
+CSQ,Calamos Strategic Total Return,XLF,3157097049.0,False
+ERO,Ero Copper Corp.,XLB,3141895176.0,False
+PENG,Penguin Solutions Inc.,XLK,3127132268.0,False
+NMIH,NMI Holdings Inc.,XLF,3120788638.0,False
+MHO,M/I Homes Inc.,XLY,3117397722.0,False
+ABG,Asbury Automotive Group Inc,XLY,3113400965.0,False
+AGO,Assured Guaranty Ltd.,XLF,3092178114.0,False
+HG,Hamilton Insurance Group Ltd.,XLF,3087950450.0,False
+HTGC,Hercules Capital Inc.,XLF,3086334360.0,False
+SDRL,Seadrill Limited,XLE,3076413581.0,False
+HURN,Huron Consulting Group Inc.,XLY,3076212421.0,False
+ELVN,Enliven Therapeutics Inc.,XLV,3072243009.0,False
+ALRM,Alarm.com Holdings Inc.,XLK,3067648348.0,False
+MZTI,The Marzetti Company,XLP,3065569835.0,False
+KNF,Knife Riv Holding Co.,XLI,3056710167.0,False
+DAN,Dana Incorporated,XLY,3036889648.0,False
+HOG,Harley-Davidson Inc.,XLY,3029550679.0,False
+KYIV,Kyivstar Group Ltd.,XLC,3018864384.0,False
+ATRC,AtriCure Inc.,XLV,3016371234.0,False
+SPNT,SiriusPoint Ltd.,XLF,3015643815.0,False
+PFS,Provident Financial Services Inc,XLF,3015370928.0,False
+VGNT,Versigent PLC,XLY,2999873473.0,False
+AEO,American Eagle Outfitters Inc.,XLY,2997886927.0,False
+WSC,WillScot Holdings Corporation,XLI,2987838897.0,False
+SXI,Standex International Corporation,XLI,2984395995.0,False
+DNLI,Denali Therapeutics Inc.,XLV,2982752540.0,False
+CALM,Cal-Maine Foods Inc.,XLP,2981538428.0,False
+CBZ,CBIZ Inc.,XLY,2978544318.0,False
+ACHC,Acadia Healthcare Company Inc.,XLV,2968036767.0,False
+CLBT,Cellebrite DI Ltd.,XLK,2963311097.0,False
+IPGP,IPG Photonics Corporation,XLK,2952322352.0,False
+TALO,Talos Energy Inc.,XLE,2948610165.0,False
+PPLI,People Incorporated,XLK,2947282152.0,False
+DYN,Dyne Therapeutics Inc.,XLV,2944991217.0,False
+CWT,California Water Service Group,XLU,2939830862.0,False
+FLY,Firefly Aerospace Inc.,XLI,2932929380.0,False
+PTRN,Pattern Group Inc. Series A,XLY,2932406941.0,False
+CLBK,Columbia Financial Inc.,XLF,2927260166.0,False
+PRVA,Privia Health Group Inc.,XLV,2923197327.0,False
+CARG,CarGurus Inc.,XLK,2915374935.0,False
+EXTR,Extreme Networks Inc.,XLC,2913042118.0,False
+ARCB,ArcBest Corporation,XLI,2912381426.0,False
+VIA,Via Transportation Inc.,XLK,2910565440.0,False
+FSK,FS KKR Capital Corp.,XLF,2909863148.0,False
+AVAH,Aveanna Healthcare Holdings Inc.,XLV,2906686351.0,False
+SHAK,Shake Shack Inc.,XLY,2905191911.0,False
+NOG,Northern Oil and Gas Inc.,XLE,2904529229.0,False
+CXW,CoreCivic Inc.,XLRE,2900546032.0,False
+ACCV,Accelevation Holdings Corp.,XLE,2896191048.0,False
+GPI,Group 1 Automotive Inc.,XLY,2894597008.0,False
+BELFB,Bel Fuse Inc.,,2885146505.0,False
+AD,Array Digital Infrastructure Inc.,XLC,2882180000.0,False
+HGV,Hilton Grand Vacations Inc.,XLY,2882011297.0,False
+IOND,Ionic Digital Inc.,XLF,2881105085.0,False
+IRON,Disc Medicine Inc.,XLV,2880615085.0,False
+DAC,Danaos Corporation,XLY,2872690390.0,False
+IMAX,Imax Corporation,XLY,2868790983.0,False
+MGRC,McGrath RentCorp,XLY,2853161695.0,False
+KN,Knowles Corporation,XLP,2850996682.0,False
+DRH,Diamondrock Hospitality Company,XLRE,2840949881.0,False
+CWK,Cushman & Wakefield Ltd.,XLF,2840035867.0,False
+GPOR,Gulfport Energy Corporation,XLE,2838260493.0,False
+MH,McGraw Hill Inc.,XLY,2831370447.0,False
+LIFE,Ethos Technologies Inc.,XLF,2828753215.0,False
+CENT,Central Garden & Pet Company,XLY,2824803948.0,False
+WDFC,WD-40 Company,XLI,2820845957.0,False
+KSS,Kohl's Corporation,XLY,2809468307.0,False
+FG,F&G Annuities & Life Inc.,XLF,2808560233.0,False
+KBH,KB Home,XLY,2806630776.0,False
+BANC,Banc of California Inc.,XLF,2802042384.0,False
+EFXT,Enerflex Ltd,XLI,2794934992.0,False
+GRBK,Green Brick Partners Inc.,XLY,2793114598.0,False
+TR,Tootsie Roll Industries Inc.,XLP,2791914589.0,False
+APAM,Artisan Partners Asset Management Inc.,XLF,2788899814.0,False
+NRIX,Nurix Therapeutics Inc. Common stock,XLV,2786962755.0,False
+AMBA,Ambarella Inc.,XLK,2786178090.0,False
+DNOW,DNOW Inc.,XLY,2785910580.0,False
+NTCT,NetScout Systems Inc.,XLK,2785417123.0,False
+HWKN,Hawkins Inc.,XLY,2779939331.0,False
+BOH,Bank of Hawaii Corporation,XLF,2771784823.0,False
+LFTO,Liftoff Mobile Inc.,XLK,2763490521.0,False
+AAUC,Allied Gold Corporation,,2763268718.0,False
+DGII,Digi International Inc.,XLC,2762623354.0,False
+SKWD,Skyward Specialty Insurance Group Inc.,XLF,2759686005.0,False
+STNE,StoneCo Ltd.,XLK,2750868537.0,False
+WLYB,John Wiley & Sons Inc.,XLY,2745294947.0,False
+WLY,John Wiley & Sons Inc.,XLY,2743772040.0,False
+NBTB,NBT Bancorp Inc.,XLF,2742971620.0,False
+DX,Dynex Capital Inc.,XLRE,2742244433.0,False
+TOWN,TowneBank,XLF,2741440704.0,False
+SII,Sprott Inc.,XLF,2740734000.0,False
+FUL,H. B. Fuller Company,XLI,2739363866.0,False
+BTU,Peabody Energy Corporation,XLE,2734217000.0,False
+BCC,Boise Cascade L.L.C.,XLY,2731643870.0,False
+REZI,Resideo Technologies Inc.,XLI,2701364855.0,False
+HAYW,Hayward Holdings Inc.,XLI,2696039887.0,False
+KWR,Quaker Houghton,XLI,2694037825.0,False
+TRMK,Trustmark Corporation,XLF,2691571244.0,False
+FBK,FB Financial Corporation,XLF,2679827760.0,False
+SA,Seabridge Gold Inc.,XLB,2677363581.0,False
+CUBI,Customers Bancorp Inc,XLF,2659798495.0,False
+RH,RH,XLY,2653482234.0,False
+FBNC,First Bancorp,XLF,2646238973.0,False
+ASAN,Asana Inc.,XLK,2633156346.0,False
+POWI,Power Integrations Inc.,XLK,2632749802.0,False
+FIVN,Five9 Inc.,XLK,2622795938.0,False
+NEOG,Neogen Corporation,XLV,2615306287.0,False
+VRDN,Viridian Therapeutics Inc.,XLV,2585329579.0,False
+NAMS,NewAmsterdam Pharma Company N.V.,XLV,2579612107.0,False
+AKR,Acadia Realty Trust,XLRE,2579108519.0,False
+GDV,Gabelli Dividend & Income Trust,XLF,2574881418.0,False
+HCI,HCI Group Inc.,XLF,2570865032.0,False
+DXC,DXC Technology Company,XLK,2569241319.0,False
+BANR,Banner Corporation,XLF,2568426987.0,False
+FRME,First Merchants Corporation,XLF,2564182101.0,False
+BLKB,Blackbaud Inc.,XLK,2563632679.0,False
+CALY,Callaway Golf Company,XLY,2563411082.0,False
+GCMG,GCM Grosvenor Inc.,XLF,2559236302.0,False
+BUSE,First Busey Corporation,XLF,2548094416.0,False
+LCLN,Lincoln International Inc.,XLF,2547114520.0,False
+ATRO,Astronics Corporation,XLI,2546136589.0,False
+TTAM,Titan America SA,XLI,2538671143.0,False
+BEAM,Beam Therapeutics Inc.,XLV,2536745052.0,False
+VECO,Veeco Instruments Inc.,XLK,2515484686.0,False
+BBT,Beacon Financial Corporation Common stock,XLF,2510291776.0,False
+LBRT,Liberty Energy Inc.,XLE,2509883978.0,False
+PLUS,ePlus inc.,XLK,2508593691.0,False
+EEFT,Euronet Worldwide Inc.,XLF,2508285081.0,False
+GRDN,Guardian Pharmacy Services Inc.,XLP,2507721815.0,False
+EROK,EagleRock Land LLC,XLE,2498871830.0,False
+TMDX,TransMedics Group Inc.,XLV,2498690949.0,False
+VERX,Vertex Inc.,XLK,2485179454.0,False
+CSQR,Csquare Inc.,XLK,2482846362.0,False
+UE,Urban Edge Properties,XLF,2468079310.0,False
+NCNO,nCino Inc.,XLK,2467882301.0,False
+OSW,OneSpaWorld Holdings Limited,XLY,2465403714.0,False
+RCUS,Arcus Biosciences Inc.,XLV,2465174159.0,False
+HTO,H2O America,XLU,2455320123.0,False
+ADMA,ADMA Biologics Inc,XLV,2452632246.0,False
+GRND,Grindr Inc.,XLK,2450870841.0,False
+DXPE,DXP Enterprises Inc.,XLI,2446433554.0,False
+BKE,Buckle Inc. (The),XLY,2445810366.0,False
+SUPN,Supernus Pharmaceuticals Inc.,XLV,2445403437.0,False
+SYBT,Stock Yards Bancorp Inc.,XLF,2440595474.0,False
+BKD,Brookdale Senior Living Inc.,XLV,2433547798.0,False
+IOSP,Innospec Inc.,XLI,2430345407.0,False
+MBX,MBX Biosciences Inc.,XLV,2430158444.0,False
+CENTA,Central Garden & Pet Company,XLY,2429218728.0,False
+WTTR,Select Water Solutions Inc.,XLE,2428953811.0,False
+FCPT,Four Corners Property Trust Inc.,XLRE,2420128752.0,False
+DCO,Ducommun Incorporated,XLI,2416719629.0,False
+NTB,Bank of N.T. Butterfield & Son Limited (The) Voting,XLF,2412400000.0,False
+PBI,Pitney Bowes Inc.,,2404562318.0,False
+MD,Pediatrix Medical Group Inc.,XLV,2401034158.0,False
+NGVT,Ingevity Corporation,XLI,2400954072.0,False
+LUNR,Intuitive Machines Inc.,XLI,2392256511.0,False
+BHE,Benchmark Electronics Inc.,XLK,2381491558.0,False
+PRCH,Porch Group Inc.,XLK,2365066869.0,False
+DBD,Diebold Nixdorf Incorporated Common stock,,2351140685.0,False
+IVT,InvenTrust Properties Corp.,XLRE,2350269910.0,False
+ADEA,Adeia Inc.,XLC,2345658791.0,False
+PBH,Prestige Consumer Healthcare Inc.,XLV,2343143858.0,False
+SHO,Sunstone Hotel Investors Inc. Sunstone Hotel Investors Inc.,XLY,2342893657.0,False
+LTC,LTC Properties Inc.,XLRE,2335728045.0,False
+BELFA,Bel Fuse Inc.,,2334714671.0,False
+PEB,Pebblebrook Hotel Trust,XLRE,2332458940.0,False
+FLYW,Flywire Corporation Voting,XLY,2329935957.0,False
+RAMP,LiveRamp Holdings Inc.,XLK,2324800112.0,False
+CALX,Calix Inc,XLY,2324000834.0,False
+BGSI,Boyd Group Services Inc.,,2322672136.0,False
+UPST,Upstart Holdings Inc. Common stock,XLF,2320916147.0,False
+LIND,Lindblad Expeditions Holdings Inc.,XLY,2313094037.0,False
+AUPH,Aurinia Pharmaceuticals Inc,XLV,2305776741.0,False
+UFPT,UFP Technologies Inc.,XLV,2303055741.0,False
+ROG,Rogers Corporation,XLI,2303049698.0,False
+VVX,V2X Inc.,XLY,2299495463.0,False
+SLS,SELLAS Life Sciences Group Inc.,XLV,2292083797.0,False
+ADUS,Addus HomeCare Corporation,XLV,2290776381.0,False
+FTRE,Fortrea Holdings Inc.,XLV,2274792000.0,False
+PRGO,Perrigo Company plc,XLV,2271652541.0,False
+PLGO,Pelagos Insurance Capital Limited,XLF,2266644600.0,False
+BKV,BKV Corporation,XLE,2266457459.0,False
+NWBI,Northwest Bancshares Inc.,XLF,2261328844.0,False
+KMT,Kennametal Inc.,XLI,2260381017.0,False
+PATK,Patrick Industries Inc.,XLY,2256950411.0,False
+MBIN,Merchants Bancorp,XLF,2253492269.0,False
+CHRN,ChronoScale Holdings Corporation,XLI,2251555008.0,False
+PGNY,Progyny Inc.,XLV,2234284358.0,False
+CNXN,PC Connection Inc.,XLY,2233824142.0,False
+AGIO,Agios Pharmaceuticals Inc.,XLV,2220312992.0,False
+BHVN,Biohaven Ltd.,XLV,2218833143.0,False
+ANDE,Andersons Inc. (The),XLI,2211809607.0,False
+EFSC,Enterprise Financial Services Corporation,XLF,2208105645.0,False
+LPG,Dorian LPG Ltd.,XLY,2200741111.0,False
+VCEL,Vericel Corporation,XLV,2200348204.0,False
+HLIO,Helios Technologies Inc.,XLI,2197470000.0,False
+COHU,Cohu Inc.,XLI,2189875911.0,False
+AGM,Federal Agricultural Mortgage Corporation,XLF,2186053558.0,False
+VC,Visteon Corporation,XLY,2181016549.0,False
+WAFD,WaFd Inc.,XLF,2178419807.0,False
+OFG,OFG Bancorp,XLF,2170755772.0,False
+MAN,ManpowerGroup,XLY,2167159562.0,False
+PPTA,Perpetua Resources Corp.,XLB,2159153560.0,False
+IMNM,Immunome Inc.,XLV,2154736898.0,False
+AXGN,Axogen Inc.,XLV,2152071097.0,False
+NMRK,Newmark Group Inc.,XLF,2142122371.0,False
+NTST,NetSTREIT Corp.,XLRE,2138273115.0,False
+PHVS,Pharvaris N.V.,XLV,2137366778.0,False
+AMPL,Amplitude Inc.,XLK,2132317247.0,False
+BOBS,Bob's Discount Furniture Inc.,XLY,2131506210.0,False
+ECPG,Encore Capital Group Inc,XLF,2128571972.0,False
+FCF,First Commonwealth Financial Corporation,XLF,2128237781.0,False
+PRDO,Perdoceo Education Corporation,XLRE,2116356000.0,False
+GCT,GigaCloud Technology Inc,XLY,2111189211.0,False
+TILE,Interface Inc.,XLY,2110294795.0,False
+NEO,NeoGenomics Inc.,XLV,2105712462.0,False
+NWN,Northwest Natural Holding Company,XLU,2101730352.0,False
+DV,DoubleVerify Holdings Inc.,XLK,2101621645.0,False
+INSP,Inspire Medical Systems Inc.,XLV,2100627848.0,False
+SRCE,1st Source Corporation,XLF,2099453591.0,False
+HRMY,Harmony Biosciences Holdings Inc.,XLV,2098257240.0,False
+SONO,Sonos Inc.,XLP,2094394898.0,False
+PHIN,PHINIA Inc.,XLY,2093500348.0,False
+VERA,Vera Therapeutics Inc.,XLV,2093439882.0,False
+CNXC,Concentrix Corporation,XLK,2092861320.0,False
+TBBK,The Bancorp Inc,XLF,2085837412.0,False
+LASR,nLIGHT Inc.,XLK,2082616112.0,False
+BLX,Bladex Inc. Class E,XLF,2082228134.0,False
+SGRY,Surgery Partners Inc.,XLV,2081600334.0,False
+IDT,IDT Corporation,XLC,2078749631.0,False
+WS,Worthington Steel Inc.,XLI,2072761460.0,False
+PENN,PENN Entertainment Inc.,XLY,2072669497.0,False
+ALMR,Alamar Biosciences Inc.,XLI,2062353006.0,False
+UTZ,Utz Brands Inc,XLP,2057220024.0,False
+TRN,Trinity Industries Inc.,XLI,2057066129.0,False
+LEU,Centrus Energy Corp.,XLI,2055286518.0,False
+INOD,Innodata Inc.,XLK,2052300438.0,False
+NSP,Insperity Inc.,XLY,2042683040.0,False
+MCRI,Monarch Casino & Resort Inc.,XLY,2034206134.0,False
+SEDG,SolarEdge Technologies Inc.,XLK,2026658139.0,False
+AMR,Alpha Metallurgical Resources Inc.,XLE,2020912983.0,False
+ZYME,Zymeworks Inc.,XLV,2018080814.0,False
+PRLB,Proto Labs Inc. Common stock,XLI,2018051231.0,False
+OUST,Ouster Inc.,XLI,2017703077.0,False
+MQ,Marqeta Inc.,XLK,2014312438.0,False
+SAM,Boston Beer Company Inc. (The),XLP,2014287805.0,False
+CHCO,City Holding Company,XLF,2014075944.0,False
+UCTT,Ultra Clean Holdings Inc.,XLK,2013016709.0,False
+CMPR,Cimpress plc,XLY,2003231391.0,False
+WGS,GeneDx Holdings Corp.,XLV,2002285403.0,False
+BL,BlackLine Inc.,XLK,1997765530.0,False
+SAH,Sonic Automotive Inc.,XLY,1996158598.0,False
+MTX,Minerals Technologies Inc.,XLB,1994419781.0,False
+TOP,TOP Financial Group Limited,XLF,1994148877.0,False
+EVTC,Evertec Inc.,XLK,1991552225.0,False
+ZD,Ziff Davis Inc.,XLC,1986943704.0,False
+WMK,Weis Markets Inc.,XLP,1986743693.0,False
+XERS,Xeris Biopharma Holdings Inc.,XLV,1979998523.0,False
+GLOB,Globant S.A.,XLK,1976760074.0,False
+CCU,Compania Cervecerias Unidas S.A.,XLP,1969450308.0,False
+KARO,Karooooo Ltd.,XLK,1966358545.0,False
+SMA,SmartStop Self Storage REIT Inc.,XLRE,1962273922.0,False
+CC,Chemours Company (The),XLI,1961001905.0,False
+ETOR,eToro Group Ltd.,XLF,1957275892.0,False
+INVX,Innovex International Inc.,XLY,1953307648.0,False
+LMAT,LeMaitre Vascular Inc.,XLV,1951433700.0,False
+CTRI,Centuri Holdings Inc.,XLU,1950606184.0,False
+DRVN,Driven Brands Holdings Inc.,XLY,1950061425.0,False
+AI,C3.ai Inc.,XLK,1934181668.0,False
+BRVE,Braveheart Bio Inc.,XLV,1934037054.0,False
+PAX,Patria Investments Limited,XLF,1931211980.0,False
+STDN,Standard Nuclear Inc.,XLB,1927139794.0,False
+ALGT,Allegiant Travel Company,XLY,1923484442.0,False
+VSTS,Vestis Corporation,XLY,1922929528.0,False
+XNCR,Xencor Inc.,XLV,1921291778.0,False
+GABC,German American Bancorp Inc.,XLF,1921028665.0,False
+SRPT,Sarepta Therapeutics Inc.,XLV,1920299242.0,False
+HMN,Horace Mann Educators Corporation,XLF,1918534928.0,False
+SEPN,Septerna Inc.,XLV,1908153593.0,False
+MLYS,Mineralys Therapeutics Inc.,XLV,1898095821.0,False
+ESTA,Establishment Labs Holdings Inc.,XLV,1893016116.0,False
+SSMR,Sunshine Silver Mining & Refining Company,XLB,1892879362.0,False
+ADRX,ADARx Pharmaceuticals Inc.,XLV,1888247426.0,False
+ASTH,Astrana Health Inc.,XLY,1885461952.0,False
+KALU,Kaiser Aluminum Corporation,XLI,1879982089.0,False
+PRGS,Progress Software Corporation,XLK,1879395348.0,False
+TY,Tri Continental Corporation,XLF,1878368314.0,False
+WHR,Whirlpool Corporation,XLY,1877742086.0,False
+DCOM,Dime Commercial Bancshares Inc.,XLF,1877538419.0,False
+WKC,World Kinect Corporation,XLE,1867034130.0,False
+SPB,Spectrum Brands Holdings Inc.,,1863333144.0,False
+MFP,Midera Food Processing Inc.,XLI,1863042441.0,False
+CPRI,Capri Holdings Limited,XLY,1859340470.0,False
+ATS,ATS Corporation,XLI,1852842887.0,False
+GRC,Gorman-Rupp Company (The),XLI,1852150342.0,False
+RLJ,RLJ Lodging Trust,XLRE,1849843086.0,False
+TRVI,Trevi Therapeutics Inc.,XLV,1843637383.0,False
+FSUN,FirstSun Capital Bancorp,XLF,1841464453.0,False
+ZBIO,Zenas BioPharma Inc.,XLV,1839938890.0,False
+NYAX,Nayax Ltd.,XLK,1836951618.0,False
+EPAC,Enerpac Tool Group Corp.,XLK,1822034327.0,False
+PVLA,Palvella Therapeutics Inc.,XLV,1821078561.0,False
+SIND,Sinda Ltd.,XLB,1819743542.0,False
+AEHR,Aehr Test Systems,XLI,1817503735.0,False
+STRA,Strategic Education Inc.,XLRE,1811914739.0,False
+RBCAA,Republic Bancorp Inc.,XLF,1810268722.0,False
+TRAX,First Tracks Biotherapeutics Inc.,XLV,1804878939.0,False
+EZPW,EZCORP Inc.,XLY,1803363115.0,False
+AIN,Albany International Corporation,XLY,1799992000.0,False
+XHR,Xenia Hotels & Resorts Inc.,XLY,1798793783.0,False
+GSHD,Goosehead Insurance Inc.,XLF,1797815111.0,False
+RVT,Royce Small-Cap Trust Inc.,XLF,1797479305.0,False
+HOPE,Hope Bancorp Inc.,XLF,1794772796.0,False
+ALG,Alamo Group Inc.,XLI,1791931177.0,False
+STBA,S&T Bancorp Inc.,XLF,1789018409.0,False
+VIR,Vir Biotechnology Inc.,XLV,1783336461.0,False
+ATEN,A10 Networks Inc.,XLC,1783277556.0,False
+BXMT,Blackstone Mortgage Trust Inc.,XLRE,1783191193.0,False
+CNOB,ConnectOne Bancorp Inc.,XLF,1781974372.0,False
+BLBD,Blue Bird Corporation,XLY,1778318884.0,False
+XPRO,Expro Ltd,XLE,1775770132.0,False
+MAZE,Maze Therapeutics Inc.,XLV,1774795918.0,False
+OLN,Olin Corporation,XLI,1771287895.0,False
+GTY,Getty Realty Corporation,XLF,1761985287.0,False
+PICS,PicS N.V.,XLF,1759798834.0,False
+NVCR,NovoCure Limited,XLV,1758332184.0,False
+ATEC,Alphatec Holdings Inc.,XLV,1754564223.0,False
+WERN,Werner Enterprises Inc.,XLI,1750133412.0,False
+WLTH,Wealthfront Corporation,XLF,1749176128.0,False
+ARDT,Ardent Health Inc.,XLV,1743327411.0,False
+LIME,Neutron Holdings Inc.,XLK,1743200897.0,False
+TCBK,TriCo Bancshares,XLF,1738665006.0,False
+NOMD,Nomad Foods Limited,XLP,1737712905.0,False
+NBHC,National Bank Holdings Corporation,XLF,1735260751.0,False
+KLRA,Kailera Therapeutics Inc.,XLV,1720371581.0,False
+URGN,UroGen Pharma Ltd.,XLV,1718151825.0,False
+TGLS,Tecnoglass Holdings Inc.,XLY,1717797932.0,False
+BY,Byline Bancorp Inc.,XLF,1716632096.0,False
+GIC,Global Industrial Company,XLI,1711445594.0,False
+CMRE,Costamare Inc.,XLY,1706330940.0,False
+ALKT,Alkami Technology Inc.,XLK,1705724581.0,False
+HCSG,Healthcare Services Group Inc.,XLV,1701392288.0,False
+FLOC,Flowco Holdings Inc.,XLY,1699544219.0,False
+WWW,Wolverine World Wide Inc.,XLY,1697131891.0,False
+OMCL,Omnicell Inc.,XLK,1692312196.0,False
+SDGR,Schrodinger Inc.,XLV,1690607193.0,False
+DEI,Douglas Emmett Inc.,XLRE,1689926344.0,False
+PSNL,Personalis Inc.,XLV,1689573975.0,False
+QCRH,QCR Holdings Inc.,XLF,1687343267.0,False
+KMTS,Kestra Medical Technologies Ltd.,XLV,1686790034.0,False
+IMKTA,Ingles Markets Incorporated,XLP,1685750870.0,False
+EFOR,Everforth Inc.,XLY,1681000000.0,False
+HAPN,Happen Inc.,XLF,1673985265.0,False
+ICFI,ICF International Inc.,XLY,1673769394.0,False
+PDFS,PDF Solutions Inc.,XLK,1666708216.0,False
+STOK,Stoke Therapeutics Inc.,XLV,1658324419.0,False
+TSLX,Sixth Street Specialty Lending Inc.,XLF,1657063756.0,False
+LOB,Live Oak Bancshares Inc.,XLF,1652788070.0,False
+SBH,Sally Beauty Holdings Inc. (Name to be changed from Sally Ho,XLY,1649624785.0,False
+PLAB,Photronics Inc.,XLK,1646020959.0,False
+GENB,Generate Biomedicines Inc.,XLV,1641627656.0,False
+ARHS,Arhaus Inc.,XLY,1634397481.0,False
+SNDA,Sonida Senior Living Inc.,XLV,1627385421.0,False
+COAG,Hemab Therapeutics Holdings Inc.,XLV,1626282353.0,False
+DSGR,Distribution Solutions Group Inc.,XLY,1622177650.0,False
+PLPC,Preformed Line Products Company,XLI,1621679896.0,False
+HUBG,Hub Group Inc.,XLI,1618733410.0,False
+PAHC,Phibro Animal Health Corporation,XLV,1616349815.0,False
+RVLV,Revolve Group Inc.,XLY,1612928180.0,False
+BFC,Bank First Corporation,XLF,1611403834.0,False
+OCFC,OceanFirst Financial Corp.,XLF,1606243540.0,False
+ENR,Energizer Holdings Inc.,,1604571615.0,False
+PGY,Pagaya Technologies Ltd.,XLF,1603444702.0,False
+QURE,uniQure N.V.,XLV,1603057781.0,False
+BXDC,Blackstone Digital Infrastructure Trust Inc.,XLF,1598320491.0,False
+CASH,Pathward Financial Inc.,XLF,1594355534.0,False
+JJSF,J & J Snack Foods Corp.,XLP,1586068519.0,False
+RARE,Ultragenyx Pharmaceutical Inc.,XLV,1572492524.0,False
+NTLA,Intellia Therapeutics Inc.,XLV,1563813894.0,False
+TEN,Tsakos Energy Navigation Ltd,XLY,1556090695.0,False
+PBT,Permian Basin Royalty Trust,XLE,1550674643.0,False
+TWFG,TWFG Inc.,XLF,1549664934.0,False
+TRIN,Trinity Capital Inc.,XLF,1549186871.0,False
+YSWY,Yesway Inc.,XLP,1548587251.0,False
+CBL,CBL & Associates Properties Inc.,XLRE,1541877581.0,False
+GAM,General American Investors Inc.,XLF,1540672699.0,False
+CERT,Certara Inc.,XLK,1539116290.0,False
+PRSU,Pursuit Attractions and Hospitality Inc.,XLY,1534699285.0,False
+XZO,Exzeo Group Inc.,XLK,1531460606.0,False
+CTS,CTS Corporation,XLK,1528613118.0,False
+SAFT,Safety Insurance Group Inc.,XLF,1527210542.0,False
+MGRT,Mega Fortune Company Limited,XLK,1525975000.0,False
+KRSA,Korsana Biosciences Inc.,XLV,1522447598.0,False
+INVA,Innoviva Inc.,XLV,1521489914.0,False
+AGL,agilon health inc.,XLV,1516078351.0,False
+FLNG,FLEX LNG Ltd.,XLY,1511340985.0,False
+NANO,Forge Nano Holdings Inc.,XLK,1509950990.0,False
+CBRL,Cracker Barrel Old Country Store Inc,XLY,1504542063.0,False
+AMAL,Amalgamated Financial Corp.,XLF,1504276396.0,False
+IIPR,Innovative Industrial Properties Inc.,XLF,1504266176.0,False
+STC,Stewart Information Services Corporation,XLF,1502913079.0,False
+EFC,Ellington Financial Inc.,XLF,1498960299.0,False
+EYE,National Vision Holdings Inc.,XLV,1492037936.0,False
+MLKN,MillerKnoll Inc.,XLY,1491579556.0,False
+ESQ,Esquire Financial Holdings Inc.,XLF,1491163580.0,False
+TFIN,Triumph Financial Inc.,XLF,1488157137.0,False
+GSL,Global Ship Lease Inc New,XLY,1487015302.0,False
+CNMD,CONMED Corporation,XLV,1480789701.0,False
+NEXA,Nexa Resources S.A.,XLB,1478019240.0,False
+VOYG,Voyager Technologies Inc.,XLI,1476071996.0,False
+LKFN,Lakeland Financial Corporation,XLF,1476058539.0,False
+CRSR,Corsair Gaming Inc.,XLK,1475533721.0,False
+PNTG,The Pennant Group Inc.,XLV,1475054795.0,False
+HYMC,Hycroft Mining Holding Corporation,XLB,1468543293.0,False
+ALNT,Allient Inc.,XLI,1465276398.0,False
+SCL,Stepan Company,XLY,1462156973.0,False
+TSAT,Telesat Corporation,XLI,1460783523.0,False
+RYZ,Ryerson Holding Corporation,XLI,1455757217.0,False
+TMP,Tompkins Financial Corporation,XLF,1449509166.0,False
+PCRX,Pacira BioSciences Inc.,XLV,1448580937.0,False
+BHRB,Burke & Herbert Financial Services Corp.,XLF,1448015877.0,False
+HLF,Herbalife Ltd.,XLV,1444190576.0,False
+TYRA,Tyra Biosciences Inc.,XLV,1434936447.0,False
+ATEX,Anterix Inc.,XLC,1434651944.0,False
+ECAT,BlackRock ESG Capital Allocation Term Trust,XLF,1431707400.0,False
+TRS,TriMas Corporation,XLI,1431367533.0,False
+WABC,Westamerica Bancorporation,XLF,1431042594.0,False
+ETON,Eton Pharmaceuticals Inc.,XLV,1429728413.0,False
+INBX,Inhibrx Biosciences Inc.,XLV,1429084786.0,False
+BCAT,BlackRock Capital Allocation Term Trust,XLF,1427382000.0,False
+ANAB,AnaptysBio Inc.,XLV,1424167936.0,False
+THRM,Gentherm Inc,XLY,1423639420.0,False
+ICHR,Ichor Holdings,XLK,1418017110.0,False
+HPK,HighPeak Energy Inc.,XLE,1417535933.0,False
+ORIC,Oric Pharmaceuticals Inc.,XLV,1412785701.0,False
+NUTX,Nutex Health Inc.,XLY,1411298756.0,False
+DMC,Del Monte Corporation,XLP,1411086305.0,False
+FRNM,Freenome Inc. Common stock,XLV,1407553263.0,False
+AFYA,Afya Limited,XLRE,1397407410.0,False
+TH,Target Hospitality Corp.,XLY,1390742985.0,False
+CSWC,Capital Southwest Corporation,XLY,1390709448.0,False
+AVEX,AEVEX Corp.,XLI,1389387944.0,False
+ATLC,Atlanticus Holdings Corporation,XLF,1388513578.0,False
+LQDT,Liquidity Services Inc.,XLY,1387990677.0,False
+NSSC,NAPCO Security Technologies Inc.,XLC,1380661668.0,False
+GO,Grocery Outlet Holding Corp.,XLP,1377274439.0,False
+DFIN,Donnelley Financial Solutions Inc.,XLY,1376535594.0,False
+PEBO,Peoples Bancorp Inc.,XLF,1372637010.0,False
+ARLO,Arlo Technologies Inc.,XLY,1355927630.0,False
+PD,PagerDuty Inc.,XLK,1355137312.0,False
+UVE,UNIVERSAL INSURANCE HOLDINGS INC,XLF,1346989182.0,False
+FMBH,First Mid Bancshares Inc.,XLF,1346588785.0,False
+TPB,Turning Point Brands Inc.,XLY,1340671414.0,False
+DMRA,Damora Therapeutics Inc.,XLV,1340278117.0,False
+FOR,Forestar Group Inc,XLF,1337682180.0,False
+EPC,Edgewell Personal Care Company,XLY,1331508754.0,False
+ADNT,Adient plc,XLY,1325296261.0,False
+USPH,U.S. Physical Therapy Inc.,XLV,1324090994.0,False
+ODD,ODDITY Tech Ltd.,XLY,1322933595.0,False
+NKTR,Nektar Therapeutics,XLV,1319626718.0,False
+UMH,UMH Properties Inc.,XLRE,1319207520.0,False
+HBT,HBT Financial Inc.,XLF,1317889779.0,False
+TRUP,Trupanion Inc.,XLV,1312229795.0,False
+AAT,American Assets Trust Inc.,XLRE,1307295695.0,False
+NVGS,Navigator Holdings Ltd.,XLY,1306188386.0,False
+BAND,Bandwidth Inc.,XLK,1303321914.0,False
+SLVM,Sylvamo Corporation,XLB,1289822283.0,False
+LYNX,Lyntris Inc.,XLI,1278921706.0,False
+DOLE,Dole plc,XLP,1277083071.0,False
+GIII,G-III Apparel Group LTD.,XLY,1276862408.0,False
+REAL,The RealReal Inc.,XLY,1275113285.0,False
+RAPP,Rapport Therapeutics Inc.,XLV,1272863928.0,False
+LBRX,LB Pharmaceuticals Inc,XLV,1271656679.0,False
+GHRS,GH Research PLC,XLV,1268307719.0,False
+PRG,PROG Holdings Inc.,XLY,1267840878.0,False
+BVS,Bioventus Inc.,XLV,1264741875.0,False
+ALX,Alexander's Inc.,XLRE,1262777453.0,False
+CDRE,Cadre Holdings Inc.,XLV,1261498824.0,False
+CRAI,CRA International Inc.,XLY,1261272248.0,False
+RDWR,Radware Ltd.,XLY,1259901567.0,False
+OSBC,Old Second Bancorp Inc.,XLF,1257138942.0,False
+RDVT,Red Violet Inc.,XLK,1253108278.0,False
+ADIG,ADI Global Distribution Inc.,XLI,1251214303.0,False
+BJRI,BJ's Restaurants Inc.,XLY,1250684644.0,False
+CRI,Carter's Inc.,XLY,1245610507.0,False
+ENOV,Enovis Corporation,XLV,1245084375.0,False
+PWP,Perella Weinberg Partners,XLF,1241692520.0,False
+MYE,Myers Industries Inc.,XLI,1235001238.0,False
+TK,Teekay Corporation Ltd.,XLY,1224445087.0,False
+VSTM,Verastem Inc.,XLV,1221476297.0,False
+OMER,Omeros Corporation,XLV,1220467008.0,False
+CCEC,Capital Clean Energy Carriers Corp. Common Share,XLY,1220265107.0,False
+XPEL,XPEL Inc.,XLI,1218902769.0,False
+LZB,La-Z-Boy Incorporated,XLY,1217604238.0,False
+SG,Sweetgreen Inc.,XLY,1216602239.0,False
+SENEB,Seneca Foods Corp.,XLP,1213249049.0,False
+SNDX,Syndax Pharmaceuticals Inc.,XLV,1211761457.0,False
+AMSC,American Superconductor Corporation,XLY,1211537996.0,False
+AVLN,Avalyn Pharma Inc.,XLV,1208076839.0,False
+SCSC,ScanSource Inc.,XLK,1207763008.0,False
+GBX,Greenbrier Companies Inc. (The),XLI,1199841023.0,False
+AMBQ,Ambiq Micro Inc.,XLK,1198827450.0,False
+WOLF,Wolfspeed Inc.,XLK,1197818776.0,False
+UTI,Universal Technical Institute Inc,XLRE,1193362703.0,False
+TNDM,Tandem Diabetes Care Inc.,XLV,1193274825.0,False
+DRTS,Alpha Tau Medical Ltd.,XLV,1192968187.0,False
+KARD,Kardigan Inc.,XLV,1191237125.0,False
+WD,Walker & Dunlop Inc,XLF,1190416837.0,False
+MCB,Metropolitan Bank Holding Corp.,XLF,1188946910.0,False
+JCAP,Jefferson Capital Inc.,XLF,1188134340.0,False
+SPH,Suburban Propane Partners L.P.,XLY,1182810622.0,False
+AORT,Artivion Inc.,XLV,1168686617.0,False
+HFWA,Heritage Financial Corporation,XLF,1166911714.0,False
+UVSP,Univest Financial Corporation,XLF,1166114871.0,False
+ROCK,Gibraltar Industries Inc.,XLI,1165686321.0,False
+BCAX,Bicara Therapeutics Inc.,XLV,1165305368.0,False
+NBN,Northeast Bank,XLF,1165092071.0,False
+AMTB,Amerant Bancorp Inc.,XLF,1162371188.0,False
+OMDA,Omada Health Inc.,XLV,1161893023.0,False
+ELE,Elemental Royalty Corporation,XLB,1157860653.0,False
+HZO,MarineMax Inc.  (FL),XLY,1156903755.0,False
+NHP,National Healthcare Properties Inc.,XLRE,1151897041.0,False
+PRCT,PROCEPT BioRobotics Corporation,XLV,1147191390.0,False
+HAWK,HawkEye 360 Inc.,XLK,1143257992.0,False
+ASIC,Ategrity Specialty Insurance Company Holdings,XLF,1140660886.0,False
+LNN,Lindsay Corporation,XLI,1138813431.0,False
+PDS,Precision Drilling Corporation,XLE,1138284912.0,False
+IBTA,Ibotta Inc.,XLY,1132994125.0,False
+REPX,Riley Exploration Permian Inc.,XLE,1132058414.0,False
+REPL,Replimune Group Inc.,XLV,1129693412.0,False
+STAA,STAAR Surgical Company,XLV,1127738200.0,False
+TNC,Tennant Company,XLI,1127299914.0,False
+VTOL,Bristow Group Inc.,XLY,1127285260.0,False
+GOLD,Gold.com Inc.,XLI,1124868796.0,False
+BOW,Bowhead Specialty Holdings Inc.,XLF,1123356471.0,False
+YELP,Yelp Inc.,XLY,1123256955.0,False
+HRTG,Heritage Insurance Holdings Inc.,XLF,1120912083.0,False
+IRMD,iRadimed Corporation,XLV,1120651891.0,False
+VOR,Vor Biopharma Inc.,XLV,1120533848.0,False
+SENEA,Seneca Foods Corp.,XLP,1112670686.0,False
+SPTX,Seaport Therapeutics Inc.,XLV,1111294218.0,False
+AMPH,Amphastar Pharmaceuticals Inc.,XLV,1107688062.0,False
+DEC,Diversified Energy Company,,1104523027.0,False
+HLIT,Harmonic Inc.,XLK,1100480430.0,False
+LTGO,Latigo Biotherapeutics Inc.,XLV,1098580180.0,False
+WLDN,Willdan Group Inc.,XLY,1097624477.0,False
+DLX,Deluxe Corporation,XLY,1094589642.0,False
+OPY,Oppenheimer Holdings Inc.,XLF,1092858990.0,False
+PSIX,Power Solutions International Inc.,XLI,1087997277.0,False
+ODC,Oil-Dri Corporation Of America,XLY,1086391858.0,False
+GNK,Genco Shipping & Trading Limited,XLY,1085306465.0,False
+FSBC,Five Star Bancorp,XLF,1083536874.0,False
+IGIC,International General Insurance Holdings Ltd. Ordinary Share,XLF,1074054355.0,False
+KRT,Karat Packaging Inc.,XLI,1073123859.0,False
+MMI,Marcus & Millichap Inc.,XLF,1070991965.0,False
+DEA,Easterly Government Properties Inc.,XLRE,1068048896.0,False
+NPK,National Presto Industries Inc.,XLI,1058992343.0,False
+HSTM,HealthStream Inc.,XLK,1058311731.0,False
+HROW,Harrow Inc.,XLV,1055282978.0,False
+SBR,Sabine Royalty Trust,XLE,1053357676.0,False
+CBLL,CeriBell Inc.,XLV,1051559967.0,False
+MSEX,Middlesex Water Company,XLU,1051492187.0,False
+MLTX,MoonLake Immunotherapeutics,XLV,1050216493.0,False
+LMRI,Lumexa Imaging Holdings Inc.,XLV,1046256489.0,False
+CTY,City Therapeutics Inc.,XLV,1045401435.0,False
+MBWM,Mercantile Bank Corporation,XLF,1044503802.0,False
+CCNE,CNB Financial Corporation,XLF,1043839987.0,False
+JANX,Janux Therapeutics Inc.,XLV,1042993347.0,False
+BFST,Business First Bancshares Inc.,XLF,1039643263.0,False
+BST,BlackRock Science and Technology Trust,XLF,1038537492.0,False
+AVO,Mission Produce Inc.,XLP,1036358735.0,False
+HBNC,Horizon Bancorp Inc.,XLF,1026376935.0,False
+MCBS,MetroCity Bankshares Inc.,XLF,1019718943.0,False
+HIPO,Hippo Holdings Inc.,XLF,1018102319.0,False
+BBNX,Beta Bionics Inc.,XLV,1018093630.0,False
+WINA,Winmark Corporation,XLY,1017822994.0,False
+CSTL,Castle Biosciences Inc.,XLV,1013938137.0,False
+UPBD,Upbound Group Inc.,XLY,1012660665.0,False
+AMRC,Ameresco Inc.,XLY,1012503306.0,False
+NBBK,NB Bancorp Inc.,XLF,1010016195.0,False
+OCSL,Oaktree Specialty Lending Corporation,XLF,1008579238.0,False
+BCX,BlackRock Resources,XLF,1006415999.0,False
+EGBN,Eagle Bancorp Inc.,XLF,1005056590.0,False
+MRTN,Marten Transport Ltd.,XLI,1004438529.0,False
+ITRN,Ituran Location and Control Ltd.,XLK,1002039625.0,False
+EQBK,Equity Bancshares Inc.,XLF,1001618714.0,False
