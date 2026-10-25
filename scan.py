@@ -32,6 +32,8 @@ MIN_AVG_VOLUME = 1_000_000
 MIN_CORRELATION = 0.50
 MAX_OFF_HIGH = 25.0
 MIN_SETUP_TO_LIST = 5  # stocks below this many checks are left out of the JSON
+EMA21_ZONE = 0.01      # pullback counts as a 21 EMA touch within 1% of it
+MIN_PULLBACK = 0.04    # or a pattern low at least 4% under the prior 10 bar high
 
 INDEXES = ["SPY", "QQQ", "DIA", "IWM"]
 SECTORS = {
@@ -153,6 +155,43 @@ def trend_up(c: np.ndarray) -> bool:
     return bool(c[-1] > e21 > c[-50:].mean())
 
 
+def pullback_triggers(frame: pd.DataFrame) -> dict:
+    """Entry triggers on the latest bar (age 0) or the bar before it (age 1).
+
+    21 EMA touch: a low within EMA21_ZONE of the 21 EMA on either of the last 2 bars,
+        with the close still no more than EMA21_ZONE below it.
+    Minor low: a bar whose low is under the lows on both sides, then a green bar that
+        closes above that low bar's high.
+    Inside and up: an inside bar (high and low inside the bar before), then a bar that
+        closes above the inside bar's high.
+    Both candle patterns only count after a real pullback: the pattern low is within
+        EMA21_ZONE of the 21 EMA, or at least MIN_PULLBACK below the 10 bar high before it.
+    """
+    o, h, l, c = (frame[k].to_numpy() for k in ("Open", "High", "Low", "Close"))
+    e21 = pd.Series(c).ewm(span=21, adjust=False).mean().to_numpy()
+    touch = any(l[-k] <= e21[-k] * (1 + EMA21_ZONE) for k in (1, 2)) and c[-1] >= e21[-1] * (1 - EMA21_ZONE)
+
+    def pulled_back(i: int) -> bool:
+        return l[i] <= e21[i] * (1 + EMA21_ZONE) or l[i] <= h[i - 10:i].max() * (1 - MIN_PULLBACK)
+
+    patterns = []
+    for age in (0, 1):
+        up = -1 - age              # the confirming bar
+        mid, before = up - 1, up - 2
+        if l[mid] < l[before] and l[up] > l[mid] and c[up] > o[up] and c[up] > h[mid] and pulled_back(mid):
+            patterns.append(("Minor low", age, l[mid]))
+        if h[mid] <= h[before] and l[mid] >= l[before] and c[up] > h[mid] and pulled_back(mid):
+            patterns.append(("Inside and up", age, l[mid]))
+    triggers = (["21 EMA"] if touch else []) + sorted({p[0] for p in patterns})
+    return {
+        "trig": triggers,
+        "age": min((p[1] for p in patterns), default=0),
+        "e21d": round((c[-1] / e21[-1] - 1) * 100, 1),
+        "pb": round((1 - min(l[-3:]) / h[-13:-1].max()) * 100, 1),
+        "stop": round(float(min((p[2] for p in patterns), default=min(l[-2:]))), 2),
+    }
+
+
 def returns(c: np.ndarray, n: int = 60) -> np.ndarray:
     return c[-n:] / c[-n - 1:-1] - 1
 
@@ -236,7 +275,9 @@ def scan() -> dict:
             c[-1] >= MIN_PRICE and avg_vol >= MIN_AVG_VOLUME,
         ]
         passed = int(sum(checks))
+        base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
+            **pullback_triggers(frame), "base": base_trend,
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
             "vs_sec": round((stock_r - etf_r) * 100, 2), "str": round(stock_r * 100, 2),

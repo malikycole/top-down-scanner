@@ -72,6 +72,17 @@
   .legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 20px;color:var(--muted);font-size:13px}
   .legend b{color:var(--text)}
   .empty{padding:30px;text-align:center;color:var(--muted)}
+  .pbhead{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+  .pbhead > div{flex:1 1 520px}
+  .candles{width:330px;max-width:100%;flex:0 0 auto;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:6px}
+  .candles text{fill:var(--text);font:700 12px "Segoe UI",Arial,sans-serif}
+  .candles .cap{fill:var(--muted);font-weight:400;font-size:10.5px}
+  .candles .wk{stroke:#cbd5e1;stroke-width:1.5}
+  .candles .dn{fill:var(--red)} .candles .upc{fill:var(--green)}
+  .candles .ref{stroke:var(--accent);stroke-width:1.2;stroke-dasharray:3 3}
+  .trig{display:inline-block;border-radius:5px;padding:2px 7px;font-size:12px;font-weight:700;margin-right:4px;background:#1e3a5f;color:#bae6fd}
+  .trig.ml{background:#14532d;color:#bbf7d0} .trig.iu{background:#4c1d95;color:#ddd6fe}
+  .when{font-size:12px;color:var(--muted)} .when.now{color:#fde68a;font-weight:700}
   footer{color:var(--faint);font-size:12px;margin-top:20px}
   @media (max-width:700px){
     .grid3{grid-template-columns:1fr}
@@ -112,7 +123,52 @@
     <div class="picks" id="picks"></div>
   </section>
 
+  <section class="panel" id="pbPanel">
+    <div class="pbhead">
+      <div>
+        <p class="row-label">Pullback entries <span>strong stocks that pulled back to the 21 EMA or printed a reversal candle on this bar or the last one</span></p>
+        <div class="controls">
+          <div>
+            <span class="row-label" style="margin-right:6px">Sector</span>
+            <select id="pbSec"></select>
+          </div>
+          <div>
+            <span class="row-label" style="margin-right:6px">Trigger</span>
+            <span class="seg" id="pbTrig"></span>
+          </div>
+          <div>
+            <span class="row-label" style="margin-right:6px">Setup</span>
+            <span class="seg" id="pbMin"></span>
+          </div>
+          <span class="count" id="pbCount"></span>
+        </div>
+      </div>
+      <svg class="candles" viewBox="0 0 330 136" role="img" aria-label="Minor low and inside and up candle patterns">
+        <text x="70" y="14" text-anchor="middle">Minor low</text>
+        <line x1="30" y1="30" x2="30" y2="78" class="wk"/><rect x="24" y="38" width="12" height="30" class="dn"/>
+        <line x1="60" y1="46" x2="60" y2="98" class="wk"/><rect x="54" y="56" width="12" height="30" class="dn"/>
+        <line x1="90" y1="34" x2="90" y2="84" class="wk"/><rect x="84" y="40" width="12" height="38" class="upc"/>
+        <line x1="40" y1="46" x2="104" y2="46" class="ref"/>
+        <text x="70" y="114" text-anchor="middle" class="cap">lowest low, then a close</text><text x="70" y="128" text-anchor="middle" class="cap">above that bar's high</text>
+        <text x="250" y="14" text-anchor="middle">Inside and up</text>
+        <line x1="210" y1="24" x2="210" y2="96" class="wk"/><rect x="204" y="32" width="12" height="54" class="dn"/>
+        <line x1="240" y1="40" x2="240" y2="80" class="wk"/><rect x="234" y="48" width="12" height="22" class="dn"/>
+        <line x1="270" y1="26" x2="270" y2="76" class="wk"/><rect x="264" y="30" width="12" height="40" class="upc"/>
+        <line x1="222" y1="40" x2="284" y2="40" class="ref"/>
+        <text x="250" y="114" text-anchor="middle" class="cap">inside bar, then a close</text><text x="250" y="128" text-anchor="middle" class="cap">above the inside bar's high</text>
+      </svg>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr id="pbHeadRow"></tr></thead>
+        <tbody id="pbRows"></tbody>
+      </table>
+    </div>
+    <p class="note">Stop = low of the reversal pattern, or the lowest low of the last 2 bars for a 21 EMA touch. During market hours "This bar" is the live candle and can still change before the close.</p>
+  </section>
+
   <section class="panel">
+    <p class="row-label">All strong stocks</p>
     <div class="controls">
       <div>
         <span class="row-label" style="margin-right:6px">Sector</span>
@@ -142,7 +198,8 @@
 </div>
 
 <script>
-const state = { data:null, sector:"green", min:7, q:"", sort:"pass", dir:-1 };
+const state = { data:null, sector:"green", min:7, q:"", sort:"pass", dir:-1,
+  pbSector:"green", pbTrig:"all", pbMin:7, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
 const pct = (v, d=2) => (v > 0 ? "+" : "") + v.toFixed(d) + "%";
@@ -213,14 +270,77 @@ function render(){
       <div class="nums"><span>${s.etf}</span><span class="${pn(s.vs_sec)}">${pct(s.vs_sec,1)} vs sector</span></div>
       <div class="nums"><span>$${s.px}</span><span class="${pn(s.day)}">${pct(s.day)} today</span></div>
     </a>`).join("") : `<div class="empty">No stock passes all 8 checks in a green sector right now. Lower the setup filter below to see the closest ones.</div>`;
+  renderPullbacks();
   renderTable();
+}
+
+const PB_COLS = [
+  ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Trigger", null, "l"], ["When", "age", "l"],
+  ["Price", "px"], ["Day", "day"], ["vs 21 EMA", "e21d"], ["Pullback", "pb"], ["Stop", "stop"],
+  ["Risk", "risk"], ["RS", "rs"], ["vs Sector", "vs_sec"], ["Setup", "pass"]
+];
+const TRIG_CLS = {"21 EMA":"", "Minor low":"ml", "Inside and up":"iu"};
+
+function renderPullbacks(){
+  const d = state.data;
+  const greens = new Set(d.sectors.filter(s => s.state === 2).map(s => s.ticker));
+  const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
+  let rows = d.stocks.filter(s => s.trig && s.trig.length && s.base && s.pass >= state.pbMin)
+    .map(s => ({...s, risk: (s.px - s.stop) / s.px * 100}));
+  if (state.pbSector === "green") rows = rows.filter(s => greens.has(s.etf));
+  else if (state.pbSector !== "all") rows = rows.filter(s => s.etf === state.pbSector);
+  if (state.pbTrig !== "all") rows = rows.filter(s => s.trig.includes(state.pbTrig));
+  const k = state.pbSort;
+  rows.sort((a,b) => {
+    if (k === "default") return (b.trig.length - a.trig.length) || (b.pass - a.pass) || (a.age - b.age) || (b.rs - a.rs);
+    const av = a[k], bv = b[k];
+    const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return c !== 0 ? c * state.pbDir : (b.rs - a.rs);
+  });
+  $("pbHeadRow").innerHTML = PB_COLS.map(([label,key,al]) =>
+    `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (state.pbDir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+  document.querySelectorAll("#pbHeadRow th").forEach(th => th.onclick = () => {
+    if (!th.dataset.k) return;
+    if (state.pbSort === th.dataset.k) state.pbDir *= -1;
+    else { state.pbSort = th.dataset.k; state.pbDir = ["age","risk","pb","e21d"].includes(th.dataset.k) ? 1 : -1; }
+    renderPullbacks();
+  });
+  const open = marketOpen();
+  $("pbRows").innerHTML = rows.length ? rows.map((s,i) => `
+    <tr class="${s.trig.length > 1 && s.pass===8 && s.sec_state===2 ? "best" : ""}">
+      <td class="l">${i+1}</td>
+      <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
+      <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
+      <td class="l">${s.trig.map(t => `<span class="trig ${TRIG_CLS[t]}">${t}</span>`).join("")}</td>
+      <td class="l"><span class="when ${s.age===0?"now":""}">${s.age===0 ? (open ? "This bar (live)" : "This bar") : "1 bar ago"}</span></td>
+      <td>$${s.px.toFixed(2)}</td>
+      <td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td>${pct(s.e21d,1)}</td>
+      <td>${s.pb.toFixed(1)}%</td>
+      <td>$${s.stop.toFixed(2)}</td>
+      <td>${s.risk.toFixed(1)}%</td>
+      <td><b>${s.rs}</b></td>
+      <td class="${pn(s.vs_sec)}">${pct(s.vs_sec,1)}</td>
+      <td><span class="tag ${s.pass===8?"g":s.pass>=6?"y":"r"}">${s.pass}/8</span></td>
+    </tr>`).join("") : `<tr><td colspan="14" class="empty">No pullback entries match these filters right now. Try All sectors or a lower setup score.</td></tr>`;
+  $("pbCount").textContent = `${rows.length} pullback${rows.length===1?"":"s"}`;
 }
 
 function syncSelect(){
   const d = state.data;
-  $("secSel").innerHTML = `<option value="green">Green sectors</option><option value="all">All sectors</option>` +
+  const opts = `<option value="green">Green sectors</option><option value="all">All sectors</option>` +
     d.sectors.map(s => `<option value="${s.ticker}">${s.ticker} ${s.name}</option>`).join("");
-  $("secSel").value = state.sector;
+  $("secSel").innerHTML = opts; $("secSel").value = state.sector;
+  $("pbSec").innerHTML = opts; $("pbSec").value = state.pbSector;
+}
+
+function seg(id, values, labels, key, after){
+  $(id).innerHTML = values.map((v,i) => `<button data-v="${v}" class="${v===state[key]?"on":""}">${labels[i]}</button>`).join("");
+  $(id).querySelectorAll("button").forEach(b => b.onclick = () => {
+    state[key] = isNaN(+b.dataset.v) ? b.dataset.v : +b.dataset.v;
+    $(id).querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    after();
+  });
 }
 
 function renderTable(){
@@ -286,6 +406,9 @@ document.querySelectorAll("#minSeg button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#minSeg button").forEach(x => x.classList.toggle("on", x === b));
   renderTable();
 });
+seg("pbTrig", ["all","21 EMA","Minor low","Inside and up"], ["All","21 EMA","Minor low","Inside and up"], "pbTrig", renderPullbacks);
+seg("pbMin", [8,7,6], ["8/8","7+","6+"], "pbMin", renderPullbacks);
+$("pbSec").onchange = e => { state.pbSector = e.target.value; renderPullbacks(); };
 $("secSel").onchange = e => { state.sector = e.target.value; render(); };
 $("q").oninput = e => { state.q = e.target.value.trim().toUpperCase(); renderTable(); };
 legend();
