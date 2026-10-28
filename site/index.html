@@ -34,6 +34,7 @@
   button.chip:hover{transform:translateY(-1px)}
   button.chip.sel{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--accent)}
   .market{font-size:16px;padding:9px 16px}
+  .sechead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin:16px 0 8px}
   .grid3{display:grid;grid-template-columns:auto 1fr;gap:14px 22px;align-items:start}
   .note{color:var(--muted);font-size:13px;margin-top:10px}
   .note b{color:var(--text)}
@@ -114,7 +115,10 @@
         <div class="chips" id="indexes"></div>
       </div>
     </div>
-    <p class="row-label" style="margin-top:16px">Sectors vs <span id="vsIndex" style="color:var(--text);font-weight:700"></span> <span>click a sector to filter the stocks below</span></p>
+    <div class="sechead">
+      <p class="row-label" id="secLabel" style="margin:0">Sectors vs <span id="vsIndex" style="color:var(--text);font-weight:700"></span> <span>click a sector to filter the stocks below</span></p>
+      <span class="seg" id="secView"></span>
+    </div>
     <div class="chips" id="sectors"></div>
     <p class="note" id="sectorNote"></p>
   </section>
@@ -203,7 +207,7 @@
 </div>
 
 <script>
-const state = { data:null, sector:"green", min:7, near:0.1, q:"", sort:"pass", dir:-1,
+const state = { data:null, secView:"strength", sector:"green", min:7, near:0.1, q:"", sort:"pass", dir:-1,
   pbSector:"green", pbTrig:"all", pbMin:7, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -254,17 +258,13 @@ function render(){
     <div class="note">SPY ${m.spy} &middot; 50 SMA ${m.sma50} &middot; 200 SMA ${m.sma200}</div>`;
   $("indexes").innerHTML = d.indexes.map((x,i) =>
     `<span class="chip ${cls(x.state)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.strength)}</span>`).join("");
-  $("vsIndex").textContent = d.leader_index;
-  $("sectors").innerHTML = d.sectors.map((x,i) =>
-    `<button class="chip ${cls(x.state)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.strength)} own strength, day ${pct(x.day)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.vs_index)}<small>${x.name}</small></button>`).join("");
-  document.querySelectorAll("#sectors button").forEach(b => b.onclick = () => {
-    state.sector = state.sector === b.dataset.sec ? "green" : b.dataset.sec; syncSelect(); render();
-  });
+  renderSectors();
   const greens = d.sectors.filter(s => s.state === 2).map(s => s.ticker);
   const yellows = d.sectors.filter(s => s.state === 1).map(s => s.ticker);
   $("sectorNote").innerHTML = (greens.length ? `<b>Green</b> (beating ${d.leader_index} and in their own uptrend): ${greens.join(", ")}. ` : `<b>No sector</b> is beating ${d.leader_index} while in its own uptrend. `) +
     (yellows.length ? `<b>Yellow</b> only falling less than the index, skip: ${yellows.join(", ")}.` : "");
   if (m.regime === "DOWNTREND") $("sectorNote").innerHTML += ` <b>Market is in a downtrend:</b> size down on anything you take.`;
+  if (state.secView === "trend") renderSectors();
 
   const picks = d.stocks.filter(s => s.pass === 8 && s.sec_state === 2)
     .sort((a,b) => b.rs - a.rs).slice(0, 12);
@@ -329,6 +329,25 @@ function renderPullbacks(){
       <td><span class="tag ${s.pass===8?"g":s.pass>=6?"y":"r"}">${s.pass}/8</span></td>
     </tr>`).join("") : `<tr><td colspan="14" class="empty">No pullback entries match these filters right now. Try All sectors or a lower setup score.</td></tr>`;
   $("pbCount").textContent = `${rows.length} pullback${rows.length===1?"":"s"}`;
+}
+
+function renderSectors(){
+  const d = state.data, trend = state.secView === "trend";
+  $("secLabel").innerHTML = trend
+    ? `Sector trend <span>each sector on its own chart, uptrend first; click a sector to filter the stocks below</span>`
+    : `Sectors vs <span style="color:var(--text);font-weight:700">${d.leader_index}</span> <span>click a sector to filter the stocks below</span>`;
+  const list = trend && d.sectors[0].trend !== undefined
+    ? [...d.sectors].sort((a,b) => (b.trend - a.trend) || (b.r1m - a.r1m)) : d.sectors;
+  $("sectors").innerHTML = list.map((x,i) => trend && x.trend !== undefined
+    ? `<button class="chip ${cls(x.trend)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.e21d)} vs 21 EMA, day ${pct(x.day)}">${x.ticker} ${x.trend_label} ${pct(x.r1m,1)} 1M<small>${x.name}</small></button>`
+    : `<button class="chip ${cls(x.state)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.strength)} own strength, day ${pct(x.day)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.vs_index)}<small>${x.name}</small></button>`).join("");
+  document.querySelectorAll("#sectors button").forEach(b => b.onclick = () => {
+    state.sector = state.sector === b.dataset.sec ? "green" : b.dataset.sec; syncSelect(); render();
+  });
+  if (trend && d.sectors[0].trend !== undefined) {
+    const by = n => d.sectors.filter(s => s.trend === n).map(s => s.ticker).join(", ") || "none";
+    $("sectorNote").innerHTML = `<b>Uptrend</b> (close above 21 EMA above 50 SMA): ${by(2)}. <b>Sideways</b>: ${by(1)}. <b>Downtrend</b> (close below 21 EMA below 50 SMA): ${by(0)}.`;
+  }
 }
 
 function syncSelect(){
@@ -416,6 +435,7 @@ document.querySelectorAll("#minSeg button").forEach(b => b.onclick = () => {
 });
 seg("pbTrig", ["all","21 EMA","Minor low","Inside and up"], ["All","21 EMA","Minor low","Inside and up"], "pbTrig", renderPullbacks);
 seg("pbMin", [8,7,6], ["8/8","7+","6+"], "pbMin", renderPullbacks);
+seg("secView", ["strength","trend"], ["Strength vs index","Trend"], "secView", () => render());
 seg("nearSeg", [1,0.5,0.1,"any"], ["1%","0.5%","0.1%","Any"], "near", renderTable);
 $("pbSec").onchange = e => { state.pbSector = e.target.value; renderPullbacks(); };
 $("secSel").onchange = e => { state.sector = e.target.value; render(); };

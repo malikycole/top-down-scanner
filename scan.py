@@ -192,6 +192,15 @@ def pullback_triggers(frame: pd.DataFrame) -> dict:
     }
 
 
+def own_trend(c: np.ndarray) -> dict:
+    """A symbol's own trend, ignoring the index: 2 uptrend (close > 21 EMA > 50 SMA),
+    0 downtrend (close < 21 EMA < 50 SMA), 1 sideways (anything in between)."""
+    e21, s50 = ema(c, 21), c[-50:].mean()
+    level = 2 if c[-1] > e21 > s50 else 0 if c[-1] < e21 < s50 else 1
+    return {"trend": level, "trend_label": ["Downtrend", "Sideways", "Uptrend"][level],
+            "r1m": round((c[-1] / c[-22] - 1) * 100, 2), "e21d": round((c[-1] / e21 - 1) * 100, 2)}
+
+
 def returns(c: np.ndarray, n: int = 60) -> np.ndarray:
     return c[-n:] / c[-n - 1:-1] - 1
 
@@ -237,7 +246,7 @@ def scan() -> dict:
         sector_rows.append({"ticker": t, "name": label, "vs_index": round(score * 100, 2),
                             "strength": round(blend(c) * 100, 2), "trend_up": up,
                             "state": (1 + int(up)) if score > 0 else 0,
-                            "day": round((c[-1] / c[-2] - 1) * 100, 2)})
+                            "day": round((c[-1] / c[-2] - 1) * 100, 2), **own_trend(c)})
     sector_rows.sort(key=lambda x: x["vs_index"], reverse=True)
     sector_state = {s["ticker"]: s["state"] for s in sector_rows}
     sector_rank = {s["ticker"]: i + 1 for i, s in enumerate(sector_rows)}
