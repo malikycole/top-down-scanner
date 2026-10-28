@@ -186,7 +186,7 @@ def pullback_triggers(frame: pd.DataFrame) -> dict:
     return {
         "trig": triggers,
         "age": min((p[1] for p in patterns), default=0),
-        "e21d": round((c[-1] / e21[-1] - 1) * 100, 1),
+        "e21d": round((c[-1] / e21[-1] - 1) * 100, 2),
         "pb": round((1 - min(l[-3:]) / h[-13:-1].max()) * 100, 1),
         "stop": round(float(min((p[2] for p in patterns), default=min(l[-2:]))), 2),
     }

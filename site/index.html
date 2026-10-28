@@ -65,6 +65,7 @@
   td a:hover{color:var(--accent)}
   td .nm{display:block;color:var(--faint);font-size:11px;font-weight:400;max-width:180px;overflow:hidden;text-overflow:ellipsis}
   .pos{color:#4ade80} .neg{color:#f87171}
+  td.hit{color:#fde68a;font-weight:700}
   .dots{display:inline-flex;gap:3px}
   .dot{width:11px;height:11px;border-radius:3px}
   .tag{display:inline-block;border-radius:5px;padding:2px 8px;font-weight:700;color:var(--chip-text);font-size:12px}
@@ -178,6 +179,10 @@
         <span class="row-label" style="margin-right:6px">Setup</span>
         <span class="seg" id="minSeg"></span>
       </div>
+      <div>
+        <span class="row-label" style="margin-right:6px">Near 21 EMA</span>
+        <span class="seg" id="nearSeg"></span>
+      </div>
       <input type="search" id="q" placeholder="Find symbol">
       <span class="count" id="count"></span>
     </div>
@@ -198,7 +203,7 @@
 </div>
 
 <script>
-const state = { data:null, sector:"green", min:7, q:"", sort:"pass", dir:-1,
+const state = { data:null, sector:"green", min:7, near:1, q:"", sort:"pass", dir:-1,
   pbSector:"green", pbTrig:"all", pbMin:7, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -210,7 +215,7 @@ const fmtVol = v => v >= 1e6 ? (v/1e6).toFixed(1) + "M" : Math.round(v/1e3) + "K
 
 const COLS = [
   ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Price", "px"], ["Day", "day"],
-  ["vs Sector", "vs_sec"], ["RS", "rs"], ["1M", "r1m"], ["3M", "r3m"], ["Off high", "off"],
+  ["vs Sector", "vs_sec"], ["RS", "rs"], ["1M", "r1m"], ["3M", "r3m"], ["Off high", "off"], ["vs 21 EMA", "e21abs"],
   ["Corr", "corr"], ["Avg vol", "vol"], ["Checks", null], ["Setup", "pass"]
 ];
 
@@ -350,6 +355,8 @@ function renderTable(){
   let rows = d.stocks.filter(s => s.pass >= state.min);
   if (state.sector === "green") rows = rows.filter(s => greens.has(s.etf));
   else if (state.sector !== "all") rows = rows.filter(s => s.etf === state.sector);
+  if (state.near !== "any") rows = rows.filter(s => Math.abs(s.e21d) <= state.near);
+  rows = rows.map(s => ({...s, e21abs: Math.abs(s.e21d)}));
   if (state.q) rows = rows.filter(s => s.t.includes(state.q) || s.n.toUpperCase().includes(state.q));
   const k = state.sort;
   rows.sort((a,b) => {
@@ -361,7 +368,7 @@ function renderTable(){
     `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (state.dir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
   document.querySelectorAll("#head th").forEach(th => th.onclick = () => {
     if (!th.dataset.k) return;
-    if (state.sort === th.dataset.k) state.dir *= -1; else { state.sort = th.dataset.k; state.dir = th.dataset.k === "off" ? 1 : -1; }
+    if (state.sort === th.dataset.k) state.dir *= -1; else { state.sort = th.dataset.k; state.dir = ["off","e21abs"].includes(th.dataset.k) ? 1 : -1; }
     renderTable();
   });
   const shown = rows.slice(0, 400);
@@ -377,11 +384,12 @@ function renderTable(){
       <td class="${pn(s.r1m)}">${pct(s.r1m,1)}</td>
       <td class="${pn(s.r3m)}">${pct(s.r3m,1)}</td>
       <td>${s.off.toFixed(1)}%</td>
+      <td class="${Math.abs(s.e21d) <= 0.1 ? "hit" : ""}">${pct(s.e21d)}</td>
       <td>${s.corr.toFixed(2)}</td>
       <td>${fmtVol(s.vol)}</td>
       <td><span class="dots">${s.chk.map((c,j) => `<span class="dot ${c?"g":"r"}" title="${d.checks[j]}: ${c?"pass":"fail"}"></span>`).join("")}</span></td>
       <td><span class="tag ${s.pass===8?"g":s.pass>=6?"y":"r"}">${s.pass}/8</span></td>
-    </tr>`).join("") : `<tr><td colspan="14" class="empty">No stocks match these filters. Try a lower setup score or All sectors.</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="15" class="empty">No stocks match these filters. Try a wider Near 21 EMA setting, a lower setup score or All sectors.</td></tr>`;
   $("count").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing top 400)":""}`;
 }
 
@@ -408,6 +416,7 @@ document.querySelectorAll("#minSeg button").forEach(b => b.onclick = () => {
 });
 seg("pbTrig", ["all","21 EMA","Minor low","Inside and up"], ["All","21 EMA","Minor low","Inside and up"], "pbTrig", renderPullbacks);
 seg("pbMin", [8,7,6], ["8/8","7+","6+"], "pbMin", renderPullbacks);
+seg("nearSeg", [1,0.5,0.1,"any"], ["1%","0.5%","0.1%","Any"], "near", renderTable);
 $("pbSec").onchange = e => { state.pbSector = e.target.value; renderPullbacks(); };
 $("secSel").onchange = e => { state.sector = e.target.value; render(); };
 $("q").oninput = e => { state.q = e.target.value.trim().toUpperCase(); renderTable(); };
