@@ -192,6 +192,20 @@ def pullback_triggers(frame: pd.DataFrame) -> dict:
     }
 
 
+def jt_trends(frame: pd.DataFrame) -> dict:
+    """Port of Jeff Thaw's JT_Trends thinkorswim study.
+    MOMO: 8 EMA > 13 EMA > 21 EMA bullish, 8 < 13 < 21 bearish, else slop.
+    Trend: MOMO bullish and 21 EMA > 34 EMA of highs = bullish; MOMO bearish and
+    21 EMA < 34 EMA of lows = bearish; else sideways. Double green = Trend bullish."""
+    c = frame["Close"]
+    e8, e13, e21 = (float(c.ewm(span=n, adjust=False).mean().iloc[-1]) for n in (8, 13, 21))
+    e34h = float(frame["High"].ewm(span=34, adjust=False).mean().iloc[-1])
+    e34l = float(frame["Low"].ewm(span=34, adjust=False).mean().iloc[-1])
+    momo = 1 if e8 > e13 > e21 else -1 if e8 < e13 < e21 else 0
+    wave = 1 if momo == 1 and e21 > e34h else -1 if momo == -1 and e21 < e34l else 0
+    return {"momo": momo, "wave": wave}
+
+
 def own_trend(c: np.ndarray) -> dict:
     """A symbol's own trend, ignoring the index: 2 uptrend (close > 21 EMA > 50 SMA),
     0 downtrend (close < 21 EMA < 50 SMA), 1 sideways (anything in between)."""
@@ -234,7 +248,8 @@ def scan() -> dict:
         c = closes[t]
         r, up = blend(c), trend_up(c)
         index_rows.append({"ticker": t, "strength": round(r * 100, 2), "trend_up": up,
-                           "state": int(r > 0) + int(up), "day": round((c[-1] / c[-2] - 1) * 100, 2)})
+                           "state": int(r > 0) + int(up), "day": round((c[-1] / c[-2] - 1) * 100, 2),
+                           **jt_trends(frames[t])})
     index_rows.sort(key=lambda x: x["strength"], reverse=True)
     leader_index = index_rows[0]["ticker"]
     leader_ret = blend(closes[leader_index])
@@ -246,7 +261,7 @@ def scan() -> dict:
         sector_rows.append({"ticker": t, "name": label, "vs_index": round(score * 100, 2),
                             "strength": round(blend(c) * 100, 2), "trend_up": up,
                             "state": (1 + int(up)) if score > 0 else 0,
-                            "day": round((c[-1] / c[-2] - 1) * 100, 2), **own_trend(c)})
+                            "day": round((c[-1] / c[-2] - 1) * 100, 2), **own_trend(c), **jt_trends(frames[t])})
     sector_rows.sort(key=lambda x: x["vs_index"], reverse=True)
     sector_state = {s["ticker"]: s["state"] for s in sector_rows}
     sector_rank = {s["ticker"]: i + 1 for i, s in enumerate(sector_rows)}
@@ -286,7 +301,7 @@ def scan() -> dict:
         passed = int(sum(checks))
         base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
-            **pullback_triggers(frame), "base": base_trend,
+            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend,
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
             "vs_sec": round((stock_r - etf_r) * 100, 2), "str": round(stock_r * 100, 2),

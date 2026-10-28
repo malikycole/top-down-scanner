@@ -66,6 +66,12 @@
   td a:hover{color:var(--accent)}
   td .nm{display:block;color:var(--faint);font-size:11px;font-weight:400;max-width:180px;overflow:hidden;text-overflow:ellipsis}
   .pos{color:#4ade80} .neg{color:#f87171}
+  .jt{display:inline-flex;gap:3px;align-items:center;vertical-align:middle}
+  .jt .dot{width:13px;height:13px}
+  .jt b{font-size:11px;margin-left:4px;color:#86efac}
+  .tb{display:inline-flex;align-items:center;gap:3px;margin-left:8px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.28);color:#fff;font-size:11px;font-weight:700;letter-spacing:.3px;vertical-align:1px}
+  .tb .dot{width:9px;height:9px;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+  .chip .jt{margin-right:6px} .chip .jt .dot{box-shadow:0 0 0 1px rgba(0,0,0,.45)}
   td.hit{color:#fde68a;font-weight:700}
   .dots{display:inline-flex;gap:3px}
   .dot{width:11px;height:11px;border-radius:3px}
@@ -145,6 +151,10 @@
             <span class="row-label" style="margin-right:6px">Setup</span>
             <span class="seg" id="pbMin"></span>
           </div>
+          <div>
+            <span class="row-label" style="margin-right:6px">JT Trend</span>
+            <span class="seg" id="pbJt"></span>
+          </div>
           <span class="count" id="pbCount"></span>
         </div>
       </div>
@@ -187,6 +197,10 @@
         <span class="row-label" style="margin-right:6px">Near 21 EMA</span>
         <span class="seg" id="nearSeg"></span>
       </div>
+      <div>
+        <span class="row-label" style="margin-right:6px">JT Trend</span>
+        <span class="seg" id="jtSeg"></span>
+      </div>
       <input type="search" id="q" placeholder="Find symbol">
       <span class="count" id="count"></span>
     </div>
@@ -207,20 +221,29 @@
 </div>
 
 <script>
-const state = { data:null, secView:"strength", sector:"green", min:7, near:0.1, q:"", sort:"pass", dir:-1,
-  pbSector:"green", pbTrig:"all", pbMin:7, pbSort:"default", pbDir:-1 };
+const state = { data:null, secView:"strength", sector:"green", min:7, near:0.1, jt:"any", q:"", sort:"pass", dir:-1,
+  pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any", pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
 const pct = (v, d=2) => (v > 0 ? "+" : "") + v.toFixed(d) + "%";
 const pn = v => v > 0 ? "pos" : v < 0 ? "neg" : "";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const chart = t => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(t);
+const JT_WORD = {1:"Bullish", 0:"Sideways", "-1":"Bearish"};
+const MOMO_WORD = {1:"Bullish", 0:"Slop", "-1":"Bearish"};
+const jtCls = v => v === 1 ? "g" : v === -1 ? "r" : "y";
+const jtDots = s => s.momo === undefined ? "" :
+  `<span class="jt" title="MOMO: ${MOMO_WORD[s.momo]}, Trend: ${JT_WORD[s.wave]}"><span class="dot ${jtCls(s.momo)}"></span><span class="dot ${jtCls(s.wave)}"></span>${s.wave===1?"<b>2G</b>":""}</span>`;
+const TREND_WORD = {1:"UPTREND", 0:"SIDEWAYS", "-1":"DOWNTREND"};
+const trendBadge = x => x.wave === undefined ? "" :
+  `<span class="tb" title="JT Trends: MOMO ${MOMO_WORD[x.momo]}, Trend ${JT_WORD[x.wave]}"><span class="dot ${jtCls(x.momo)}"></span><span class="dot ${jtCls(x.wave)}"></span>${TREND_WORD[x.wave]}</span>`;
+const jtv = s => (s.momo ?? 0) + (s.wave ?? 0);
 const fmtVol = v => v >= 1e6 ? (v/1e6).toFixed(1) + "M" : Math.round(v/1e3) + "K";
 
 const COLS = [
   ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Price", "px"], ["Day", "day"],
   ["vs Sector", "vs_sec"], ["RS", "rs"], ["1M", "r1m"], ["3M", "r3m"], ["Off high", "off"], ["vs 21 EMA", "e21abs"],
-  ["Corr", "corr"], ["Avg vol", "vol"], ["Checks", null], ["Setup", "pass"]
+  ["Corr", "corr"], ["Avg vol", "vol"], ["JT", "jtv"], ["Checks", null], ["Setup", "pass"]
 ];
 
 async function load(){
@@ -257,7 +280,7 @@ function render(){
   $("market").innerHTML = `<span class="chip market ${mc}">MARKET: ${m.regime}</span>
     <div class="note">SPY ${m.spy} &middot; 50 SMA ${m.sma50} &middot; 200 SMA ${m.sma200}</div>`;
   $("indexes").innerHTML = d.indexes.map((x,i) =>
-    `<span class="chip ${cls(x.state)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.strength)}</span>`).join("");
+    `<span class="chip ${cls(x.state)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.strength)}${trendBadge(x)}</span>`).join("");
   renderSectors();
   const greens = d.sectors.filter(s => s.state === 2).map(s => s.ticker);
   const yellows = d.sectors.filter(s => s.state === 1).map(s => s.ticker);
@@ -282,7 +305,7 @@ function render(){
 const PB_COLS = [
   ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Trigger", null, "l"], ["When", "age", "l"],
   ["Price", "px"], ["Day", "day"], ["vs 21 EMA", "e21d"], ["Pullback", "pb"], ["Stop", "stop"],
-  ["Risk", "risk"], ["RS", "rs"], ["vs Sector", "vs_sec"], ["Setup", "pass"]
+  ["Risk", "risk"], ["RS", "rs"], ["vs Sector", "vs_sec"], ["JT", "jtv"], ["Setup", "pass"]
 ];
 const TRIG_CLS = {"21 EMA":"", "Minor low":"ml", "Inside and up":"iu"};
 
@@ -291,7 +314,8 @@ function renderPullbacks(){
   const greens = new Set(d.sectors.filter(s => s.state === 2).map(s => s.ticker));
   const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
   let rows = d.stocks.filter(s => s.trig && s.trig.length && s.base && s.pass >= state.pbMin)
-    .map(s => ({...s, risk: (s.px - s.stop) / s.px * 100}));
+    .map(s => ({...s, risk: (s.px - s.stop) / s.px * 100, jtv: jtv(s)}));
+  if (state.pbJt === "dg") rows = rows.filter(s => s.wave === 1);
   if (state.pbSector === "green") rows = rows.filter(s => greens.has(s.etf));
   else if (state.pbSector !== "all") rows = rows.filter(s => s.etf === state.pbSector);
   if (state.pbTrig !== "all") rows = rows.filter(s => s.trig.includes(state.pbTrig));
@@ -326,27 +350,28 @@ function renderPullbacks(){
       <td>${s.risk.toFixed(1)}%</td>
       <td><b>${s.rs}</b></td>
       <td class="${pn(s.vs_sec)}">${pct(s.vs_sec,1)}</td>
+      <td>${jtDots(s)}</td>
       <td><span class="tag ${s.pass===8?"g":s.pass>=6?"y":"r"}">${s.pass}/8</span></td>
-    </tr>`).join("") : `<tr><td colspan="14" class="empty">No pullback entries match these filters right now. Try All sectors or a lower setup score.</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="15" class="empty">No pullback entries match these filters right now. Try All sectors or a lower setup score.</td></tr>`;
   $("pbCount").textContent = `${rows.length} pullback${rows.length===1?"":"s"}`;
 }
 
 function renderSectors(){
   const d = state.data, trend = state.secView === "trend";
   $("secLabel").innerHTML = trend
-    ? `Sector trend <span>each sector on its own chart, uptrend first; click a sector to filter the stocks below</span>`
+    ? `Sector trend <span>JT Trends on each sector ETF, double green first; click a sector to filter the stocks below</span>`
     : `Sectors vs <span style="color:var(--text);font-weight:700">${d.leader_index}</span> <span>click a sector to filter the stocks below</span>`;
-  const list = trend && d.sectors[0].trend !== undefined
-    ? [...d.sectors].sort((a,b) => (b.trend - a.trend) || (b.r1m - a.r1m)) : d.sectors;
-  $("sectors").innerHTML = list.map((x,i) => trend && x.trend !== undefined
-    ? `<button class="chip ${cls(x.trend)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.e21d)} vs 21 EMA, day ${pct(x.day)}">${x.ticker} ${x.trend_label} ${pct(x.r1m,1)} 1M<small>${x.name}</small></button>`
-    : `<button class="chip ${cls(x.state)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.strength)} own strength, day ${pct(x.day)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.vs_index)}<small>${x.name}</small></button>`).join("");
+  const list = trend && d.sectors[0].wave !== undefined
+    ? [...d.sectors].sort((a,b) => (jtv(b) - jtv(a)) || (b.r1m - a.r1m)) : d.sectors;
+  $("sectors").innerHTML = list.map((x,i) => trend && x.wave !== undefined
+    ? `<button class="chip ${jtCls(x.wave)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: MOMO ${MOMO_WORD[x.momo]}, Trend ${JT_WORD[x.wave]}, ${pct(x.e21d)} vs 21 EMA, day ${pct(x.day)}"><span class="jt"><span class="dot ${jtCls(x.momo)}"></span><span class="dot ${jtCls(x.wave)}"></span></span>${x.ticker} ${x.wave===1?"Double green":"Trend "+JT_WORD[x.wave]} ${pct(x.r1m,1)} 1M<small>${x.name}</small></button>`
+    : `<button class="chip ${cls(x.state)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.strength)} own strength, day ${pct(x.day)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.vs_index)}<small>${x.name}</small>${trendBadge(x)}</button>`).join("");
   document.querySelectorAll("#sectors button").forEach(b => b.onclick = () => {
     state.sector = state.sector === b.dataset.sec ? "green" : b.dataset.sec; syncSelect(); render();
   });
-  if (trend && d.sectors[0].trend !== undefined) {
-    const by = n => d.sectors.filter(s => s.trend === n).map(s => s.ticker).join(", ") || "none";
-    $("sectorNote").innerHTML = `<b>Uptrend</b> (close above 21 EMA above 50 SMA): ${by(2)}. <b>Sideways</b>: ${by(1)}. <b>Downtrend</b> (close below 21 EMA below 50 SMA): ${by(0)}.`;
+  if (trend && d.sectors[0].wave !== undefined) {
+    const by = n => d.sectors.filter(s => s.wave === n).map(s => s.ticker).join(", ") || "none";
+    $("sectorNote").innerHTML = `<b>Double green</b> (MOMO and Trend bullish): ${by(1)}. <b>Sideways</b>: ${by(0)}. <b>Bearish</b>: ${by(-1)}. Left square = MOMO (8 &gt; 13 &gt; 21 EMA), right square = Trend (MOMO plus 21 EMA above the 34 EMA of highs).`;
   }
 }
 
@@ -375,7 +400,8 @@ function renderTable(){
   if (state.sector === "green") rows = rows.filter(s => greens.has(s.etf));
   else if (state.sector !== "all") rows = rows.filter(s => s.etf === state.sector);
   if (state.near !== "any") rows = rows.filter(s => Math.abs(s.e21d) <= state.near);
-  rows = rows.map(s => ({...s, e21abs: Math.abs(s.e21d)}));
+  if (state.jt === "dg") rows = rows.filter(s => s.wave === 1);
+  rows = rows.map(s => ({...s, e21abs: Math.abs(s.e21d), jtv: jtv(s)}));
   if (state.q) rows = rows.filter(s => s.t.includes(state.q) || s.n.toUpperCase().includes(state.q));
   const k = state.sort;
   rows.sort((a,b) => {
@@ -406,9 +432,10 @@ function renderTable(){
       <td class="${Math.abs(s.e21d) <= 0.1 ? "hit" : ""}">${pct(s.e21d)}</td>
       <td>${s.corr.toFixed(2)}</td>
       <td>${fmtVol(s.vol)}</td>
+      <td>${jtDots(s)}</td>
       <td><span class="dots">${s.chk.map((c,j) => `<span class="dot ${c?"g":"r"}" title="${d.checks[j]}: ${c?"pass":"fail"}"></span>`).join("")}</span></td>
       <td><span class="tag ${s.pass===8?"g":s.pass>=6?"y":"r"}">${s.pass}/8</span></td>
-    </tr>`).join("") : `<tr><td colspan="15" class="empty">No stocks match these filters. Try a wider Near 21 EMA setting, a lower setup score or All sectors.</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="16" class="empty">No stocks match these filters. Try a wider Near 21 EMA setting, JT Trend Any, a lower setup score or All sectors.</td></tr>`;
   $("count").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing top 400)":""}`;
 }
 
@@ -417,11 +444,13 @@ function legend(){
     ["Green chip", "beating the benchmark and trend is up"],
     ["Yellow chip", "beating the benchmark but its own trend is not up, so it is only falling less"],
     ["Red chip", "lagging the benchmark"],
+    ["Trend badge", "inside each index and sector chip: UPTREND = JT double green, DOWNTREND = JT Trend bearish, SIDEWAYS otherwise. The two squares are MOMO and Trend"],
     ["vs Sector", "stock strength minus its sector ETF strength"],
     ["RS", "1 to 99 rank of strength against every stock scanned"],
     ["Off high", "percent below the 52 week high"],
     ["Corr", "how closely daily moves follow the sector ETF over 60 days"],
     ["Checks", "stronger than sector, beats sector 1M, beats sector 3M, RS line above its 50 day average, close > 21 EMA > 50 SMA > 200 SMA, corr 0.50+, within 25% of high, $10+ and 1M+ avg volume"],
+    ["JT", "your JT_Trends study: left square MOMO (8 > 13 > 21 EMA), right square Trend (MOMO plus 21 EMA above the 34 EMA of highs). 2G = double green"],
     ["Setup", "8/8 take it, 6 to 7 watch, 5 skip. Green rows are 8/8 in a green sector"],
   ];
   $("legend").innerHTML = items.map(([a,b]) => `<div><b>${a}</b>: ${b}</div>`).join("");
@@ -437,6 +466,8 @@ seg("pbTrig", ["all","21 EMA","Minor low","Inside and up"], ["All","21 EMA","Min
 seg("pbMin", [8,7,6], ["8/8","7+","6+"], "pbMin", renderPullbacks);
 seg("secView", ["strength","trend"], ["Strength vs index","Trend"], "secView", () => render());
 seg("nearSeg", [1,0.5,0.1,"any"], ["1%","0.5%","0.1%","Any"], "near", renderTable);
+seg("jtSeg", ["any","dg"], ["Any","Double green"], "jt", renderTable);
+seg("pbJt", ["any","dg"], ["Any","Double green"], "pbJt", renderPullbacks);
 $("pbSec").onchange = e => { state.pbSector = e.target.value; renderPullbacks(); };
 $("secSel").onchange = e => { state.sector = e.target.value; render(); };
 $("q").oninput = e => { state.q = e.target.value.trim().toUpperCase(); renderTable(); };
