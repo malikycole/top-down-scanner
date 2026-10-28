@@ -2,9 +2,9 @@ name: Scan market and publish
 
 on:
   schedule:
-    # Every 15 minutes, Monday to Friday, 13:00 to 21:59 UTC (covers 9:00 AM to 5:00 PM ET all year)
-    - cron: "*/15 13-21 * * 1-5"
-    # Weekly keepalive so GitHub never pauses the schedule for inactivity
+    # Backup runs in case the ticker workflow fails to start; ticker.yml does the 15 minute cadence
+    - cron: "0 15,18,21 * * 1-5"
+    # Weekly keepalive so GitHub never pauses the schedules for inactivity
     - cron: "0 12 * * 1"
   workflow_dispatch:
 

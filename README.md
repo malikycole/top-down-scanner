@@ -4,7 +4,7 @@ Live web version of the top down strength system: strongest index, then stronges
 
 ## How it runs
 
-* GitHub Actions runs `scan.py` every 15 minutes, Monday to Friday, 9 AM to 5 PM ET.
+* GitHub Actions runs `scan.py` every 15 minutes during market hours, Monday to Friday. GitHub skips many scheduled runs, so `ticker.yml` starts once at the open, stays running through the session and starts a scan every 15 minutes itself. `scan.yml` also has 3 backup scheduled runs a day.
 * Each run downloads daily prices from Yahoo Finance for about 2,000 U.S. stocks (market cap $1B+, price $10+), plus SPY, QQQ, DIA, IWM and the 11 sector ETFs.
 * It writes `site/data.json` and publishes the `site` folder to GitHub Pages. The page reloads the data every 5 minutes.
 * Your PC does not need to be on.
