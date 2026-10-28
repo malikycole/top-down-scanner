@@ -15,8 +15,7 @@ Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months.
 
 1. **Market:** SPY above 50 SMA above 200 SMA = uptrend, above 200 only = chop, else downtrend.
 2. **Indexes:** ranked by strength, #1 is the leader.
-3. **Sectors:** scored against the #1 index. Green = beating it and in its own uptrend. Yellow = beating it but only falling less. A **Trend** toggle switches the row to JT Trends on each sector ETF, double green first.
-4. **Stocks:** each one is scored against its own sector ETF with 8 checks:
+3. **Sectors:** scored against the #1 index. Green = beating it and in its own uptrend. Yellow = beating it but only falling less.4. **Stocks:** each one is scored against its own sector ETF with 8 checks:
    stronger than sector, beats sector over 1 month, beats sector over 3 months, RS line above its 50 day average, close > 21 EMA > 50 SMA > 200 SMA, daily moves correlate 0.50+ with the sector ETF, within 25% of the 52 week high, price $10+ with 1M+ average volume.
 
 5. **Pullback entries:** stocks with 6+ checks, still above the 50 SMA with the 50 above the 200, that triggered on this bar or the one before:

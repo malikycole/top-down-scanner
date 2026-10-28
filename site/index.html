@@ -34,7 +34,6 @@
   button.chip:hover{transform:translateY(-1px)}
   button.chip.sel{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--accent)}
   .market{font-size:16px;padding:9px 16px}
-  .sechead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin:16px 0 8px}
   .grid3{display:grid;grid-template-columns:auto 1fr;gap:14px 22px;align-items:start}
   .note{color:var(--muted);font-size:13px;margin-top:10px}
   .note b{color:var(--text)}
@@ -121,10 +120,7 @@
         <div class="chips" id="indexes"></div>
       </div>
     </div>
-    <div class="sechead">
-      <p class="row-label" id="secLabel" style="margin:0">Sectors vs <span id="vsIndex" style="color:var(--text);font-weight:700"></span> <span>click a sector to filter the stocks below</span></p>
-      <span class="seg" id="secView"></span>
-    </div>
+    <p class="row-label" style="margin-top:16px">Sectors vs <span id="vsIndex" style="color:var(--text);font-weight:700"></span> <span>click a sector to filter the stocks below</span></p>
     <div class="chips" id="sectors"></div>
     <p class="note" id="sectorNote"></p>
   </section>
@@ -221,7 +217,7 @@
 </div>
 
 <script>
-const state = { data:null, secView:"strength", sector:"green", min:7, near:0.1, jt:"any", q:"", sort:"pass", dir:-1,
+const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort:"pass", dir:-1,
   pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any", pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -287,7 +283,6 @@ function render(){
   $("sectorNote").innerHTML = (greens.length ? `<b>Green</b> (beating ${d.leader_index} and in their own uptrend): ${greens.join(", ")}. ` : `<b>No sector</b> is beating ${d.leader_index} while in its own uptrend. `) +
     (yellows.length ? `<b>Yellow</b> only falling less than the index, skip: ${yellows.join(", ")}.` : "");
   if (m.regime === "DOWNTREND") $("sectorNote").innerHTML += ` <b>Market is in a downtrend:</b> size down on anything you take.`;
-  if (state.secView === "trend") renderSectors();
 
   const picks = d.stocks.filter(s => s.pass === 8 && s.sec_state === 2)
     .sort((a,b) => b.rs - a.rs).slice(0, 12);
@@ -357,22 +352,13 @@ function renderPullbacks(){
 }
 
 function renderSectors(){
-  const d = state.data, trend = state.secView === "trend";
-  $("secLabel").innerHTML = trend
-    ? `Sector trend <span>JT Trends on each sector ETF, double green first; click a sector to filter the stocks below</span>`
-    : `Sectors vs <span style="color:var(--text);font-weight:700">${d.leader_index}</span> <span>click a sector to filter the stocks below</span>`;
-  const list = trend && d.sectors[0].wave !== undefined
-    ? [...d.sectors].sort((a,b) => (jtv(b) - jtv(a)) || (b.r1m - a.r1m)) : d.sectors;
-  $("sectors").innerHTML = list.map((x,i) => trend && x.wave !== undefined
-    ? `<button class="chip ${jtCls(x.wave)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: MOMO ${MOMO_WORD[x.momo]}, Trend ${JT_WORD[x.wave]}, ${pct(x.e21d)} vs 21 EMA, day ${pct(x.day)}"><span class="jt"><span class="dot ${jtCls(x.momo)}"></span><span class="dot ${jtCls(x.wave)}"></span></span>${x.ticker} ${x.wave===1?"Double green":"Trend "+JT_WORD[x.wave]} ${pct(x.r1m,1)} 1M<small>${x.name}</small></button>`
-    : `<button class="chip ${cls(x.state)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.strength)} own strength, day ${pct(x.day)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.vs_index)}<small>${x.name}</small>${trendBadge(x)}</button>`).join("");
+  const d = state.data;
+  $("vsIndex").textContent = d.leader_index;
+  $("sectors").innerHTML = d.sectors.map((x,i) =>
+    `<button class="chip ${cls(x.state)} ${state.sector===x.ticker?"sel":""}" data-sec="${x.ticker}" title="${x.name}: ${pct(x.strength)} own strength, day ${pct(x.day)}">${i===0?"#1 ":""}${x.ticker} ${pct(x.vs_index)}<small>${x.name}</small>${trendBadge(x)}</button>`).join("");
   document.querySelectorAll("#sectors button").forEach(b => b.onclick = () => {
     state.sector = state.sector === b.dataset.sec ? "green" : b.dataset.sec; syncSelect(); render();
   });
-  if (trend && d.sectors[0].wave !== undefined) {
-    const by = n => d.sectors.filter(s => s.wave === n).map(s => s.ticker).join(", ") || "none";
-    $("sectorNote").innerHTML = `<b>Double green</b> (MOMO and Trend bullish): ${by(1)}. <b>Sideways</b>: ${by(0)}. <b>Bearish</b>: ${by(-1)}. Left square = MOMO (8 &gt; 13 &gt; 21 EMA), right square = Trend (MOMO plus 21 EMA above the 34 EMA of highs).`;
-  }
 }
 
 function syncSelect(){
@@ -464,7 +450,6 @@ document.querySelectorAll("#minSeg button").forEach(b => b.onclick = () => {
 });
 seg("pbTrig", ["all","21 EMA","Minor low","Inside and up"], ["All","21 EMA","Minor low","Inside and up"], "pbTrig", renderPullbacks);
 seg("pbMin", [8,7,6], ["8/8","7+","6+"], "pbMin", renderPullbacks);
-seg("secView", ["strength","trend"], ["Strength vs index","Trend"], "secView", () => render());
 seg("nearSeg", [1,0.5,0.1,"any"], ["1%","0.5%","0.1%","Any"], "near", renderTable);
 seg("jtSeg", ["any","dg"], ["Any","Double green"], "jt", renderTable);
 seg("pbJt", ["any","dg"], ["Any","Double green"], "pbJt", renderPullbacks);
