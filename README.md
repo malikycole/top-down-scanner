@@ -20,11 +20,11 @@ Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months.
    stronger than sector, beats sector over 1 month, beats sector over 3 months, RS line above its 50 day average, close > 21 EMA > 50 SMA > 200 SMA, daily moves correlate 0.50+ with the sector ETF, within 25% of the 52 week high, price $10+ with 1M+ average volume.
 
 5. **Pullback entries:** stocks with 6+ checks, still above the 50 SMA with the 50 above the 200, that triggered on this bar or the one before:
-   * **21 EMA:** a low within 1% of the 21 EMA on either of the last 2 bars, with the close no more than 1% below it.
+   * **21 EMA:** the current price is within 1% of the 21 EMA, above or below it.
    * **Minor low:** a bar with a lower low than the bars on both sides, then a green bar that closes above that low bar's high.
-   * **Inside and up:** an inside bar, then a bar that closes above the inside bar's high.
-   * Both candle patterns only count after a real pullback: the pattern low is within 1% of the 21 EMA, or at least 4% under the prior 10 bar high (`EMA21_ZONE`, `MIN_PULLBACK` in `scan.py`).
-   * Stop = the pattern low, or the lowest low of the last 2 bars for a 21 EMA touch.
+   * **Inside and up:** an inside bar, then a bar that closes above the inside bar's high, with the current price within 1% of the 21 EMA.
+   * Minor low only counts after a real pullback: the pattern low is within 1% of the 21 EMA, or at least 4% under the prior 10 bar high (`EMA21_ZONE`, `MIN_PULLBACK` in `scan.py`).
+   * Stop = the pattern low, or the lowest low of the last 2 bars for a 21 EMA entry.
 
 Sectors come from the S&P 500 list (GICS) where the stock is in it, the Nasdaq screener sector otherwise, and the best correlated sector ETF if neither has one.
 

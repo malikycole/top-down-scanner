@@ -32,7 +32,7 @@ MIN_AVG_VOLUME = 1_000_000
 MIN_CORRELATION = 0.50
 MAX_OFF_HIGH = 25.0
 MIN_SETUP_TO_LIST = 5  # stocks below this many checks are left out of the JSON
-EMA21_ZONE = 0.01      # pullback counts as a 21 EMA touch within 1% of it
+EMA21_ZONE = 0.01      # current price within 1% of the 21 EMA counts as at the 21 EMA
 MIN_PULLBACK = 0.04    # or a pattern low at least 4% under the prior 10 bar high
 
 INDEXES = ["SPY", "QQQ", "DIA", "IWM"]
@@ -158,18 +158,18 @@ def trend_up(c: np.ndarray) -> bool:
 def pullback_triggers(frame: pd.DataFrame) -> dict:
     """Entry triggers on the latest bar (age 0) or the bar before it (age 1).
 
-    21 EMA touch: a low within EMA21_ZONE of the 21 EMA on either of the last 2 bars,
-        with the close still no more than EMA21_ZONE below it.
+    21 EMA: the current price is within EMA21_ZONE of the 21 EMA, above or below it.
     Minor low: a bar whose low is under the lows on both sides, then a green bar that
         closes above that low bar's high.
     Inside and up: an inside bar (high and low inside the bar before), then a bar that
-        closes above the inside bar's high.
-    Both candle patterns only count after a real pullback: the pattern low is within
-        EMA21_ZONE of the 21 EMA, or at least MIN_PULLBACK below the 10 bar high before it.
+        closes above the inside bar's high, with the current price within EMA21_ZONE
+        of the 21 EMA.
+    Minor low only counts after a real pullback: the pattern low is within EMA21_ZONE
+        of the 21 EMA, or at least MIN_PULLBACK below the 10 bar high before it.
     """
     o, h, l, c = (frame[k].to_numpy() for k in ("Open", "High", "Low", "Close"))
     e21 = pd.Series(c).ewm(span=21, adjust=False).mean().to_numpy()
-    touch = any(l[-k] <= e21[-k] * (1 + EMA21_ZONE) for k in (1, 2)) and c[-1] >= e21[-1] * (1 - EMA21_ZONE)
+    touch = abs(c[-1] / e21[-1] - 1) <= EMA21_ZONE
 
     def pulled_back(i: int) -> bool:
         return l[i] <= e21[i] * (1 + EMA21_ZONE) or l[i] <= h[i - 10:i].max() * (1 - MIN_PULLBACK)
@@ -180,7 +180,7 @@ def pullback_triggers(frame: pd.DataFrame) -> dict:
         mid, before = up - 1, up - 2
         if l[mid] < l[before] and l[up] > l[mid] and c[up] > o[up] and c[up] > h[mid] and pulled_back(mid):
             patterns.append(("Minor low", age, l[mid]))
-        if h[mid] <= h[before] and l[mid] >= l[before] and c[up] > h[mid] and pulled_back(mid):
+        if h[mid] <= h[before] and l[mid] >= l[before] and c[up] > h[mid] and touch:
             patterns.append(("Inside and up", age, l[mid]))
     triggers = (["21 EMA"] if touch else []) + sorted({p[0] for p in patterns})
     return {
