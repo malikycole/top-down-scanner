@@ -206,6 +206,101 @@ def jt_trends(frame: pd.DataFrame) -> dict:
     return {"momo": momo, "wave": wave}
 
 
+def big3(frame: pd.DataFrame) -> dict:
+    """Port of Simpler Trading's Big 3 Squeeze studies (ST_Big3_Squeeze, ST_Big3SqueezeLabels,
+    ST_Big3_APlus_Signals, ST_Big3_Slingshot_Signals, ATR trailing stop) on daily bars."""
+    o, h, l, c = (frame[k] for k in ("Open", "High", "Low", "Close"))
+    prev_c = c.shift()
+    tr = pd.concat([h - l, (h - prev_c).abs(), (l - prev_c).abs()], axis=1).max(axis=1)
+
+    # Squeeze: Bollinger (20, 2.0, population stdev) upper band inside Keltner (20, 1.75 x SMA of TR)
+    sma20 = c.rolling(20).mean()
+    sqz = (sma20 + 2.0 * c.rolling(20).std(ddof=0)) < (sma20 + 1.75 * tr.rolling(20).mean())
+
+    ema_ = lambda n: c.ewm(span=n, adjust=False).mean()
+    macd = ema_(24) - ema_(52)
+    diff = macd - macd.ewm(span=9, adjust=False).mean()          # MACDHistogram(24, 52, 9) = MD = Diff
+    e5, e8, e21, e34 = ema_(5), ema_(8), ema_(21), ema_(34)
+    s50, s200 = c.rolling(50).mean(), c.rolling(200).mean()
+    sp = (e5 > e8) & (e8 > e21) & (e21 > e34) & (e21 > s50)
+    sn = (e5 < e8) & (e8 < e21) & (e21 < e34) & (e21 < s50)
+
+    # Modified ATR trailing stop (period 9, factor 2.4, exponential, first trade long)
+    hl = h - l
+    hilo = np.minimum(hl, 1.5 * hl.rolling(9).mean())
+    href = np.where(l <= h.shift(), h - prev_c, (h - prev_c) - 0.5 * (l - h.shift()))
+    lref = np.where(h >= l.shift(), prev_c - l, (prev_c - l) - 0.5 * (l.shift() - h))
+    mtr = pd.concat([hilo, pd.Series(href, index=c.index), pd.Series(lref, index=c.index)], axis=1).max(axis=1, skipna=False)
+    loss = (2.4 * mtr.ewm(span=9, adjust=False, ignore_na=True).mean()).to_numpy()
+    cv = c.to_numpy()
+    trail, state = np.full(len(cv), np.nan), 0                     # 0 init, 1 long, -1 short
+    for i in range(len(cv)):
+        if state == 0:
+            if not np.isnan(loss[i]):
+                state, trail[i] = 1, cv[i] - loss[i]
+        elif state == 1:
+            if cv[i] > trail[i - 1]:
+                trail[i] = max(trail[i - 1], cv[i] - loss[i])
+            else:
+                state, trail[i] = -1, cv[i] + loss[i]
+        else:
+            if cv[i] < trail[i - 1]:
+                trail[i] = min(trail[i - 1], cv[i] + loss[i])
+            else:
+                state, trail[i] = 1, cv[i] - loss[i]
+
+    x = -1                      # latest bar
+    C, D, D1 = cv[x], float(diff.iloc[x]), float(diff.iloc[x - 1])
+    E8, E21, S50, S200, T = float(e8.iloc[x]), float(e21.iloc[x]), float(s50.iloc[x]), float(s200.iloc[x]), float(trail[x])
+    up50, up21, up200 = s50.iloc[x] > s50.iloc[x - 1], e21.iloc[x] > e21.iloc[x - 1], s200.iloc[x] > s200.iloc[x - 1]
+    dn50, dn21, dn200 = s50.iloc[x] < s50.iloc[x - 1], e21.iloc[x] < e21.iloc[x - 1], s200.iloc[x] < s200.iloc[x - 1]
+    SP, SN, SQ = bool(sp.iloc[x]), bool(sn.iloc[x]), bool(sqz.iloc[x])
+    bull = [D > 0, up50, up21, up200, SP, C > S50, C > E21, C > S200, E21 > S50, S50 > S200, E8 > E21, C > T]
+    bear = [D < 0, SN, C < S50, C < E21, C < S200, E21 < S50, S50 < S200, dn50, dn21, dn200, E8 < E21, C < T]
+    bull_score, bear_score = int(sum(bull)), int(sum(bear))
+    score = bull_score - bear_score
+    bull_ts, bear_ts = up50 and up21 and up200, dn50 and dn21 and dn200
+
+    signals = []
+    if SP and S50 > S200 and D > 0 and C > S50 and SQ and C > T and score > 6 and bull_ts:
+        signals.append("A+ Bull")
+    if SQ and bull_score == 12:
+        signals.append("+12 Bull")
+    if SP and D > 0 and C > S50 and SQ:
+        signals.append("Bull squeeze")
+    if SQ and SP and D < 0 and D > D1 and C > S50:
+        signals.append("Slingshot bull")
+    if SN and S50 < S200 and D < 0 and C < S50 and SQ and C < T and score < -6 and bear_ts:
+        signals.append("A+ Bear")
+    if SN and D < 0 and C < S50 and SQ:
+        signals.append("Bear squeeze")
+    if SQ and SN and D > 0 and D < D1 and C < S50:
+        signals.append("Slingshot bear")
+
+    # Labels study: TREND, STRUCTURE, MOMENTUM, TRAILING STOP as 1 bull, -1 bear, 0 neutral
+    trend = 1 if bull_ts and E21 > S50 > S200 else -1 if bear_ts and E21 < S50 < S200 else 0
+    structure = 1 if SP and E21 > S50 > S200 else -1 if SN and E21 < S50 < S200 else 0
+    momentum = 1 if D > 0 else -1 if D < 0 else 0
+    trail_lab = 1 if C > T else -1 if C < T else 0
+
+    atr_sma = float(tr.rolling(14).mean().iloc[x])                 # targets use Average(TrueRange, 14)
+    atr_ema = float(tr.ewm(span=14, adjust=False).mean().iloc[x])  # the ATR label uses an exponential 14
+    atr_wilder = float(tr.ewm(alpha=1 / 14, adjust=False).mean().iloc[x])
+    sq = sqz.to_numpy()
+    bars = 0
+    while bars < len(sq) and sq[len(sq) - 1 - bars]:
+        bars += 1
+    return {
+        "sqz": SQ, "sqzn": bars, "bull": bull_score, "bear": bear_score, "score": score, "sig": signals,
+        "lab": [trend, structure, momentum, trail_lab],
+        "hist": round(D, 4), "hist_up": bool(D > D1),
+        "e21": round(E21, 2), "atrs21": round((C - E21) / atr_wilder, 2) if atr_wilder else 0.0,
+        "trail": round(T, 2), "tgt_up": round(E21 + 3 * atr_sma, 2), "tgt_dn": round(E21 - 3 * atr_sma, 2),
+        "atr": round(atr_ema, 2), "buyz": bool(C <= E21 + 1.25 * atr_sma), "sellz": bool(C >= E21 - 1.25 * atr_sma),
+        "vol1": int(frame["Volume"].iloc[x]),
+    }
+
+
 def returns(c: np.ndarray, n: int = 60) -> np.ndarray:
     return c[-n:] / c[-n - 1:-1] - 1
 
@@ -292,7 +387,8 @@ def scan() -> dict:
         passed = int(sum(checks))
         base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
-            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend,
+            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame),
+            "cap": round(float(rec.cap) / 1e9, 1),
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
             "vs_sec": round((stock_r - etf_r) * 100, 2), "str": round(stock_r * 100, 2),
@@ -307,6 +403,12 @@ def scan() -> dict:
     for s in stocks:
         pct = np.searchsorted(ranked, s["str"] / 100, side="right") / len(ranked)
         s["rs"] = int(min(99, max(1, round(pct * 99))))
+    # Big 3 tab: every stock in a squeeze or carrying any Big 3 signal, with its top down context
+    keep = ("t", "n", "etf", "px", "day", "vs_sec", "rs", "pass", "sec_state", "momo", "wave", "e21d", "cap", "vol")
+    big3_rows = [{**{k: s[k] for k in keep}, **s["b3"]} for s in stocks if s["b3"]["sqz"] or s["b3"]["sig"]]
+    big3_rows.sort(key=lambda s: (s["bull"], s["score"], s["rs"]), reverse=True)
+    for s in stocks:
+        del s["b3"]
     listed = [s for s in stocks if s["pass"] >= MIN_SETUP_TO_LIST]
     listed.sort(key=lambda s: (s["pass"], s["sec_state"], s["vs_sec"]), reverse=True)
 
@@ -323,7 +425,7 @@ def scan() -> dict:
                    "sma50": round(float(sma50), 2), "sma200": round(float(sma200), 2)},
         "indexes": index_rows, "leader_index": leader_index,
         "sectors": sector_rows, "leader_sector": sector_rows[0]["ticker"],
-        "stocks": listed,
+        "stocks": listed, "big3": big3_rows,
     }
 
 

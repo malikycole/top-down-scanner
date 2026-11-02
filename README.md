@@ -27,6 +27,17 @@ Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months.
 
 6. **JT Trends** (port of Jeff Thaw's thinkorswim study): MOMO bullish = 8 EMA > 13 EMA > 21 EMA; Trend bullish = MOMO bullish and 21 EMA above the 34 EMA of highs (bearish mirrors it with the 34 EMA of lows). Double green = Trend bullish. Shown as two squares on every stock, a Double green filter on both tables, a trend badge (UPTREND, SIDEWAYS, DOWNTREND) inside every index and sector chip, and the sector Trend view.
 
+## Big 3 Squeeze tab
+
+Open it with the **Big 3 Squeeze** tab or the link `#big3`. It is a port of the Simpler Trading Big 3 studies (squeeze, labels, A+ signals, slingshot, ATR trailing stop) on daily bars, run on every stock scanned:
+
+* **Squeeze:** Bollinger Band (20, 2.0) upper band inside the Keltner Channel (20, 1.75) upper band.
+* **+12 Bull Squeeze:** the default, matching the thinkorswim scan: squeeze on and Bull Score 12/12, price $20+, volume 200K+, market cap $10B+.
+* **A+ Bull:** 5 > 8 > 21 > 34 EMA stack with 21 EMA above the 50 SMA, 50 SMA above the 200, MACD histogram (24, 52, 9) above zero, close above the 50 SMA and the trailing stop, squeeze on, B3 Score 7+, and 50 SMA, 21 EMA, 200 SMA all rising. A+ Bear is the mirror.
+* **Bull squeeze, Slingshot** and their bear versions as in the studies.
+* Columns: Bull score, B3 score (bull minus bear), squeeze length, Trend / Structure / Momentum / Trailing stop labels, histogram, distance from the 21 EMA in ATRs, buy zone (within 1.25 ATR above the 21 EMA), stop (21 EMA), target (21 EMA + 3 ATR), R:R, trailing stop, top down setup score, RS and JT.
+* A How to trade it section at the bottom explains entry, stop, target and exits.
+
 Sectors come from the S&P 500 list (GICS) where the stock is in it, the Nasdaq screener sector otherwise, and the best correlated sector ETF if neither has one.
 
 ## Change the settings
