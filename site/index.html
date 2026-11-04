@@ -129,6 +129,11 @@
   .howto li b{color:var(--text)}
   .src{color:var(--accent)}
   @media (max-width:800px){ .howto{grid-template-columns:1fr} }
+  .devv{display:inline-block;min-width:52px;text-align:center;border-radius:5px;padding:2px 7px;font-weight:800;color:#fff}
+  .devv.l25{background:#2563eb} .devv.l3{background:#7c3aed} .devv.l4{background:#be185d} .devv.out{background:#475569}
+  .reg{font-size:12px;font-weight:700} .reg.flat{color:#86efac} .reg.mild{color:#fde68a} .reg.steep{color:#fca5a5}
+  .sdhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .sdhead h2{margin:0;font-size:18px} .sdhead .count{margin-left:0}
 </style>
 </head>
 <body>
@@ -144,6 +149,7 @@
   <nav class="tabs">
     <a href="#home" data-tab="home">Home</a>
     <a href="#big3" data-tab="big3">Big 3 Squeeze</a>
+    <a href="#stddev" data-tab="stddev">Std Dev Channel</a>
   </nav>
 
   <div class="tab" id="tab-home">
@@ -347,12 +353,72 @@
   </section>
   </div>
 
+  <div class="tab" id="tab-stddev" hidden>
+  <section class="panel">
+    <p class="row-label">Std Dev Channel <span>1 year daily regression channel (your thinkorswim StandardDeviationChannel, full range): stocks 2.5 to 4 deviations from the line</span></p>
+    <div class="ctx" id="sdctx"></div>
+    <div class="controls" style="margin-top:12px">
+      <div><span class="row-label" style="margin-right:6px">Show</span><span class="seg" id="sdShow"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Deviation</span><span class="seg" id="sdRange"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Channel</span><span class="seg" id="sdReg"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Price</span><span class="seg" id="sdPx"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="sdCap"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Volume</span><span class="seg" id="sdVol"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Candle</span><span class="seg" id="sdCandle"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Sector</span><select id="sdSec"></select></div>
+      <input type="search" id="sdq" placeholder="Find symbol">
+    </div>
+  </section>
+
+  <section class="panel" id="sdBuyPanel">
+    <div class="sdhead"><h2>Buyers</h2><span class="row-label" style="margin:0"><span>at or below the lower 2.5 deviation line, stretched furthest first</span></span><span class="count" id="sdBuyCount"></span></div>
+    <div class="tablewrap" style="margin-top:10px"><table><thead><tr id="sdBuyHead"></tr></thead><tbody id="sdBuyRows"></tbody></table></div>
+  </section>
+
+  <section class="panel" id="sdSellPanel">
+    <div class="sdhead"><h2>Sellers</h2><span class="row-label" style="margin:0"><span>at or above the upper 2.5 deviation line, stretched furthest first</span></span><span class="count" id="sdSellCount"></span></div>
+    <div class="tablewrap" style="margin-top:10px"><table><thead><tr id="sdSellHead"></tr></thead><tbody id="sdSellRows"></tbody></table></div>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">How to trade it</p>
+    <div class="howto">
+      <svg viewBox="0 0 420 300" role="img" aria-label="Flat std dev channel: buy between minus 2.5 and minus 4 deviations, target the middle line">
+        <rect x="30" y="196" width="380" height="62" fill="rgba(37,99,235,.18)"/>
+        <line x1="30" y1="40" x2="410" y2="40" stroke="#94a3b8" stroke-dasharray="4 4"/><text x="34" y="34" fill="#cbd5e1">+2.5 sellers zone</text>
+        <line x1="30" y1="126" x2="410" y2="114" stroke="#facc15" stroke-width="2.5"/><text x="34" y="118" fill="#facc15">middle line = target</text>
+        <line x1="30" y1="196" x2="410" y2="196" stroke="#60a5fa" stroke-width="1.5"/><text x="300" y="190" fill="#93c5fd">-2.5</text>
+        <line x1="30" y1="226" x2="410" y2="226" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="3 3"/><text x="300" y="222" fill="#c4b5fd">-3</text>
+        <line x1="30" y1="258" x2="410" y2="258" stroke="#f472b6" stroke-width="1.5"/><text x="300" y="254" fill="#f9a8d4">-4</text>
+        <text x="34" y="276" fill="#93c5fd">buy zone: -2.5 to -4</text>
+        <line x1="30" y1="290" x2="410" y2="290" stroke="#ef4444" stroke-dasharray="4 4"/><text x="250" y="286" fill="#fca5a5">20% disaster stop</text>
+        <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="40,120 60,100 80,130 100,110 120,150 140,170 160,200 175,232 190,220 205,214"/>
+        <circle cx="205" cy="214" r="8" fill="none" stroke="#22c55e" stroke-width="2"/><text x="214" y="236" fill="#86efac">green candle: buy</text>
+        <polyline fill="none" stroke="#86efac" stroke-width="2" stroke-dasharray="5 4" points="205,214 240,190 270,160 300,140 330,122"/>
+        <text x="300" y="150" fill="#86efac">ride back to the line</text>
+      </svg>
+      <ol>
+        <li><b>Buyers only for real trades.</b> Your backtests on 1,755 stocks (2008 to 2026) showed buying at -2.5 in a flat channel and holding to the line won 77% of 3,702 trades, while shorting the top lost money (44% win). Use the Sellers list to take profits or avoid buying, not to short.</li>
+        <li><b>Flat channels first.</b> The best results came from flat channels (slope under 0.15 deviations per 20 bars). Steep down channels can keep falling, so use the Channel filter.</li>
+        <li><b>Wait for a green candle.</b> In your earlier 50 stock tests a confirming close beat buying the first touch (85% vs 77%). Use the Candle filter.</li>
+        <li><b>Target the middle line.</b> The regression line is the exit. Winners took a median of about 35 to 40 days to get there.</li>
+        <li><b>Use a 20% disaster stop.</b> Tight stops at the next band killed the win rate. No stop kept the win rate at 77% but the worst trade lost 90%; a 20% stop dropped it to 68% and capped the worst near 46% (gaps). The Stop column shows 20% under price.</li>
+        <li><b>Beyond -4 is a trend break,</b> not a bigger discount. Those are hidden unless you pick All past 2.5.</li>
+        <li><b>Bands are probability zones, not support.</b> About 1 in 5 trades fell a full extra deviation before working. Size small enough to sit through it.</li>
+      </ol>
+    </div>
+    <p class="note">Channel = regression line over the last 251 daily closes plus or minus the standard deviation of those closes, matching your study on a 1 year daily chart. Deviation numbers can differ slightly from thinkorswim because these prices are split and dividend adjusted. Research tool only, not investment advice.</p>
+  </section>
+  </div>
+
   <footer>Data from Yahoo Finance, refreshed about every 15 minutes during market hours. Daily bars. Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months. Research tool only, not investment advice.</footer>
 </div>
 
 <script>
 const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort:"pass", dir:-1,
   pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any",
+  sdShow:"both", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdSector:"all", sdq:"",
+  sdSort:{buy:"dev", sell:"dev"}, sdDir:{buy:1, sell:-1},
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -431,6 +497,7 @@ function render(){
   renderPullbacks();
   renderTable();
   renderB3();
+  renderSD();
 }
 
 const PB_COLS = [
@@ -505,6 +572,7 @@ function syncSelect(){
   $("pbSec").innerHTML = opts; $("pbSec").value = state.pbSector;
   $("b3Sec").innerHTML = `<option value="all">All sectors</option>` + d.sectors.map(s => `<option value="${s.ticker}">${s.ticker} ${s.name}</option>`).join("");
   $("b3Sec").value = state.b3Sector;
+  $("sdSec").innerHTML = $("b3Sec").innerHTML; $("sdSec").value = state.sdSector;
 }
 
 function seg(id, values, labels, key, after){
@@ -663,8 +731,77 @@ function buildB3Sig(){
   seg("b3Sig", sigs.map(x => x[0]), sigs.map(x => x[1]), "b3Sig", renderB3);
 }
 
+const SD_COLS = side => [
+  ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Deviation", "dev"], ["Yesterday", "dev1"], ["Channel", "angle"],
+  ["Price", "px"], ["Day", "day"], ["Candle", "green"],
+  ...(side === "buy" ? [["-2.5 line", "b25"], ["-4 line", "b4"]] : [["+2.5 line", "u25"], ["+4 line", "u4"]]),
+  ["Middle (target)", "mean"], ["To middle", "to_mean"], ...(side === "buy" ? [["20% stop", "stop"]] : []),
+  ["Vol today", "vol1"], ["Cap", "cap"], ["Top down", "pass"], ["RS", "rs"], ["JT", "jtv"]
+];
+
+function renderSD(){
+  const d = state.data;
+  if (!d.stddev) return;
+  $("sdctx").innerHTML = `<span><b>${(d.scanned_wide || d.scanned).toLocaleString()}</b> stocks checked (price $1.25+, cap $350M+)</span><span>&middot;</span>
+    <span>Data through <b>${d.data_date}</b></span>`;
+  let base = d.stddev.filter(s => s.px >= state.sdPx && s.cap >= state.sdCap && s.vol1 >= state.sdVol);
+  if (state.sdSector !== "all") base = base.filter(s => s.etf === state.sdSector);
+  if (state.sdReg === "flat") base = base.filter(s => s.regime === "Flat");
+  if (state.sdReg === "notdown") base = base.filter(s => !/down/.test(s.regime));
+  if (state.sdCandle === "green") base = base.filter(s => s.green);
+  if (state.sdq) base = base.filter(s => s.t.includes(state.sdq) || s.n.toUpperCase().includes(state.sdq));
+  const inRange = (s, side) => side === "buy"
+    ? (state.sdRange === "zone" ? s.dev <= -2.5 && s.dev >= -4 : s.dev <= -2.5)
+    : (state.sdRange === "zone" ? s.dev >= 2.5 && s.dev <= 4 : s.dev >= 2.5);
+  const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
+  const devCls = v => Math.abs(v) > 4 ? "out" : Math.abs(v) >= 3.5 ? "l4" : Math.abs(v) >= 3 ? "l3" : "l25";
+  const regCls = r => r === "Flat" ? "flat" : /Mild/.test(r) ? "mild" : "steep";
+  for (const side of ["buy", "sell"]) {
+    const P = side === "buy" ? "sdBuy" : "sdSell";
+    $(P + "Panel").hidden = !(state.sdShow === "both" || state.sdShow === side);
+    let rows = base.filter(s => inRange(s, side)).map(s => ({...s, stop: +(s.px * 0.8).toFixed(2), jtv: jtv(s)}));
+    const k = state.sdSort[side], dir = state.sdDir[side];
+    rows.sort((a,b) => {
+      const av = a[k], bv = b[k];
+      const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+      return c !== 0 ? c * dir : a.dev - b.dev;
+    });
+    const cols = SD_COLS(side);
+    $(P + "Head").innerHTML = cols.map(([label,key,al]) =>
+      `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (dir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+    document.querySelectorAll("#" + P + "Head th").forEach(th => th.onclick = () => {
+      if (!th.dataset.k) return;
+      if (state.sdSort[side] === th.dataset.k) state.sdDir[side] *= -1;
+      else { state.sdSort[side] = th.dataset.k; state.sdDir[side] = th.dataset.k === "dev" ? (side === "buy" ? 1 : -1) : -1; }
+      renderSD();
+    });
+    $(P + "Rows").innerHTML = rows.length ? rows.map((s,i) => `
+      <tr class="${side === "buy" && s.regime === "Flat" && s.green ? "best" : ""}">
+        <td class="l">${i+1}</td>
+        <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
+        <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
+        <td><span class="devv ${devCls(s.dev)}">${s.dev > 0 ? "+" : ""}${s.dev.toFixed(2)}</span></td>
+        <td>${s.dev1 > 0 ? "+" : ""}${s.dev1.toFixed(2)}</td>
+        <td><span class="reg ${regCls(s.regime)}" title="slope ${s.angle} deviations per 20 bars">${s.regime}</span></td>
+        <td>$${s.px.toFixed(2)}</td>
+        <td class="${pn(s.day)}">${pct(s.day)}</td>
+        <td>${s.green ? `<span class="zone in">Green</span>` : `<span class="zone out">Red</span>`}</td>
+        ${side === "buy" ? `<td>$${s.b25.toFixed(2)}</td><td>$${s.b4.toFixed(2)}</td>` : `<td>$${s.u25.toFixed(2)}</td><td>$${s.u4.toFixed(2)}</td>`}
+        <td>$${s.mean.toFixed(2)}</td>
+        <td class="${pn(s.to_mean)}">${pct(s.to_mean,1)}</td>
+        ${side === "buy" ? `<td>$${s.stop.toFixed(2)}</td>` : ""}
+        <td>${fmtVol(s.vol1)}</td>
+        <td>${s.cap >= 1 ? "$" + s.cap.toFixed(1) + "B" : "$" + Math.round(s.cap * 1000) + "M"}</td>
+        <td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td>
+        <td><b>${s.rs}</b></td>
+        <td>${jtDots(s)}</td>
+      </tr>`).join("") : `<tr><td colspan="${cols.length}" class="empty">No ${side === "buy" ? "buyers" : "sellers"} match these filters right now.</td></tr>`;
+    $(P + "Count").textContent = `${rows.length} stock${rows.length===1?"":"s"}`;
+  }
+}
+
 function showTab(){
-  const tab = location.hash === "#big3" ? "big3" : "home";
+  const tab = location.hash === "#big3" ? "big3" : location.hash === "#stddev" ? "stddev" : "home";
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== "tab-" + tab);
   document.querySelectorAll(".tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
 }
@@ -705,6 +842,15 @@ seg("b3Zone", ["any","zone"], ["Any","In zone"], "b3Zone", renderB3);
 seg("b3Jt", ["any","dg"], ["Any","Double green"], "b3Jt", renderB3);
 $("b3Sec").onchange = e => { state.b3Sector = e.target.value; renderB3(); };
 $("b3q").oninput = e => { state.b3q = e.target.value.trim().toUpperCase(); renderB3(); };
+seg("sdShow", ["both","buy","sell"], ["Both","Buyers","Sellers"], "sdShow", renderSD);
+seg("sdRange", ["zone","all"], ["2.5 to 4","All past 2.5"], "sdRange", renderSD);
+seg("sdReg", ["any","flat","notdown"], ["Any","Flat","Not falling"], "sdReg", renderSD);
+seg("sdPx", [1.25,4,10], ["$1.25+","$4+","$10+"], "sdPx", renderSD);
+seg("sdCap", [0.35,1,10], ["$350M+","$1B+","$10B+"], "sdCap", renderSD);
+seg("sdVol", [500000,200000,0], ["500K+","200K+","Any"], "sdVol", renderSD);
+seg("sdCandle", ["any","green"], ["Any","Green only"], "sdCandle", renderSD);
+$("sdSec").onchange = e => { state.sdSector = e.target.value; renderSD(); };
+$("sdq").oninput = e => { state.sdq = e.target.value.trim().toUpperCase(); renderSD(); };
 window.addEventListener("hashchange", showTab);
 showTab();
 $("pbSec").onchange = e => { state.pbSector = e.target.value; renderPullbacks(); };

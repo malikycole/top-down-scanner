@@ -38,6 +38,15 @@ Open it with the **Big 3 Squeeze** tab or the link `#big3`. It is a port of the 
 * Columns: Bull score, B3 score (bull minus bear), squeeze length, Trend / Structure / Momentum / Trailing stop labels, histogram, distance from the 21 EMA in ATRs, buy zone (within 1.25 ATR above the 21 EMA), stop (21 EMA), target (21 EMA + 3 ATR), R:R, trailing stop, top down setup score, RS and JT.
 * A How to trade it section at the bottom explains entry, stop, target and exits.
 
+## Std Dev Channel tab
+
+Open it with the **Std Dev Channel** tab or the link `#stddev`. It ports the thinkorswim StandardDeviationChannel with full range on a 1 year daily chart: a regression line over the last 251 closes, plus or minus the standard deviation of those closes (`CHANNEL_BARS` in `scan.py`).
+
+* Uses the CustStdDevScan filters: price $1.25+, market cap $350M+, volume 500K+ (the scan downloads this wider set; Home and Big 3 still use $1B+ and $10+).
+* **Buyers** (top): -2.5 to -4 deviations. **Sellers** (bottom): +2.5 to +4. A Show filter picks either or both.
+* Filters for channel slope (flat, not falling), green candle, price, cap, volume and sector. Columns: deviation today and yesterday, channel slope, bands, middle line (target), distance to it, 20% stop, top down score, RS and JT.
+* How to trade it at the bottom uses the deviation channel backtest results.
+
 Sectors come from the S&P 500 list (GICS) where the stock is in it, the Nasdaq screener sector otherwise, and the best correlated sector ETF if neither has one.
 
 ## Change the settings

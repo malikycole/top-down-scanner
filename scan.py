@@ -31,7 +31,12 @@ MIN_PRICE = 10.0
 MIN_AVG_VOLUME = 1_000_000
 MIN_CORRELATION = 0.50
 MAX_OFF_HIGH = 25.0
+# The Std Dev Channel tab uses the wider thinkorswim CustStdDevScan filters, so the universe
+# is downloaded at these looser limits; everything else only uses the core (MIN_CAP, MIN_PRICE).
+WIDE_MIN_CAP = 350_000_000
+WIDE_MIN_PRICE = 1.25
 MIN_SETUP_TO_LIST = 5  # stocks below this many checks are left out of the JSON
+CHANNEL_BARS = 251     # std dev channel length: a 1 year daily chart, as in thinkorswim
 EMA21_ZONE = 0.01      # current price within 1% of the 21 EMA counts as at the 21 EMA
 MIN_PULLBACK = 0.04    # or a pattern low at least 4% under the prior 10 bar high
 
@@ -90,7 +95,7 @@ def build_universe() -> pd.DataFrame:
         if not any(k in name for k in equity) or any(w in name for w in _NON_EQUITY):
             continue
         cap, price = _num(row.get("marketCap")), _num(row.get("lastsale"))
-        if cap < MIN_CAP or price < MIN_PRICE:
+        if cap < WIDE_MIN_CAP or price < WIDE_MIN_PRICE:
             continue
         ticker = symbol.replace(".", "-")
         etf = gics.get(ticker) or NASDAQ_TO_ETF.get(row.get("sector", ""), "")
@@ -98,7 +103,7 @@ def build_universe() -> pd.DataFrame:
         for junk in (" Common Stock", " Ordinary Shares", " Common Shares", " Class A", " Class B", " Class C"):
             clean = clean.split(junk)[0]
         out.append({"ticker": ticker, "name": clean.strip()[:60], "etf": etf, "cap": cap,
-                    "sp500": ticker in gics})
+                    "sp500": ticker in gics, "core": cap >= MIN_CAP and price >= MIN_PRICE})
     return pd.DataFrame(out).drop_duplicates("ticker").sort_values("cap", ascending=False)
 
 
@@ -111,7 +116,10 @@ def load_universe() -> pd.DataFrame:
             return universe
     except Exception as exc:  # noqa: BLE001  feeds can block cloud runners
         print(f"universe refresh failed, using saved copy: {exc}")
-    return pd.read_csv(UNIVERSE_FILE, keep_default_na=False)
+    saved = pd.read_csv(UNIVERSE_FILE, keep_default_na=False)
+    if "core" not in saved:
+        saved["core"] = True
+    return saved
 
 
 # ---------------------------------------------------------------- data
@@ -301,6 +309,31 @@ def big3(frame: pd.DataFrame) -> dict:
     }
 
 
+def std_channel(frame: pd.DataFrame) -> dict:
+    """Port of the thinkorswim StandardDeviationChannel (fullRange = yes) on a 1 year daily
+    chart: regression line over the last CHANNEL_BARS closes (InertiaAll) plus or minus
+    the population standard deviation of those closes (StDevAll)."""
+    c = frame["Close"].to_numpy()[-CHANNEL_BARS:]
+    x = np.arange(len(c))
+    slope, intercept = np.polyfit(x, c, 1)
+    mean = intercept + slope * x[-1]
+    sd = float(np.std(c))
+    if sd == 0:
+        return {"dev": 0.0}
+    dev = (c[-1] - mean) / sd
+    angle = slope * 20 / sd    # playbook slope: deviations per 20 bars
+    regime = ("Steep up" if angle >= 0.22 else "Mild up" if angle >= 0.15 else
+              "Steep down" if angle <= -0.22 else "Mild down" if angle <= -0.15 else "Flat")
+    o = frame["Open"].to_numpy()
+    return {
+        "dev": round(float(dev), 2), "dev1": round(float((c[-2] - (intercept + slope * x[-2])) / sd), 2),
+        "mean": round(float(mean), 2), "sd": round(sd, 2), "angle": round(float(angle), 3), "regime": regime,
+        "b25": round(float(mean - 2.5 * sd), 2), "b3": round(float(mean - 3 * sd), 2), "b4": round(float(mean - 4 * sd), 2),
+        "u25": round(float(mean + 2.5 * sd), 2), "u4": round(float(mean + 4 * sd), 2),
+        "green": bool(c[-1] > o[-1]), "to_mean": round(float((mean / c[-1] - 1) * 100), 1),
+    }
+
+
 def returns(c: np.ndarray, n: int = 60) -> np.ndarray:
     return c[-n:] / c[-n - 1:-1] - 1
 
@@ -359,7 +392,9 @@ def scan() -> dict:
         if frame is None or len(frame) < 253:
             continue
         c = frame["Close"].to_numpy()
-        all_blends.append(blend(c))
+        core = str(rec.core) in ("True", "true", "1")
+        if core:
+            all_blends.append(blend(c))
         etf = rec.etf if rec.etf in SECTORS else ""
         if not etf:  # unknown sector: assign the sector ETF it moves with most
             fits = {e: corr(*map(returns, aligned_closes(frame, etf_returns[e]))) for e in SECTORS}
@@ -387,8 +422,8 @@ def scan() -> dict:
         passed = int(sum(checks))
         base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
-            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame),
-            "cap": round(float(rec.cap) / 1e9, 1),
+            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame),
+            "cap": round(float(rec.cap) / 1e9, 2), "core": core,
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
             "vs_sec": round((stock_r - etf_r) * 100, 2), "str": round(stock_r * 100, 2),
@@ -405,10 +440,17 @@ def scan() -> dict:
         s["rs"] = int(min(99, max(1, round(pct * 99))))
     # Big 3 tab: every stock in a squeeze or carrying any Big 3 signal, with its top down context
     keep = ("t", "n", "etf", "px", "day", "vs_sec", "rs", "pass", "sec_state", "momo", "wave", "e21d", "cap", "vol")
-    big3_rows = [{**{k: s[k] for k in keep}, **s["b3"]} for s in stocks if s["b3"]["sqz"] or s["b3"]["sig"]]
+    big3_rows = [{**{k: s[k] for k in keep}, **s["b3"]} for s in stocks
+                 if s["core"] and (s["b3"]["sqz"] or s["b3"]["sig"])]
     big3_rows.sort(key=lambda s: (s["bull"], s["score"], s["rs"]), reverse=True)
+    # Std Dev Channel tab: every stock 2.5 or more deviations from its 1 year regression line
+    sd_rows = [{**{k: s[k] for k in keep}, **s["sdc"], "vol1": s["b3"]["vol1"]}
+               for s in stocks if abs(s["sdc"]["dev"]) >= 2.5]
+    sd_rows.sort(key=lambda s: s["dev"])
     for s in stocks:
-        del s["b3"]
+        del s["b3"], s["sdc"]
+    wide_count = len(stocks)
+    stocks = [s for s in stocks if s.pop("core")]
     listed = [s for s in stocks if s["pass"] >= MIN_SETUP_TO_LIST]
     listed.sort(key=lambda s: (s["pass"], s["sec_state"], s["vs_sec"]), reverse=True)
 
@@ -417,7 +459,8 @@ def scan() -> dict:
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "data_date": str(pd.Timestamp(last_bar).date()),
         "seconds": round(time.time() - started, 1),
-        "universe_size": len(universe), "scanned": len(stocks),
+        "universe_size": int(universe["core"].astype(str).isin(["True", "true", "1"]).sum()), "scanned": len(stocks),
+        "scanned_wide": wide_count,
         "settings": {"min_cap": MIN_CAP, "min_price": MIN_PRICE, "min_avg_volume": MIN_AVG_VOLUME,
                      "min_corr": MIN_CORRELATION, "max_off_high": MAX_OFF_HIGH},
         "checks": CHECKS,
@@ -425,7 +468,7 @@ def scan() -> dict:
                    "sma50": round(float(sma50), 2), "sma200": round(float(sma200), 2)},
         "indexes": index_rows, "leader_index": leader_index,
         "sectors": sector_rows, "leader_sector": sector_rows[0]["ticker"],
-        "stocks": listed, "big3": big3_rows,
+        "stocks": listed, "big3": big3_rows, "stddev": sd_rows,
     }
 
 
