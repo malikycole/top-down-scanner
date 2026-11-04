@@ -41,7 +41,9 @@ jobs:
       # so each run restores the latest cache and only looks up what is missing
       - uses: actions/cache@v4
         with:
-          path: options_cache.json
+          path: |
+            options_cache.json
+            tm_history.pkl
           key: options-${{ github.run_id }}
           restore-keys: options-
 

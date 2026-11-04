@@ -421,9 +421,12 @@
 
   <div class="tab" id="tab-stddev" hidden>
   <section class="panel">
-    <p class="row-label">Std Dev Channel <span>1 year daily regression channel (your thinkorswim StandardDeviationChannel, full range): stocks 2.5 to 4 deviations from the line</span></p>
+    <p class="row-label">Std Dev Channel <span>1 year daily regression channel (your 7of9 Custom Standard Deviation / Standard Error Channel): stocks 2.5 to 4 deviations or standard errors from the line</span></p>
     <div class="ctx" id="sdctx"></div>
     <div class="controls" style="margin-top:12px">
+      <div><span class="row-label" style="margin-right:6px">Mode</span><span class="seg" id="sdMode"></span></div>
+      <div id="sdSetupBox"><span class="row-label" style="margin-right:6px">Setup</span><span class="seg" id="sdSetup"></span></div>
+      <div id="sdTrendBox"><span class="row-label" style="margin-right:6px">Uptrend</span><span class="seg" id="sdTrend"></span></div>
       <div><span class="row-label" style="margin-right:6px">Show</span><span class="seg" id="sdShow"></span></div>
       <div><span class="row-label" style="margin-right:6px">Deviation</span><span class="seg" id="sdRange"></span></div>
       <div><span class="row-label" style="margin-right:6px">Channel</span><span class="seg" id="sdReg"></span></div>
@@ -466,10 +469,11 @@
         <li><b>Target the middle line.</b> The regression line is the exit. Winners took a median of about 35 to 40 days to get there.</li>
         <li><b>Use a 20% disaster stop.</b> Tight stops at the next band killed the win rate. No stop kept the win rate at 77% but the worst trade lost 90%; a 20% stop dropped it to 68% and capped the worst near 46% (gaps). The Stop column shows 20% under price.</li>
         <li><b>Beyond -4 is a trend break,</b> not a bigger discount. Those are hidden unless you pick All past 2.5.</li>
+        <li><b>Std Error mode (your uptrend pullback).</b> Standard error measures how far price strays from the line, so in a smooth strong uptrend it shrinks and -2.5 to -4 is a real, rare pullback. Qualified pullback (works in both modes) = line rising with R&sup2; 0.7+, a low in the last 3 days reached -2.5 or lower, no close of the past year under -4 (the levels have held), and today closed up. Target the line, stop just under the -4 line. For the flat channel buyer trade, pick Setup: Any in the zone and Uptrend: Any.</li>
         <li><b>Bands are probability zones, not support.</b> About 1 in 5 trades fell a full extra deviation before working. Size small enough to sit through it.</li>
       </ol>
     </div>
-    <p class="note">Channel = regression line over the last 251 daily closes plus or minus the standard deviation of those closes, matching your study on a 1 year daily chart. Deviation numbers can differ slightly from thinkorswim because these prices are split and dividend adjusted. Options data is Cboe delayed quotes: Liquid options = open interest 500+ at the first expiration 20+ days out, the same rule as your thinkorswim scans. ATM spread is shown for reference; it is only meaningful during market hours. Research tool only, not investment advice.</p>
+    <p class="note">Channel = your 7of9 study on a 1 year daily chart: regression line over the last 251 daily closes plus or minus the standard deviation of those closes (Std Dev mode, StDevAll) or the standard error of the closes around the line (Std Error mode, StErrAll). Deviation = (close minus line) divided by that width, the study's Dev label. The backtest numbers above are for Std Dev mode; Std Error mode is not backtested yet. Deviation numbers can differ slightly from thinkorswim because these prices are split and dividend adjusted. Options data is Cboe delayed quotes: Liquid options = open interest 500+ at the first expiration 20+ days out, the same rule as your thinkorswim scans. ATM spread is shown for reference; it is only meaningful during market hours. Research tool only, not investment advice.</p>
   </section>
   </div>
 
@@ -848,7 +852,7 @@
 <script>
 const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort:"pass", dir:-1,
   pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any",
-  sdShow:"buy", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
+  sdMode:"se", sdSetup:"qual", sdTrend:0.7, sdShow:"buy", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
   sdSort:"stretch", sdDir:-1,
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
@@ -1180,8 +1184,8 @@ function buildB3Sig(){
 
 const SD_COLS = [
   ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Side", "side", "l"], ["Deviation", "stretch"], ["Yesterday", "dev1"], ["Channel", "angle"],
-  ["Price", "px"], ["Day", "day"], ["Candle", "green"], ["2.5 line", "l25"], ["4 line", "l4"],
-  ["Middle (target)", "mean"], ["To middle", "to_mean"], ["20% stop", "stop"],
+  ["Price", "px"], ["Day", "day"], ["Candle", "green"], ["2.5 line", "l25"], ["4 line", "l4"], ["Fit (R&sup2;)", "r2"], ["Low 3 days", "lo3x"], ["Year low close", "minx"],
+  ["Middle (target)", "mean"], ["To middle", "to_mean"], ["Stop", "stop"],
   ["Vol today", "vol1"], ["Cap", "cap"], ["Options", "oi"], ["ATM spread", "spr"], ["Top down", "pass"], ["RS", "rs"], ["JT", "jtv"]
 ];
 const SD_TEXT = {
@@ -1211,13 +1215,28 @@ function renderSD(){
   const regCls = r => r === "Flat" ? "flat" : /Mild/.test(r) ? "mild" : "steep";
   const show = state.sdShow;
   [$("sdTitle").textContent, $("sdSub").textContent] = SD_TEXT[show];
-  let rows = base.filter(s => Math.abs(s.dev) >= 2.5 && Math.abs(s.dev) <= lim)
-    .filter(s => show === "both" || (show === "buy" ? s.dev < 0 : s.dev > 0))
+  if (state.sdMode === "se" && state.sdSetup !== "qual") $("sdSub").textContent = $("sdSub").textContent.replace(/deviation/g, "standard error");
+  const se = state.sdMode === "se";
+
+  // Std Error mode swaps in the standard error deviation and lines; the table code below stays the same
+  base = se ? base.filter(s => s.edev != null).map(s => ({...s, dev: s.edev, dev1: s.edev1, b25: s.eb25, b4: s.eb4, u25: s.eu25, u4: s.eu4, lo3x: s.elow3, minx: s.emin}))
+            : base.map(s => ({...s, lo3x: s.low3, minx: s.dmin}));
+  const qual = state.sdSetup === "qual";
+  if (state.sdTrend > 0) base = base.filter(s => s.angle > 0 && s.r2 >= state.sdTrend);
+  if (state.sdTrend === -1) base = base.filter(s => s.angle > 0);
+  let rows = (qual
+      // qualified: a low of the last 3 days reached -2.5 to -4, every close of the year held above -4,
+      // the close is still near the zone (-4 to -2) and today closed up, turning back toward the line
+      ? base.filter(s => s.lo3x != null && s.lo3x <= -2.5 && s.minx >= -4 && s.dev >= -4 && s.dev <= -2 && s.up)
+      : base.filter(s => Math.abs(s.dev) >= 2.5 && Math.abs(s.dev) <= lim)
+          .filter(s => show === "both" || (show === "buy" ? s.dev < 0 : s.dev > 0)))
     .map(s => {
       const buy = s.dev < 0;
       return {...s, side: buy ? "Buyer" : "Seller", stretch: Math.abs(s.dev), l25: buy ? s.b25 : s.u25, l4: buy ? s.b4 : s.u4,
-              stop: buy ? +(s.px * 0.8).toFixed(2) : null, jtv: jtv(s)};
+              stop: buy ? +(qual ? s.b4 * 0.98 : s.px * 0.8).toFixed(2) : null, jtv: jtv(s)};
     });
+  const unit = se ? "standard errors" : "deviations";
+  if (qual) { $("sdTitle").textContent = `Qualified ${se ? "Std Error" : "Std Dev"} uptrend pullbacks`; $("sdSub").textContent = `uptrend, pulled back to -2.5 to -4 ${unit}, every close held above -4, closing up`; }
   const k = state.sdSort, dir = state.sdDir;
   rows.sort((a,b) => {
     const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
@@ -1234,7 +1253,7 @@ function renderSD(){
   });
   {
     $("sdRows").innerHTML = rows.length ? rows.map((s,i) => `
-      <tr class="${s.dev < 0 && s.regime === "Flat" && s.green ? "best" : ""}">
+      <tr class="${s.dev < 0 && (qual ? s.green : s.regime === "Flat" && s.green) ? "best" : ""}">
         <td class="l">${i+1}</td>
         <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
         <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
@@ -1246,9 +1265,11 @@ function renderSD(){
         <td class="${pn(s.day)}">${pct(s.day)}</td>
         <td>${s.green ? `<span class="zone in">Green</span>` : `<span class="zone out">Red</span>`}</td>
         <td>$${s.l25.toFixed(2)}</td><td>$${s.l4.toFixed(2)}</td>
+        <td title="how tightly price hugs the line; higher = shrunk standard error">${s.r2 != null ? s.r2.toFixed(2) : "&ndash;"}</td>
+        <td>${s.lo3x != null ? s.lo3x.toFixed(2) : "&ndash;"}</td><td class="${s.minx != null && s.minx < -4 ? "neg" : ""}">${s.minx != null ? s.minx.toFixed(2) : "&ndash;"}</td>
         <td>$${s.mean.toFixed(2)}</td>
         <td class="${pn(s.to_mean)}">${pct(s.to_mean,1)}</td>
-        <td>${s.stop != null ? "$" + s.stop.toFixed(2) : "&ndash;"}</td>
+        <td title="${state.sdSetup === "qual" ? "2% under the -4 line" : "20% under price"}">${s.stop != null ? "$" + s.stop.toFixed(2) : "&ndash;"}</td>
         <td>${fmtVol(s.vol1)}</td>
         <td>${s.cap >= 1 ? "$" + s.cap.toFixed(1) + "B" : "$" + Math.round(s.cap * 1000) + "M"}</td>
         <td>${s.opt ? `<span class="zone ${s.liq ? "in" : "out"}" title="open interest at the ${s.exp || ""} expiration">${s.liq ? "Liquid" : "Thin"} ${fmtVol(s.oi || 0).replace("K","K OI").replace("M","M OI")}${(s.oi||0) < 1000 ? " OI" : ""}</span>` : s.opt === false ? `<span class="zone out">None</span>` : "&ndash;"}</td>
@@ -1804,6 +1825,9 @@ seg("b3Zone", ["any","zone"], ["Any","In zone"], "b3Zone", renderB3);
 seg("b3Jt", ["any","dg"], ["Any","Double green"], "b3Jt", renderB3);
 $("b3Sec").onchange = e => { state.b3Sector = e.target.value; renderB3(); };
 $("b3q").oninput = e => { state.b3q = e.target.value.trim().toUpperCase(); renderB3(); };
+seg("sdMode", ["sd","se"], ["Std Dev","Std Error"], "sdMode", renderSD);
+seg("sdSetup", ["qual","zone"], ["Qualified pullback","Any in the zone"], "sdSetup", renderSD);
+seg("sdTrend", [0.7,0.85,-1,0], ["Strong (R&sup2; 0.7+)","Very strong (0.85+)","Any rising","Any"], "sdTrend", renderSD);
 seg("sdShow", ["buy","sell","both"], ["Buyers","Sellers","Both"], "sdShow", renderSD);
 seg("sdRange", ["zone","all"], ["2.5 to 4","All past 2.5"], "sdRange", renderSD);
 seg("sdReg", ["any","flat","rising","falling","notdown"], ["Any","Flat","Rising","Falling","Not falling"], "sdReg", renderSD);

@@ -40,6 +40,7 @@ WIDE_MIN_CAP = 350_000_000
 WIDE_MIN_PRICE = 1.25
 MIN_SETUP_TO_LIST = 5  # stocks below this many checks are left out of the JSON
 OPTIONS_CACHE = ROOT / "options_cache.json"
+TM_CACHE = ROOT / "tm_history.pkl"      # weekly + monthly closes, downloaded once a day
 MAX_OI_FETCH = 400     # open interest lookups per run; the rest wait for the next run (cache)
 MIN_OPT_DTE = 20      # option liquidity is read at the first expiration this many days out
 MIN_OPT_OI = 500       # open interest at that expiration for "liquid options"
@@ -188,6 +189,38 @@ def download_weekly(symbols: list[str], interval: str = "1wk", period: str = "10
             if len(wc) >= 30:
                 out[t] = wc
     return out
+
+
+def tm_history(symbols: list[str], frames: dict) -> tuple[dict, dict]:
+    """Weekly and monthly closes for True Momentum. Downloaded once a day (first run) and cached;
+    later runs only move the live week's and month's close to the latest daily close, which is
+    what a fresh download would return."""
+    import pickle
+    today = str(pd.Timestamp.now(tz="America/New_York").date())
+    weekly = monthly = None
+    if TM_CACHE.exists():
+        try:
+            saved = pickle.loads(TM_CACHE.read_bytes())
+            if saved.get("date") == today:
+                weekly, monthly = saved["w"], saved["m"]
+        except Exception as exc:  # noqa: BLE001
+            print(f"tm cache unreadable: {exc}")
+    missing = [t for t in symbols if weekly is None or t not in weekly]
+    if weekly is None:
+        weekly, monthly = {}, {}
+    if missing:
+        weekly.update(download_weekly(missing))
+        monthly.update(download_weekly(missing, "1mo", "20y"))
+        TM_CACHE.write_bytes(pickle.dumps({"date": today, "w": weekly, "m": monthly}))
+        print(f"tm history: downloaded {len(missing)}")
+    for series in (weekly, monthly):
+        for t, ser in series.items():
+            f = frames.get(t)
+            if f is not None and len(ser):
+                last_day = f.index[-1]
+                if last_day >= ser.index[-1]:          # live bar of this week / month
+                    ser.iloc[-1] = float(f["Close"].iloc[-1])
+    return weekly, monthly
 
 
 # ---------------------------------------------------------------- math
@@ -352,9 +385,10 @@ def big3(frame: pd.DataFrame) -> dict:
 
 
 def std_channel(frame: pd.DataFrame) -> dict:
-    """Port of the thinkorswim StandardDeviationChannel (fullRange = yes) on a 1 year daily
-    chart: regression line over the last CHANNEL_BARS closes (InertiaAll) plus or minus
-    the population standard deviation of those closes (StDevAll)."""
+    """Port of the 7of9 Custom Standard Deviation / Standard Error Channel on a 1 year daily chart:
+    regression line over the last CHANNEL_BARS closes (InertiaAll) plus or minus either the
+    population standard deviation of those closes (StdDev mode, StDevAll) or the standard error
+    of the closes around the line (StdErr mode, StErrAll). Dev label = (close - line) / width."""
     c = frame["Close"].to_numpy()[-CHANNEL_BARS:]
     x = np.arange(len(c))
     slope, intercept = np.polyfit(x, c, 1)
@@ -367,7 +401,29 @@ def std_channel(frame: pd.DataFrame) -> dict:
     regime = ("Steep up" if angle >= 0.22 else "Mild up" if angle >= 0.15 else
               "Steep down" if angle <= -0.22 else "Mild down" if angle <= -0.15 else "Flat")
     o = frame["Open"].to_numpy()
-    return {
+    # StdErr mode: spread of the closes around the line itself, so it shrinks in a smooth trend
+    line = intercept + slope * x
+    resid = c - line
+    se = float(np.sqrt((resid ** 2).sum() / max(1, len(c) - 2)))
+    ss_tot = float(((c - c.mean()) ** 2).sum())
+    r2 = 1 - float((resid ** 2).sum()) / ss_tot if ss_tot > 0 else 0.0
+    lo3 = frame["Low"].to_numpy()[-3:]
+    se_part = {}
+    if se > 0:
+        edev_all = resid / se
+        se_part = {
+            "edev": round(float(edev_all[-1]), 2), "edev1": round(float(edev_all[-2]), 2), "se": round(se, 2),
+            "r2": round(r2, 3), "se_ratio": round(se / sd, 3),
+            "emin": round(float(edev_all.min()), 2),                         # lowest close of the year, in std errors
+            "elow3": round(float(((lo3 - line[-3:]) / se).min()), 2),        # deepest low of the last 3 bars
+            "gain_yr": round(float(slope * (len(c) - 1) / line[0] * 100), 1) if line[0] > 0 else None,
+            "eb25": round(float(mean - 2.5 * se), 2), "eb4": round(float(mean - 4 * se), 2),
+            "eu25": round(float(mean + 2.5 * se), 2), "eu4": round(float(mean + 4 * se), 2),
+            "up": bool(c[-1] > c[-2]),
+        }
+    se_part.update({"r2": round(r2, 3), "dmin": round(float((resid / sd).min()), 2),
+                    "low3": round(float(((lo3 - line[-3:]) / sd).min()), 2), "up": bool(c[-1] > c[-2])})
+    return {**se_part,
         "dev": round(float(dev), 2), "dev1": round(float((c[-2] - (intercept + slope * x[-2])) / sd), 2),
         "mean": round(float(mean), 2), "sd": round(sd, 2), "angle": round(float(angle), 3), "regime": regime,
         "b25": round(float(mean - 2.5 * sd), 2), "b3": round(float(mean - 3 * sd), 2), "b4": round(float(mean - 4 * sd), 2),
@@ -715,8 +771,17 @@ def acdc(frame: pd.DataFrame) -> dict:
     }
 
 
+_OPT_RUN: dict = {}      # per run: Cboe directory, cache and rate limit state shared by every attach_options call
+
+
 def optionable_symbols() -> tuple[set, set]:
     """Every optionable symbol and the ones with weekly options, from Cboe's symbol directory."""
+    if "dir" not in _OPT_RUN:
+        _OPT_RUN["dir"] = _optionable_symbols()
+    return _OPT_RUN["dir"]
+
+
+def _optionable_symbols() -> tuple[set, set]:
     def symbols(url: str) -> set:
         text = _get(url)
         return {line.split('","')[1].strip().replace(".", "-") for line in text.splitlines()[1:] if '","' in line}
@@ -732,12 +797,15 @@ def attach_options(*row_lists: list, limit: int = MAX_OI_FETCH) -> None:
     """Optionable (directory) on every row; open interest from Cboe quotes, fetched slowly to stay
     under Cboe's rate limit and cached for the day (open interest only updates once a day)."""
     listed, weekly = optionable_symbols()
-    cache = {}
-    if OPTIONS_CACHE.exists():
-        saved = json.loads(OPTIONS_CACHE.read_text())
-        if saved.get("date") == str(pd.Timestamp.now().date()):
-            cache = saved["data"]
-    fetched, blocked = 0, False
+    if "cache" not in _OPT_RUN:
+        cache = {}
+        if OPTIONS_CACHE.exists():
+            saved = json.loads(OPTIONS_CACHE.read_text())
+            if saved.get("date") == str(pd.Timestamp.now().date()):
+                cache = saved["data"]
+        _OPT_RUN["cache"], _OPT_RUN["blocked"] = cache, False
+    cache = _OPT_RUN["cache"]
+    fetched, blocked = 0, _OPT_RUN["blocked"]     # once Cboe blocks, later calls skip straight to the cache
     for rows in row_lists:
         for row in rows:
             t = row["t"]
@@ -753,6 +821,7 @@ def attach_options(*row_lists: list, limit: int = MAX_OI_FETCH) -> None:
             if listed:
                 row["opt"] = t in listed
                 row["wk"] = t in weekly
+    _OPT_RUN["blocked"] = blocked
     OPTIONS_CACHE.write_text(json.dumps({"date": str(pd.Timestamp.now().date()), "data": cache}))
     print(f"options: {fetched} fetched, {len(cache)} cached{', stopped by Cboe rate limit' if blocked else ''}")
 
@@ -834,9 +903,18 @@ def aligned_closes(stock: pd.DataFrame, ref: pd.DataFrame) -> tuple[np.ndarray, 
 
 def scan() -> dict:
     started = time.time()
+    mark = [started]
+
+    def lap(name: str) -> None:        # phase timer, printed to the Actions log
+        now = time.time()
+        print(f"[time] {name}: {now - mark[0]:.0f}s", flush=True)
+        mark[0] = now
+
     universe = load_universe()
+    lap("universe")
     etfs = INDEXES + list(SECTORS)
     frames = download(etfs + universe["ticker"].tolist())
+    lap("daily download")
     closes = {t: frames[t]["Close"].to_numpy() for t in etfs if t in frames}
 
     spy = closes["SPY"]
@@ -914,6 +992,7 @@ def scan() -> dict:
             "sec_state": sector_state[etf], "sec_rank": sector_rank[etf],
         })
 
+    lap("per stock studies")
     # RS rating 1 to 99: percentile of each stock's strength across the whole universe
     ranked = np.sort(np.array(all_blends))
     for s in stocks:
@@ -926,7 +1005,8 @@ def scan() -> dict:
     big3_rows.sort(key=lambda s: (s["bull"], s["score"], s["rs"]), reverse=True)
     # Std Dev Channel tab: every stock 2.5 or more deviations from its 1 year regression line
     sd_rows = [{**{k: s[k] for k in keep}, **s["sdc"], "vol1": s["b3"]["vol1"]}
-               for s in stocks if abs(s["sdc"]["dev"]) >= 2.5]
+               for s in stocks if abs(s["sdc"]["dev"]) >= 2.5 or abs(s["sdc"].get("edev", 0)) >= 2.5
+               or s["sdc"].get("elow3", 0) <= -2.5 or s["sdc"].get("low3", 0) <= -2.5]
     sd_rows.sort(key=lambda s: s["dev"])
     # Trendy Edge tab: AC/DC BULL, monthly pocket and weekly push, market cap $1B+ (no price floor)
     acdc_rows = [{**{k: s[k] for k in keep}, **s["acdc"], "vol1": s["b3"]["vol1"]} for s in stocks
@@ -938,7 +1018,9 @@ def scan() -> dict:
                  if s["cap"] >= 0.35 and s["edges"]["tf"]]
     # options: std dev and AC/DC first, then edge setups from the yearly down to the daily
     edge_rows.sort(key=lambda r: [tf in r["ed"]["tf"] for tf in "YMWD"], reverse=True)
+    lap("rows")
     attach_options(sd_rows, acdc_rows, edge_rows)
+    lap("options 1")
     edge_rows.sort(key=lambda r: r["rs"], reverse=True)
     # Moxie tab: daily chart Moxie up (ST_MoxieScan on D), price $1.25+, volume 500K+, then the hourly check
     keep_m = ("t", "n", "etf", "px", "day", "rs", "pass", "sec_state", "momo", "wave", "cap")
@@ -951,22 +1033,24 @@ def scan() -> dict:
     mox_rows = [r for r in mox_rows if r.get("h_scan") or r["d_state"] in (1, 2) or r.get("h_state") in (1, 2)
                 or r["cross"] is not None]
     print(f"moxie: {len(hourly)} hourly checked, {len(mox_rows)} rows")
+    lap("moxie hourly")
     # Squeeze Pro tab: in a squeeze (any level) or fired today, within 15% of the 252 day high
     sqp_rows = [{**{k: s[k] for k in keep_m}, **s["sqp"], "vol1": s["b3"]["vol1"]} for s in stocks
                 if (s["sqp"]["lvl"] > 0 or s["sqp"]["fired"]) and s["sqp"]["off_hi"] <= 15]
     attach_options(sqp_rows)
+    lap("options squeeze pro")
     # Squeeze Ultra tab: in any squeeze or fired today, $10+ and $1B+ (the page filters down to the scan)
     squ_rows = [{**{k: s[k] for k in keep_m}, **s["squ"], "beta": s["sqp"]["beta"], "vol1": s["b3"]["vol1"]} for s in stocks
                 if (s["squ"]["lvl"] > 0 or s["squ"]["fired"]) and s["px"] >= 10 and s["cap"] >= 1]
     # options for the ones that match the ToS scan first (ideal, $20+, $2B+), the rest as the cache allows
     squ_rows.sort(key=lambda r: (r["ideal"] and r["px"] >= 20 and r["cap"] >= 2, r["ideal"], r["cap"]), reverse=True)
     attach_options(squ_rows, limit=150)
+    lap("options squeeze ultra")
     print(f"squeeze ultra: {len(squ_rows)} rows, {sum(r['ideal'] for r in squ_rows)} ideal")
     # True Momentum tab: HiLo PRO X, weekly Trend Oscillator, Structure Score, swing levels. Cap $2B+, $5+
     tm_t = [s for s in stocks if s["cap"] >= 2 and s["px"] >= 5]
     t0 = time.time()
-    weekly = download_weekly([s["t"] for s in tm_t])
-    monthly = download_weekly([s["t"] for s in tm_t], "1mo", "20y")
+    weekly, monthly = tm_history([s["t"] for s in tm_t], frames)
     tm_rows = []
     for s in tm_t:
         if s["t"] not in weekly:
@@ -982,6 +1066,7 @@ def scan() -> dict:
                             "sqp": s["sqp"]["lvl"], "squ": s["squ"]["lvl"], "squ_ideal": s["squ"]["ideal"],
                             "mom_p": s["sqp"]["mom"], "momc_p": s["sqp"]["mom_c"], "mom_u": s["squ"]["mom"], "momc_u": s["squ"]["mom_c"]})
     print(f"true momentum: {len(weekly)} weekly series in {time.time() - t0:.0f}s, {len(tm_rows)} rows")
+    lap("true momentum")
     for s in stocks:
         del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"], s["sqp"], s["squ"]
     wide_count = len(stocks)
