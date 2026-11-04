@@ -614,6 +614,39 @@ def squeeze_pro(frame: pd.DataFrame) -> dict:
             "avgvol": int(frame["Volume"].iloc[-50:].mean())}
 
 
+def squeeze_ultra(frame: pd.DataFrame) -> dict:
+    """Port of ST_SqueezeUltra (daily settings, length 21). Bollinger upper = 21 EMA + 2 population
+    std devs; Keltner upper = 21 SMA + 1.0 / 1.5 / 2.0 times the 21 EMA of true range (3 high, 2 mid,
+    1 low). Momentum = TTM Squeeze histogram (length 21). Ideal squeeze (the IdealSqueezeScan plot):
+    8 > 13 > 21 EMA, the 13 and 21 EMA both rising, and a mid squeeze."""
+    n = 21
+    h, l, c = (frame[k] for k in ("High", "Low", "Close"))
+    tr = pd.concat([h - l, (h - c.shift()).abs(), (l - c.shift()).abs()], axis=1).max(axis=1)
+    e8, e13, e21 = (c.ewm(span=k, adjust=False).mean() for k in (8, 13, 21))
+    bb_up = e21 + 2.0 * c.rolling(n).std(ddof=0)
+    sma = c.rolling(n).mean()
+    shift = tr.ewm(span=n, adjust=False).mean()
+    lvl = np.select([bb_up <= sma + 1.0 * shift, bb_up <= sma + 1.5 * shift, bb_up <= sma + 2.0 * shift], [3, 2, 1], 0)
+    ideal = ((e8 > e13) & (e13 > e21) & (e13 > e13.shift()) & (e21 > e21.shift())).to_numpy() & (lvl == 2)
+    delta = (c - ((h.rolling(n).max() + l.rolling(n).min()) / 2 + e21) / 2).to_numpy()
+    x = np.arange(n)
+    w = (x - x.mean()) / ((x - x.mean()) ** 2).sum()
+    reg_end = lambda y: y.mean() + (n - 1) / 2 * (w * y).sum()   # regression line value at its last bar
+    m, m1 = float(reg_end(delta[-n:])), float(reg_end(delta[-n - 1:-1]))
+    color = ("cyan" if m >= 0 else "yellow") if m > m1 else ("blue" if m >= 0 else "red")
+    run = lambda arr: next((k for k in range(len(arr)) if not arr[len(arr) - 1 - k]), len(arr))
+    cv = c.to_numpy()
+    e21v = float(e21.iloc[-1])
+    s50_all = c.rolling(50).mean().to_numpy()
+    s50, s50_3 = float(s50_all[-1]), s50_all[-3:]
+    respect50 = bool((l.to_numpy()[-3:] <= s50_3 * 1.01).any() and (cv[-3:] >= s50_3).all())
+    return {"lvl": int(lvl[-1]), "lvl1": int(lvl[-2]), "sq_bars": run(lvl > 0), "fired": bool(lvl[-1] == 0 and lvl[-2] > 0),
+            "ideal": bool(ideal[-1]), "ideal_bars": run(ideal), "mom": round(m, 3), "mom_c": color,
+            "e21": round(e21v, 2), "e21d": round((cv[-1] / e21v - 1) * 100, 2),
+            "s50": round(s50, 2), "s50d": round((cv[-1] / s50 - 1) * 100, 2), "resp50": respect50,
+            "avgvol": int(frame["Volume"].iloc[-50:].mean())}
+
+
 def _fib_pocket(bar: pd.Series) -> tuple[float, float, float]:
     """AC/DC levels off one bar: upper = high - 38.2% of range, mid = 50%, lower = 61.8%."""
     h, l = float(bar["High"]), float(bar["Low"])
@@ -671,7 +704,7 @@ def optionable_symbols() -> tuple[set, set]:
         return set(), set()
 
 
-def attach_options(*row_lists: list) -> None:
+def attach_options(*row_lists: list, limit: int = MAX_OI_FETCH) -> None:
     """Optionable (directory) on every row; open interest from Cboe quotes, fetched slowly to stay
     under Cboe's rate limit and cached for the day (open interest only updates once a day)."""
     listed, weekly = optionable_symbols()
@@ -684,7 +717,7 @@ def attach_options(*row_lists: list) -> None:
     for rows in row_lists:
         for row in rows:
             t = row["t"]
-            if t not in cache and listed and t in listed and fetched < MAX_OI_FETCH and not blocked:
+            if t not in cache and listed and t in listed and fetched < limit and not blocked:
                 info = options_info(t)
                 time.sleep(0.4)
                 fetched += 1
@@ -846,7 +879,7 @@ def scan() -> dict:
         passed = int(sum(checks))
         base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
-            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame), "sqp": {**squeeze_pro(frame), "beta": beta_vs(frame, frames["SPY"])},
+            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame), "sqp": {**squeeze_pro(frame), "beta": beta_vs(frame, frames["SPY"])}, "squ": squeeze_ultra(frame),
             "cap": round(float(rec.cap) / 1e9, 2), "core": core,
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
@@ -898,8 +931,15 @@ def scan() -> dict:
     sqp_rows = [{**{k: s[k] for k in keep_m}, **s["sqp"], "vol1": s["b3"]["vol1"]} for s in stocks
                 if (s["sqp"]["lvl"] > 0 or s["sqp"]["fired"]) and s["sqp"]["off_hi"] <= 15]
     attach_options(sqp_rows)
+    # Squeeze Ultra tab: in any squeeze or fired today, $10+ and $1B+ (the page filters down to the scan)
+    squ_rows = [{**{k: s[k] for k in keep_m}, **s["squ"], "beta": s["sqp"]["beta"], "vol1": s["b3"]["vol1"]} for s in stocks
+                if (s["squ"]["lvl"] > 0 or s["squ"]["fired"]) and s["px"] >= 10 and s["cap"] >= 1]
+    # options for the ones that match the ToS scan first (ideal, $20+, $2B+), the rest as the cache allows
+    squ_rows.sort(key=lambda r: (r["ideal"] and r["px"] >= 20 and r["cap"] >= 2, r["ideal"], r["cap"]), reverse=True)
+    attach_options(squ_rows, limit=150)
+    print(f"squeeze ultra: {len(squ_rows)} rows, {sum(r['ideal'] for r in squ_rows)} ideal")
     for s in stocks:
-        del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"], s["sqp"]
+        del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"], s["sqp"], s["squ"]
     wide_count = len(stocks)
     stocks = [s for s in stocks if s.pop("core")]
     listed = [s for s in stocks if s["pass"] >= MIN_SETUP_TO_LIST]
@@ -919,7 +959,7 @@ def scan() -> dict:
                    "sma50": round(float(sma50), 2), "sma200": round(float(sma200), 2)},
         "indexes": index_rows, "leader_index": leader_index,
         "sectors": sector_rows, "leader_sector": sector_rows[0]["ticker"],
-        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows, "moxie": mox_rows, "sqpro": sqp_rows,
+        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows, "moxie": mox_rows, "sqpro": sqp_rows, "squltra": squ_rows,
     }
 
 

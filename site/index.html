@@ -205,6 +205,7 @@
     <a href="#edges" data-tab="edges">Trendy Edge</a>
     <a href="#moxie" data-tab="moxie">Moxie</a>
     <a href="#sqpro" data-tab="sqpro">Squeeze Pro</a>
+    <a href="#squltra" data-tab="squltra">Squeeze Ultra</a>
     <a href="#backtest" data-tab="backtest">Backtests</a>
   </nav>
 
@@ -711,6 +712,66 @@
   </section>
   </div>
 
+  <div class="tab" id="tab-squltra" hidden>
+  <section class="panel">
+    <p class="row-label">Squeeze Ultra <span>your ST_SqueezeUltra IdealSqueezeScan: a mid squeeze inside a rising 8 &gt; 13 &gt; 21 EMA stack</span></p>
+    <div class="ctx" id="suctx"></div>
+    <div class="kpis" id="suKpis"></div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Entry</span><span class="seg" id="suEntry"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Momentum</span><span class="seg" id="suMom"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Options</span><span class="seg" id="suOpt"></span></div>
+    </div>
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Price</span><span class="seg" id="suPx"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Volume</span><span class="seg" id="suVol"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="suCap"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Beta</span><span class="seg" id="suBeta"></span></div>
+      <div><span class="row-label" style="margin-right:6px">JT Trend</span><span class="seg" id="suJt"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Sector</span><select id="suSec"></select></div>
+      <input type="search" id="suq" placeholder="Find symbol">
+      <span class="count" id="suCount"></span>
+    </div>
+    <div class="tablewrap"><table><thead><tr id="suHead"></tr></thead><tbody id="suRows"></tbody></table></div>
+    <p class="note">Defaults follow your thinkorswim SqueezeUltraScan: ideal squeeze on the daily, price $20+, market cap $2B+, options with open interest 500+ at the first expiration 20+ days out, Health Care included. Your scan's volume minimum is 1,052 shares, which lets nearly everything through, so Volume defaults to Any. Squeeze: Bollinger upper band (21 EMA plus 2 std devs) inside the Keltner upper band (21 SMA plus 1.0, 1.5 or 2.0 times the 21 EMA of true range): high (orange), mid (red), low (black). Ideal = 8 EMA above 13 above 21, the 13 and 21 EMA both rising, and a mid squeeze. Ideal column = how many days in a row it has been ideal. 21 EMA entry = price within 1% of the 21 EMA. 50 SMA hold = a low reached the 50 SMA (within 1%) in the last 3 bars and every close held above it.</p>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">How to trade it</p>
+    <div class="howto">
+      <svg viewBox="0 0 420 300" role="img" aria-label="Squeeze Ultra: rising 8, 13 and 21 EMAs, price pulls back to the 21 EMA during a red mid squeeze, then the squeeze fires">
+        <line x1="20" y1="150" x2="410" y2="70" stroke="#22d3ee" stroke-width="2"/><text x="392" y="62" fill="#67e8f9">8</text>
+        <line x1="20" y1="160" x2="410" y2="84" stroke="#4ade80" stroke-width="2"/><text x="388" y="102" fill="#86efac">13</text>
+        <line x1="20" y1="172" x2="410" y2="100" stroke="#facc15" stroke-width="2"/><text x="24" y="188" fill="#facc15">21 EMA</text>
+        <line x1="20" y1="196" x2="410" y2="140" stroke="#a78bfa" stroke-width="2"/><text x="24" y="212" fill="#c4b5fd">50 SMA</text>
+        <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="25,140 55,128 85,120 115,124 140,132 165,128 190,136 215,128 240,134 262,126 285,122 305,104 330,80 360,58 400,32"/>
+        <circle cx="262" cy="126" r="7" fill="none" stroke="#22c55e" stroke-width="2.5"/><text x="200" y="164" fill="#86efac">buy at the 21 EMA</text>
+        <line x1="20" y1="232" x2="410" y2="232" stroke="#334155"/>
+        <g>
+          <circle cx="40" cy="232" r="5" fill="#22c55e"/><circle cx="70" cy="232" r="5" fill="#111" stroke="#cbd5e1"/><circle cx="100" cy="232" r="5" fill="#ef4444"/>
+          <circle cx="130" cy="232" r="5" fill="#ef4444"/><circle cx="160" cy="232" r="5" fill="#ef4444"/><circle cx="190" cy="232" r="5" fill="#ef4444"/>
+          <circle cx="220" cy="232" r="5" fill="#ef4444"/><circle cx="250" cy="232" r="5" fill="#ef4444"/><circle cx="280" cy="232" r="5" fill="#ef4444"/>
+          <circle cx="310" cy="232" r="5" fill="#22c55e"/><circle cx="340" cy="232" r="5" fill="#22c55e"/><circle cx="370" cy="232" r="5" fill="#22c55e"/>
+        </g>
+        <g fill="#fff"><path d="M100 248 l-5 8 h10z"/><path d="M160 248 l-5 8 h10z"/><path d="M220 248 l-5 8 h10z"/><path d="M280 248 l-5 8 h10z"/></g>
+        <text x="24" y="280" fill="#fca5a5">red mid squeeze + rising EMAs = ideal (white arrows)</text><text x="318" y="252" fill="#86efac">fired</text>
+      </svg>
+      <ol>
+        <li><b>Trend first.</b> 8 EMA over 13 over 21, with the 13 and 21 both rising. No stack, no trade.</li>
+        <li><b>The ideal squeeze.</b> A red (mid) squeeze inside that trend. The study prints a white arrow on each ideal bar; the Ideal column counts them.</li>
+        <li><b>Your entry.</b> Buy when price is at the 21 EMA (within 1%), or after a pullback to the 50 SMA that held and is bouncing (Entry filter).</li>
+        <li><b>Momentum.</b> Better when the histogram is cyan (above zero and rising). Blue means it is fading.</li>
+        <li><b>Stop.</b> Under the pullback low at the 21 EMA, or under the 50 SMA pullback low on a 50 SMA entry.</li>
+        <li><b>Target.</b> The move after the squeeze fires (dots turn green). Trail it under the 21 EMA, or take profits when momentum turns dark blue.</li>
+      </ol>
+    </div>
+    <p class="note">Stop, target and exit follow common squeeze practice; your study does not define them. Not backtested yet. Squeeze Pro, its close cousin, trailed random buying in the backtest. Research tool only, not investment advice.</p>
+  </section>
+  </div>
+
   <footer>Data from Yahoo Finance, refreshed about every 15 minutes during market hours. Daily bars. Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months. Research tool only, not investment advice.</footer>
 </div>
 
@@ -722,6 +783,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
+  suLvl:"ideal", suEntry:"either", suMom:"any", suOpt:"liq", suPx:20, suVol:0, suCap:2, suBeta:0, suJt:"any", suSector:"all", suq:"", suSort:"default", suDir:-1,
   sqLvl:"any", sqEntry:"any", sqMom:"any", sqHi:10, sqPx:20, sqVol:150000, sqCap:0.35, sqBeta:0, sqJt:"any", sqSector:"all", sqq:"", sqSort:"default", sqDir:-1,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
@@ -805,6 +867,7 @@ function render(){
   renderTE();
   renderMX();
   renderSQ();
+  renderSU();
 }
 
 const PB_COLS = [
@@ -883,6 +946,7 @@ function syncSelect(){
   $("teSec").innerHTML = $("b3Sec").innerHTML; $("teSec").value = state.teSector;
   $("mxSec").innerHTML = $("b3Sec").innerHTML; $("mxSec").value = state.mxSector;
   $("sqSec").innerHTML = $("b3Sec").innerHTML; $("sqSec").value = state.sqSector;
+  $("suSec").innerHTML = $("b3Sec").innerHTML; $("suSec").value = state.suSector;
 }
 
 function seg(id, values, labels, key, after){
@@ -1474,8 +1538,72 @@ function renderSQ(){
   $("sqCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing 400)":""}`;
 }
 
+const SU_KPI = [["ideal","Ideal squeeze"], ["new","Ideal, new today"], ["any","In a squeeze or fired"], ["3","High (orange)"], ["2","Mid (red)"], ["1","Low (black)"], ["fired","Fired today"]];
+const suLvlMatch = (s, k) => k === "any" ? true : k === "ideal" ? s.ideal : k === "new" ? s.ideal && s.ideal_bars === 1 : k === "fired" ? s.fired : s.lvl === +k;
+
+function suBase(){
+  const d = state.data;
+  let rows = (d.squltra || []).filter(s => s.px >= state.suPx && s.vol1 >= state.suVol && s.cap >= state.suCap);
+  if (state.suSector !== "all") rows = rows.filter(s => s.etf === state.suSector);
+  if (state.suEntry === "e21") rows = rows.filter(s => Math.abs(s.e21d) <= 1);
+  if (state.suEntry === "s50") rows = rows.filter(s => s.resp50);
+  if (state.suEntry === "either") rows = rows.filter(s => Math.abs(s.e21d) <= 1 || s.resp50);
+  if (state.suMom === "pos") rows = rows.filter(s => s.mom > 0);
+  if (state.suMom === "cyan") rows = rows.filter(s => s.mom_c === "cyan");
+  if (state.suOpt === "opt") rows = rows.filter(s => s.opt);
+  if (state.suOpt === "liq") rows = rows.filter(s => s.liq);
+  if (state.suBeta > 0) rows = rows.filter(s => s.beta != null && s.beta >= state.suBeta);
+  if (state.suJt === "dg") rows = rows.filter(s => s.wave === 1);
+  if (state.suq) rows = rows.filter(s => s.t.includes(state.suq) || s.n.toUpperCase().includes(state.suq));
+  return rows;
+}
+
+function renderSU(){
+  const d = state.data;
+  if (!d.squltra) return;
+  const base = suBase();
+  const entryTxt = {any:"any entry", e21:"at the 21 EMA", s50:"holding the 50 SMA", either:"at the 21 EMA or holding the 50 SMA"}[state.suEntry];
+  const optTxt = {any:"", opt:", optionable", liq:", options OI 500+ (20+ DTE)"}[state.suOpt];
+  $("suctx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Price $${state.suPx}+, cap ${capTxt(state.suCap)}+${state.suVol ? ", volume " + fmtVol(state.suVol) + "+" : ""}${optTxt}, ${entryTxt}</span>`;
+  $("suKpis").innerHTML = SU_KPI.map(([k,label]) => `<button class="kpi ${state.suLvl===k?"on":""}" data-k="${k}"><div class="n">${base.filter(s => suLvlMatch(s,k)).length}</div><div class="l">${label}</div></button>`).join("");
+  document.querySelectorAll("#suKpis .kpi").forEach(b => b.onclick = () => { state.suLvl = b.dataset.k; renderSU(); });
+  let rows = base.filter(s => suLvlMatch(s, state.suLvl)).map(s => ({...s, jtv: jtv(s), lvlr: s.fired ? 0.5 : s.lvl, e21abs: Math.abs(s.e21d)}));
+  const cols = [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Squeeze","lvlr","l"],["Ideal","ideal_bars","l"],["Bars","sq_bars"],["Momentum","mom"],["Price","px"],["Day","day"],
+    ["vs 21 EMA","e21abs"],["vs 50 SMA","s50d"],["Entry",null,"l"],["Vol today","vol1"],["Avg vol","avgvol"],["Beta","beta"],["Cap","cap"],["Options","oi_all"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
+  const k = state.suSort;
+  rows.sort((a,b) => {
+    if (k === "default") return (b.ideal - a.ideal) || ((b.mom_c === "cyan") - (a.mom_c === "cyan")) || (a.e21abs - b.e21abs);
+    const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
+    const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return c !== 0 ? c * state.suDir : (b.rs - a.rs);
+  });
+  $("suHead").innerHTML = cols.map(([label,key,al]) => `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (state.suDir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+  document.querySelectorAll("#suHead th").forEach(th => th.onclick = () => {
+    if (!th.dataset.k) return;
+    if (state.suSort === th.dataset.k) state.suDir *= -1; else { state.suSort = th.dataset.k; state.suDir = th.dataset.k === "e21abs" ? 1 : -1; }
+    renderSU();
+  });
+  const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
+  const entry = s => [Math.abs(s.e21d) <= 1 ? `<span class="zone in">21 EMA</span>` : "", s.resp50 ? `<span class="zone in">50 SMA hold</span>` : ""].filter(Boolean).join(" ") || "&ndash;";
+  $("suRows").innerHTML = rows.length ? rows.slice(0, 400).map((s,i) => `
+    <tr class="${s.ideal && (Math.abs(s.e21d) <= 1 || s.resp50) && s.mom_c === "cyan" ? "best" : ""}">
+      <td class="l">${i+1}</td>
+      <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
+      <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
+      <td class="l"><span class="sqd ${s.fired ? "l0" : "l" + s.lvl}"><i></i>${s.fired ? "Fired (was " + SQ_LVL[s.lvl1][0].toLowerCase() + ")" : SQ_LVL[s.lvl][0]}</span></td>
+      <td class="l">${s.ideal ? `<span class="zone in">&#9650; ${s.ideal_bars === 1 ? "new today" : s.ideal_bars + " days"}</span>` : "&ndash;"}</td>
+      <td>${s.fired ? "&ndash;" : s.sq_bars}</td>
+      <td><span class="momc ${s.mom_c}">${s.mom > 0 ? "+" : ""}${s.mom.toFixed(2)} ${s.mom_c === "cyan" || s.mom_c === "yellow" ? "&uarr;" : "&darr;"}</span></td>
+      <td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td class="${Math.abs(s.e21d) <= 1 ? "hit" : ""}">${pct(s.e21d)}</td><td class="${pn(s.s50d)}">${pct(s.s50d)}</td>
+      <td class="l">${entry(s)}</td><td>${fmtVol(s.vol1)}</td><td>${fmtVol(s.avgvol)}</td><td>${s.beta != null ? s.beta.toFixed(2) : "&ndash;"}</td><td>${capTxt(s.cap)}</td><td>${optCell(s)}</td>
+      <td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td><td><b>${s.rs}</b></td><td>${jtDots(s)}</td>
+    </tr>`).join("") : `<tr><td colspan="${cols.length}" class="empty">No stocks match these filters right now. Try Entry: Any, or the In a squeeze card.</td></tr>`;
+  $("suCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing 400)":""}`;
+}
+
 function showTab(){
-  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#moxie":"moxie", "#sqpro":"sqpro", "#backtest":"backtest"}[location.hash] || "home";
+  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#moxie":"moxie", "#sqpro":"sqpro", "#squltra":"squltra", "#backtest":"backtest"}[location.hash] || "home";
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== "tab-" + tab);
   document.querySelectorAll(".tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
 }
@@ -1555,6 +1683,16 @@ seg("sqBeta", [0,1,1.5], ["Any","1+","1.5+"], "sqBeta", renderSQ);
 seg("sqJt", ["any","dg"], ["Any","Double green"], "sqJt", renderSQ);
 $("sqSec").onchange = e => { state.sqSector = e.target.value; renderSQ(); };
 $("sqq").oninput = e => { state.sqq = e.target.value.trim().toUpperCase(); renderSQ(); };
+seg("suEntry", ["either","e21","s50","any"], ["Either","At 21 EMA","50 SMA hold","Any"], "suEntry", renderSU);
+seg("suMom", ["any","pos","cyan"], ["Any","Above zero","Cyan (rising)"], "suMom", renderSU);
+seg("suOpt", ["liq","opt","any"], ["OI 500+","Optionable","Any"], "suOpt", renderSU);
+seg("suPx", [20,10,50], ["$20+","$10+","$50+"], "suPx", renderSU);
+seg("suVol", [0,150000,500000,1000000], ["Any","150K+","500K+","1M+"], "suVol", renderSU);
+seg("suCap", [2,1,10], ["$2B+","$1B+","$10B+"], "suCap", renderSU);
+seg("suBeta", [0,1,1.5], ["Any","1+","1.5+"], "suBeta", renderSU);
+seg("suJt", ["any","dg"], ["Any","Double green"], "suJt", renderSU);
+$("suSec").onchange = e => { state.suSector = e.target.value; renderSU(); };
+$("suq").oninput = e => { state.suq = e.target.value.trim().toUpperCase(); renderSU(); };
 loadBT();
 window.addEventListener("hashchange", showTab);
 showTab();

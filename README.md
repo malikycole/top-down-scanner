@@ -96,3 +96,7 @@ Open it with **Moxie** or `#moxie`. Port of ST_MoxieIndicator and ST_MoxiePriceS
 ## Squeeze Pro tab
 
 Open it with **Squeeze Pro** or `#sqpro`. Port of ST_SqueezePRO: Bollinger (20, 2) upper band inside the Keltner (20) upper band at 1.0 (high), 1.5 (mid) or 2.0 (low), momentum = TTM Squeeze histogram with the study's colors. Defaults: price $20+, volume 150K+, within 10% of the 252 day high with no new high yet. Beta filter (1+, 1.5+): beta against SPY from the last 252 daily returns. Entry filter: at the 21 EMA (within 1%) or a pullback that held the 50 SMA (a low within 1% of it in the last 3 bars, every close above it). Backtested in `backtest/bt_sqpro.py`.
+
+## Squeeze Ultra tab
+
+Open it with **Squeeze Ultra** or `#squltra`. Port of ST_SqueezeUltra's IdealSqueezeScan on the daily (length 21): Bollinger upper = 21 EMA + 2 population std devs, Keltner upper = 21 SMA + 1.0 / 1.5 / 2.0 times the 21 EMA of true range. Ideal = 8 > 13 > 21 EMA, the 13 and 21 EMA rising, and a mid squeeze. Defaults follow the thinkorswim SqueezeUltraScan: price $20+, cap $2B+, options OI 500+ at the first 20+ DTE expiration, Health Care included, entry at the 21 EMA or a 50 SMA hold. The scan's 1,052 share volume minimum is effectively no filter, so Volume defaults to Any. Not backtested yet.
