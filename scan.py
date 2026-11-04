@@ -979,7 +979,8 @@ def scan() -> dict:
         if tm["buy10"] or tm["sell10"] or abs(tm["tm_score"]) >= 40:
             tm_rows.append({**{k: s[k] for k in keep_m}, **tm, "e21d": s["sqp"]["e21d"], "resp50": s["sqp"]["resp50"],
                             "s50d": s["sqp"]["s50d"], "vol1": s["b3"]["vol1"], "beta": s["sqp"]["beta"],
-                            "sqp": s["sqp"]["lvl"], "squ": s["squ"]["lvl"], "squ_ideal": s["squ"]["ideal"]})
+                            "sqp": s["sqp"]["lvl"], "squ": s["squ"]["lvl"], "squ_ideal": s["squ"]["ideal"],
+                            "mom_p": s["sqp"]["mom"], "momc_p": s["sqp"]["mom_c"], "mom_u": s["squ"]["mom"], "momc_u": s["squ"]["mom_c"]})
     print(f"true momentum: {len(weekly)} weekly series in {time.time() - t0:.0f}s, {len(tm_rows)} rows")
     for s in stocks:
         del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"], s["sqp"], s["squ"]

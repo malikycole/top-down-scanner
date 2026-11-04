@@ -792,6 +792,7 @@
     <div class="controls">
       <div><span class="row-label" style="margin-right:6px">Squeeze indicator</span><span class="seg" id="tmSqInd"></span></div>
       <div><span class="row-label" style="margin-right:6px">Squeeze level</span><span class="seg" id="tmSqLvl"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Momentum</span><span class="seg" id="tmMom"></span></div>
       <div><span class="row-label" style="margin-right:6px">Entry</span><span class="seg" id="tmEntry"></span></div>
     </div>
     <div class="controls">
@@ -852,7 +853,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
-  tmScan:"htsq", tmSqInd:"pro", tmSqLvl:"2", tmEntry:"any", tmCap:5, tmPx:5, tmVol:500000, tmJt:"any", tmSector:"all", tmq:"", tmSort:"default", tmDir:-1,
+  tmScan:"htsq", tmSqInd:"pro", tmSqLvl:"2", tmEntry:"any", tmMom:"any", tmCap:5, tmPx:5, tmVol:500000, tmJt:"any", tmSector:"all", tmq:"", tmSort:"default", tmDir:-1,
   suLvl:"ideal", suEntry:"either", suMom:"any", suOpt:"liq", suPx:20, suVol:0, suCap:2, suBeta:0, suJt:"any", suSector:"all", suq:"", suSort:"default", suDir:-1,
   sqLvl:"any", sqEntry:"any", sqMom:"any", sqHi:10, sqPx:20, sqVol:150000, sqCap:0.35, sqBeta:0, sqJt:"any", sqSector:"all", sqq:"", sqSort:"default", sqDir:-1,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
@@ -1700,6 +1701,9 @@ function tmBase(){
   if (state.tmEntry === "s50") rows = rows.filter(s => s.resp50);
   if (state.tmEntry === "either") rows = rows.filter(s => Math.abs(s.e21d) <= 1 || s.resp50);
   if (state.tmJt === "dg") rows = rows.filter(s => s.wave === 1);
+  const tmMom = s => state.tmSqInd === "ultra" ? [s.mom_u, s.momc_u] : [s.mom_p, s.momc_p];
+  if (state.tmMom === "pos") rows = rows.filter(s => tmMom(s)[0] > 0);
+  if (state.tmMom === "cyan") rows = rows.filter(s => tmMom(s)[1] === "cyan");
   if (state.tmq) rows = rows.filter(s => s.t.includes(state.tmq) || s.n.toUpperCase().includes(state.tmq));
   return rows;
 }
@@ -1709,7 +1713,7 @@ function renderTM(){
   if (!d.truemo) return;
   const base = tmBase();
   const sqName = (state.tmSqInd === "ultra" ? "Squeeze Ultra " : "Squeeze Pro ") + {"2":"mid","3":"high","1":"low","mid+":"mid or tighter","any":"any level","ideal": state.tmSqInd === "ultra" ? "ideal" : "mid"}[state.tmSqLvl];
-  $("tmctx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Cap ${capTxt(state.tmCap)}+, price $${state.tmPx}+${state.tmVol ? ", 20 EMA volume " + fmtVol(state.tmVol) + "+" : ""}, squeeze: ${sqName}</span>`;
+  $("tmctx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Cap ${capTxt(state.tmCap)}+, price $${state.tmPx}+${state.tmVol ? ", 20 EMA volume " + fmtVol(state.tmVol) + "+" : ""}, squeeze: ${sqName}${state.tmMom === "pos" ? ", momentum above zero" : state.tmMom === "cyan" ? ", momentum cyan" : ""}</span>`;
   $("tmScans").innerHTML = TM_SCANS.map(([k,t,desc,cl]) => `<button class="tmscan ${cl||""} ${state.tmScan===k?"on":""}" data-k="${k}"><div class="n">${base.filter(s => tmScanMatch(s,k)).length}</div><div class="t">${t}</div><div class="d">${desc}</div></button>`).join("");
   document.querySelectorAll("#tmScans .tmscan").forEach(b => b.onclick = () => { state.tmScan = b.dataset.k; renderTM(); });
   let rows = base.filter(s => tmScanMatch(s, state.tmScan)).map(s => ({...s, jtv: jtv(s), e21abs: Math.abs(s.e21d), to_gap: s.to - s.to_ema,
@@ -1740,8 +1744,8 @@ function renderTM(){
     const lab = s.to_res === 1 ? "Cross up" : s.to_res === -1 ? "Cross down" : s.to_res === 2 ? "Bullish" : s.to_res === -2 ? "Bearish" : "Flat";
     return `<span class="${s.to_res > 0 ? "pos" : "neg"}"><b>${lab}</b></span> ${s.to_ext ? `<span class="tag y">Extreme</span>` : ""}<span class="nm">W ${s.to.toFixed(1)} vs ${s.to_ema.toFixed(1)}${s.to_m != null ? ` · M <b class="${s.to_m_res > 0 ? "pos" : "neg"}">${s.to_m.toFixed(1)} vs ${s.to_m_ema.toFixed(1)}</b>` : ""}</span>`;
   };
-  const sqz = s => [["Pro", s.sqp, false], ["Ultra", s.squ, s.squ_ideal]].map(([n, lv, ideal]) =>
-    `<span class="sqd l${lv}"><i></i>${n} ${lv ? SQ_LVL[lv][0].toLowerCase() : "none"}${ideal ? " &#9650;ideal" : ""}</span>`).join("<br>");
+  const sqz = s => [["Pro", s.sqp, false, s.mom_p, s.momc_p], ["Ultra", s.squ, s.squ_ideal, s.mom_u, s.momc_u]].map(([n, lv, ideal, m, mc]) =>
+    `<span class="sqd l${lv}"><i></i>${n} ${lv ? SQ_LVL[lv][0].toLowerCase() : "none"}${ideal ? " &#9650;ideal" : ""}</span>${m != null ? ` <span class="momc ${mc}">${m > 0 ? "+" : ""}${m.toFixed(2)} ${mc === "cyan" || mc === "yellow" ? "&uarr;" : "&darr;"}</span>` : ""}`).join("<br>");
   const entry = s => [Math.abs(s.e21d) <= 1 ? `<span class="zone in">21 EMA</span>` : "", s.resp50 ? `<span class="zone in">50 SMA hold</span>` : ""].filter(Boolean).join(" ") || "&ndash;";
   $("tmRows").innerHTML = rows.length ? rows.slice(0, 400).map((s,i) => `
     <tr class="${s.tm_score >= 20 && s.buy && s.hl_conf ? "best" : ""}">
@@ -1851,6 +1855,7 @@ $("suSec").onchange = e => { state.suSector = e.target.value; renderSU(); };
 $("suq").oninput = e => { state.suq = e.target.value.trim().toUpperCase(); renderSU(); };
 seg("tmSqInd", ["pro","ultra"], ["Squeeze Pro","Squeeze Ultra"], "tmSqInd", () => { if (state.tmSqInd === "pro" && state.tmSqLvl === "ideal") state.tmSqLvl = "2"; renderTM(); });
 seg("tmSqLvl", ["2","3","1","mid+","any","ideal"], ["Mid (red)","High (orange)","Low (black)","Mid or tighter","Any","Ideal (Ultra)"], "tmSqLvl", () => { if (state.tmSqLvl === "ideal" && state.tmSqInd !== "ultra") { state.tmSqInd = "ultra"; seg("tmSqInd", ["pro","ultra"], ["Squeeze Pro","Squeeze Ultra"], "tmSqInd", renderTM); } renderTM(); });
+seg("tmMom", ["any","pos","cyan"], ["Any","Above zero","Cyan (rising)"], "tmMom", renderTM);
 seg("tmEntry", ["any","e21","s50","either"], ["Any","At 21 EMA","50 SMA hold","Either"], "tmEntry", renderTM);
 seg("tmCap", [5,2,10], ["$5B+","$2B+","$10B+"], "tmCap", renderTM);
 seg("tmPx", [5,10,20], ["$5+","$10+","$20+"], "tmPx", renderTM);
