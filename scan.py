@@ -23,6 +23,8 @@ import numpy as np
 import pandas as pd
 import yfinance as yf
 
+from true_momentum import true_momentum
+
 ROOT = Path(__file__).parent
 SITE = ROOT / "site"
 UNIVERSE_FILE = ROOT / "universe.csv"
@@ -164,6 +166,28 @@ def download(symbols: list[str]) -> dict[str, pd.DataFrame]:
             if len(frame) >= 200:
                 frames[ticker] = frame
     return frames
+
+
+def download_weekly(symbols: list[str], interval: str = "1wk", period: str = "10y") -> dict[str, pd.Series]:
+    """Long weekly (or monthly) closes, the live bar included, for the True Momentum Trend Oscillator,
+    whose 120 week and 21 month EMAs need a long history to settle."""
+    out: dict[str, pd.Series] = {}
+    for start in range(0, len(symbols), 400):
+        batch = symbols[start:start + 400]
+        try:
+            raw = yf.download(batch, period=period, interval=interval, auto_adjust=True,
+                              group_by="ticker", threads=True, progress=False)
+        except Exception as exc:  # noqa: BLE001
+            print(f"weekly batch {start} failed: {exc}")
+            continue
+        for t in batch:
+            try:
+                wc = raw[t]["Close"].dropna()
+            except KeyError:
+                continue
+            if len(wc) >= 30:
+                out[t] = wc
+    return out
 
 
 # ---------------------------------------------------------------- math
@@ -938,6 +962,25 @@ def scan() -> dict:
     squ_rows.sort(key=lambda r: (r["ideal"] and r["px"] >= 20 and r["cap"] >= 2, r["ideal"], r["cap"]), reverse=True)
     attach_options(squ_rows, limit=150)
     print(f"squeeze ultra: {len(squ_rows)} rows, {sum(r['ideal'] for r in squ_rows)} ideal")
+    # True Momentum tab: HiLo PRO X, weekly Trend Oscillator, Structure Score, swing levels. Cap $2B+, $5+
+    tm_t = [s for s in stocks if s["cap"] >= 2 and s["px"] >= 5]
+    t0 = time.time()
+    weekly = download_weekly([s["t"] for s in tm_t])
+    monthly = download_weekly([s["t"] for s in tm_t], "1mo", "20y")
+    tm_rows = []
+    for s in tm_t:
+        if s["t"] not in weekly:
+            continue
+        try:
+            tm = true_momentum(frames[s["t"]], weekly[s["t"]], monthly.get(s["t"]))
+        except Exception as exc:  # noqa: BLE001
+            print(f"true momentum {s['t']}: {exc}")
+            continue
+        if tm["buy10"] or tm["sell10"] or abs(tm["tm_score"]) >= 40:
+            tm_rows.append({**{k: s[k] for k in keep_m}, **tm, "e21d": s["sqp"]["e21d"], "resp50": s["sqp"]["resp50"],
+                            "s50d": s["sqp"]["s50d"], "vol1": s["b3"]["vol1"], "beta": s["sqp"]["beta"],
+                            "sqp": s["sqp"]["lvl"], "squ": s["squ"]["lvl"], "squ_ideal": s["squ"]["ideal"]})
+    print(f"true momentum: {len(weekly)} weekly series in {time.time() - t0:.0f}s, {len(tm_rows)} rows")
     for s in stocks:
         del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"], s["sqp"], s["squ"]
     wide_count = len(stocks)
@@ -959,7 +1002,7 @@ def scan() -> dict:
                    "sma50": round(float(sma50), 2), "sma200": round(float(sma200), 2)},
         "indexes": index_rows, "leader_index": leader_index,
         "sectors": sector_rows, "leader_sector": sector_rows[0]["ticker"],
-        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows, "moxie": mox_rows, "sqpro": sqp_rows, "squltra": squ_rows,
+        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows, "moxie": mox_rows, "sqpro": sqp_rows, "squltra": squ_rows, "truemo": tm_rows,
     }
 
 

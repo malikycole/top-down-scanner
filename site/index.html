@@ -175,6 +175,14 @@
   .bars .val{text-align:right;font-weight:700}
   .grp{display:inline-block;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--chip-text)}
   .grp.Home{background:#38bdf8} .grp.Big3{background:#facc15} .grp.StdDev{background:#a78bfa} .grp.Edge{background:#4ade80} .grp.ACDC{background:#fb923c} .grp.Moxie{background:#f472b6} .grp.SqPro{background:#22d3ee}
+  .tmscans{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:10px}
+  .tmscan{text-align:left;background:var(--panel2,#111827);border:1px solid #334155;border-radius:10px;padding:12px 14px;color:inherit;cursor:pointer;font:inherit}
+  .tmscan:hover{border-color:#64748b}
+  .tmscan.on{border-color:#22d3ee;box-shadow:0 0 0 1px #22d3ee inset;background:rgba(34,211,238,.08)}
+  .tmscan .n{font-size:26px;font-weight:700;line-height:1.1}
+  .tmscan .t{font-weight:700;margin-top:2px}
+  .tmscan .d{font-size:12px;color:#94a3b8;margin-top:4px;line-height:1.35}
+  .tmscan.bear .n{color:#f87171}
   td.small{color:var(--faint)}
   .track-rec{font-size:13px;color:var(--muted);margin-top:8px}
   .track-rec b{color:var(--text)}
@@ -206,6 +214,7 @@
     <a href="#moxie" data-tab="moxie">Moxie</a>
     <a href="#sqpro" data-tab="sqpro">Squeeze Pro</a>
     <a href="#squltra" data-tab="squltra">Squeeze Ultra</a>
+    <a href="#truemo" data-tab="truemo">True Momentum</a>
     <a href="#backtest" data-tab="backtest">Backtests</a>
   </nav>
 
@@ -772,6 +781,66 @@
   </section>
   </div>
 
+  <div class="tab" id="tab-truemo" hidden>
+  <section class="panel">
+    <p class="row-label">True Momentum <span>Simpler Trading's True Momentum scans: HiLo PRO X thrust, Trend Oscillator PRO X, Structure Score and a squeeze. Click a scan.</span></p>
+    <div class="ctx" id="tmctx"></div>
+    <div class="tmscans" id="tmScans"></div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Squeeze indicator</span><span class="seg" id="tmSqInd"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Squeeze level</span><span class="seg" id="tmSqLvl"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Entry</span><span class="seg" id="tmEntry"></span></div>
+    </div>
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="tmCap"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Price</span><span class="seg" id="tmPx"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Volume (20 EMA)</span><span class="seg" id="tmVol"></span></div>
+      <div><span class="row-label" style="margin-right:6px">JT Trend</span><span class="seg" id="tmJt"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Sector</span><select id="tmSec"></select></div>
+      <input type="search" id="tmq" placeholder="Find symbol">
+      <span class="count" id="tmCount"></span>
+    </div>
+    <div class="tablewrap"><table><thead><tr id="tmHead"></tr></thead><tbody id="tmRows"></tbody></table></div>
+    <p class="note">Ported from the course scan studies. HiLo buy = ST_HiLoPRO_X_Scan BuyScan on the daily: an up arrow printed on today's bar. Thrust = direction of the last HiLo arrow; Double = the hidden trigger line agrees (the "Confirmed" label). Trend Oscillator = ST_TrendOscillatorPRO_X_Scan BullishAlignment on weekly bars (lengths 30 and 120): the green line above the red line, not on the bar it crossed. Score = ST_StructureScoreX: Price (21 EMA, 50 and 200 SMA stack plus the 9 / 2.9 ATR trailing stop, max 20) + Trend (max 10) + Thrust (max 10); Bull 20+, Max Bull 40, Bear and Max Bear the same below zero. Max Bull = your Sam Max Bull scan, including the monthly Trend Oscillator (monthly bars, lengths 10 and 21) and a HiLo buy arrow any time in the last 10 days. Max Bear mirrors it (your bear scan was not shared). Score +40 = the Structure Score label. Swing low / high = ST_SwingLevelsPRO (25 bars each side), handy for the stop and the first target. Defaults match your HiLo + TrendOsc + Sqz scan: cap $5B+, price $5+, 20 EMA of volume over 500K, Squeeze Pro mid squeeze. Health Care included.</p>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">How to trade it</p>
+    <div class="howto">
+      <svg viewBox="0 0 420 300" role="img" aria-label="True Momentum: Trend Oscillator green above red above 50, HiLo up arrow with double thrust, squeeze dots red, buy at the 21 EMA with the stop under the swing low">
+        <text x="20" y="18" fill="#94a3b8">Price</text>
+        <line x1="20" y1="34" x2="410" y2="34" stroke="#ef4444" stroke-dasharray="6 4"/><text x="300" y="30" fill="#fca5a5">swing high: target 1</text>
+        <line x1="20" y1="112" x2="410" y2="112" stroke="#22c55e" stroke-dasharray="6 4"/><text x="300" y="126" fill="#86efac">swing low: stop</text>
+        <line x1="20" y1="100" x2="410" y2="60" stroke="#facc15" stroke-width="2"/><text x="24" y="94" fill="#facc15">21 EMA</text>
+        <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="25,96 60,80 95,70 130,78 160,86 190,82 215,88 240,80 262,76 285,70 310,56 340,46 370,40 405,30"/>
+        <circle cx="215" cy="88" r="7" fill="none" stroke="#22c55e" stroke-width="2.5"/><text x="150" y="108" fill="#86efac">buy</text>
+        <text x="20" y="150" fill="#94a3b8">Trend Oscillator (weekly)</text>
+        <line x1="20" y1="196" x2="410" y2="196" stroke="#475569" stroke-dasharray="3 4"/><text x="380" y="192" fill="#64748b">50</text>
+        <polyline fill="none" stroke="#e879f9" stroke-width="2.5" points="20,200 120,196 220,188 320,182 410,176"/>
+        <polyline fill="none" stroke="#22c55e" stroke-width="2.5" points="20,204 80,194 140,180 200,172 260,168 330,160 410,154"/>
+        <text x="250" y="150" fill="#86efac">green over red, both over 50</text>
+        <text x="20" y="226" fill="#94a3b8">HiLo PRO X (daily)</text>
+        <polyline fill="none" stroke="#22c55e" stroke-width="2.5" points="20,282 70,270 120,276 170,286 215,272 260,256 310,244 360,238 410,234"/>
+        <path d="M215 262 l-6 10 h12z" fill="#fff"/><text x="226" y="290" fill="#e5e7eb">up arrow + Double Thrust</text>
+        <g><circle cx="150" cy="246" r="5" fill="#ef4444"/><circle cx="168" cy="246" r="5" fill="#ef4444"/><circle cx="186" cy="246" r="5" fill="#ef4444"/><circle cx="204" cy="246" r="5" fill="#ef4444"/></g>
+        <text x="110" y="250" fill="#fca5a5">mid sqz</text>
+      </svg>
+      <ol>
+        <li><b>Score first.</b> Bull (20+) or Max Bull (40). Price 20 means 21 EMA above 50 above 200 and price above the ATR trailing stop.</li>
+        <li><b>Trend.</b> On the weekly Trend Oscillator the green line sits above the red, both above 50, with a clear gap. Extreme (green over 70) is rare and stretched.</li>
+        <li><b>Thrust.</b> A HiLo up arrow, ideally above 50, with Double Thrust (the hidden trigger agrees). HiLo usually turns before the Trend Oscillator.</li>
+        <li><b>Squeeze.</b> A mid (red) squeeze adds fuel. Switch the indicator to Squeeze Ultra and pick Ideal for its stricter version.</li>
+        <li><b>Entry.</b> Buy at the 21 EMA or on a 50 SMA hold (Entry filter), or on the day of the arrow.</li>
+        <li><b>Stop and target.</b> Stop under the swing low or the ATR trail. First target the swing high. When HiLo shows Extreme, tighten the stop.</li>
+      </ol>
+    </div>
+    <p class="note">Rules above come from the course cheat sheet; it does not define exact stops or targets. Bull Judo and Bear Judo are not here yet; send their scan screens like you did for Max Bull and they become cards. Not backtested yet. Research tool only, not investment advice.</p>
+  </section>
+  </div>
+
   <footer>Data from Yahoo Finance, refreshed about every 15 minutes during market hours. Daily bars. Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months. Research tool only, not investment advice.</footer>
 </div>
 
@@ -783,6 +852,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
+  tmScan:"htsq", tmSqInd:"pro", tmSqLvl:"2", tmEntry:"any", tmCap:5, tmPx:5, tmVol:500000, tmJt:"any", tmSector:"all", tmq:"", tmSort:"default", tmDir:-1,
   suLvl:"ideal", suEntry:"either", suMom:"any", suOpt:"liq", suPx:20, suVol:0, suCap:2, suBeta:0, suJt:"any", suSector:"all", suq:"", suSort:"default", suDir:-1,
   sqLvl:"any", sqEntry:"any", sqMom:"any", sqHi:10, sqPx:20, sqVol:150000, sqCap:0.35, sqBeta:0, sqJt:"any", sqSector:"all", sqq:"", sqSort:"default", sqDir:-1,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
@@ -868,6 +938,7 @@ function render(){
   renderMX();
   renderSQ();
   renderSU();
+  renderTM();
 }
 
 const PB_COLS = [
@@ -947,6 +1018,7 @@ function syncSelect(){
   $("mxSec").innerHTML = $("b3Sec").innerHTML; $("mxSec").value = state.mxSector;
   $("sqSec").innerHTML = $("b3Sec").innerHTML; $("sqSec").value = state.sqSector;
   $("suSec").innerHTML = $("b3Sec").innerHTML; $("suSec").value = state.suSector;
+  $("tmSec").innerHTML = $("b3Sec").innerHTML; $("tmSec").value = state.tmSector;
 }
 
 function seg(id, values, labels, key, after){
@@ -1602,8 +1674,92 @@ function renderSU(){
   $("suCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing 400)":""}`;
 }
 
+const TM_SCANS = [
+  ["htsq", "HiLo + TrendOsc + Squeeze", "HiLo buy arrow today, weekly Trend Oscillator bullish, in the squeeze you pick. Your ToS scan."],
+  ["hsq", "HiLo + Squeeze", "HiLo buy arrow today plus the squeeze you pick. No trend filter."],
+  ["maxbull", "Max Bull", "Your Sam Max Bull scan: Trend Oscillator bullish on weekly and monthly, 21 EMA over 50 over 200, above the ATR trail, HiLo buy in the last 10 days, in the squeeze you pick."],
+  ["score40", "Score +40", "Structure Score at its max: every True Momentum label green."],
+  ["bull", "Bull score + HiLo buy", "Score 20+ and a HiLo buy arrow today."],
+  ["buy", "HiLo buy today", "Every HiLo up arrow on today's bar."],
+  ["maxbear", "Max Bear", "Max Bull flipped: Trend Oscillator bearish weekly and monthly, 21 EMA under 50 under 200, under the ATR trail, HiLo sell in the last 10 days, in the squeeze you pick. For puts or to avoid.", "bear"],
+];
+const tmSqMatch = s => {
+  const lv = state.tmSqInd === "ultra" ? s.squ : s.sqp, k = state.tmSqLvl;
+  return k === "any" ? lv > 0 : k === "mid+" ? lv >= 2 : k === "ideal" ? (state.tmSqInd === "ultra" ? s.squ_ideal : lv === 2) : lv === +k;
+};
+const tmScanMatch = (s, k) => k === "htsq" ? s.buy && s.to_res === 2 && tmSqMatch(s) : k === "hsq" ? s.buy && tmSqMatch(s)
+  : k === "maxbull" ? s.to_res === 2 && s.to_m_res === 2 && s.stack === 1 && s.above_trail && s.buy10 && tmSqMatch(s)
+  : k === "maxbear" ? s.to_res === -2 && s.to_m_res === -2 && s.stack === -1 && !s.above_trail && s.sell10 && tmSqMatch(s)
+  : k === "score40" ? s.tm_score >= 40 : k === "bull" ? s.tm_score >= 20 && s.buy : k === "buy" ? s.buy : true;
+
+function tmBase(){
+  const d = state.data;
+  let rows = (d.truemo || []).filter(s => s.cap >= state.tmCap && s.px >= state.tmPx && s.vol_ema20 >= state.tmVol);
+  if (state.tmSector !== "all") rows = rows.filter(s => s.etf === state.tmSector);
+  if (state.tmEntry === "e21") rows = rows.filter(s => Math.abs(s.e21d) <= 1);
+  if (state.tmEntry === "s50") rows = rows.filter(s => s.resp50);
+  if (state.tmEntry === "either") rows = rows.filter(s => Math.abs(s.e21d) <= 1 || s.resp50);
+  if (state.tmJt === "dg") rows = rows.filter(s => s.wave === 1);
+  if (state.tmq) rows = rows.filter(s => s.t.includes(state.tmq) || s.n.toUpperCase().includes(state.tmq));
+  return rows;
+}
+
+function renderTM(){
+  const d = state.data;
+  if (!d.truemo) return;
+  const base = tmBase();
+  const sqName = (state.tmSqInd === "ultra" ? "Squeeze Ultra " : "Squeeze Pro ") + {"2":"mid","3":"high","1":"low","mid+":"mid or tighter","any":"any level","ideal": state.tmSqInd === "ultra" ? "ideal" : "mid"}[state.tmSqLvl];
+  $("tmctx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Cap ${capTxt(state.tmCap)}+, price $${state.tmPx}+${state.tmVol ? ", 20 EMA volume " + fmtVol(state.tmVol) + "+" : ""}, squeeze: ${sqName}</span>`;
+  $("tmScans").innerHTML = TM_SCANS.map(([k,t,desc,cl]) => `<button class="tmscan ${cl||""} ${state.tmScan===k?"on":""}" data-k="${k}"><div class="n">${base.filter(s => tmScanMatch(s,k)).length}</div><div class="t">${t}</div><div class="d">${desc}</div></button>`).join("");
+  document.querySelectorAll("#tmScans .tmscan").forEach(b => b.onclick = () => { state.tmScan = b.dataset.k; renderTM(); });
+  let rows = base.filter(s => tmScanMatch(s, state.tmScan)).map(s => ({...s, jtv: jtv(s), e21abs: Math.abs(s.e21d), to_gap: s.to - s.to_ema,
+    to_sw: s.sw_lo ? (s.px / s.sw_lo - 1) * 100 : null}));
+  const cols = [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Score","tm_score","l"],["Thrust (HiLo)","hl_d","l"],["Trend Osc (W · M)","to_gap","l"],["Squeeze",null,"l"],
+    ["Price","px"],["Day","day"],["vs 21 EMA","e21abs"],["Entry",null,"l"],["Swing low","sw_lo"],["Swing high","sw_hi"],["ATR trail","atr_trail"],["Vol 20 EMA","vol_ema20"],["Cap","cap"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
+  const k = state.tmSort;
+  rows.sort((a,b) => {
+    if (k === "default") return state.tmScan === "maxbear" ? (a.tm_score - b.tm_score) || (a.rs - b.rs) : state.tmScan === "maxbull" ? (b.buy - a.buy) || (b.tm_score - a.tm_score) || (b.rs - a.rs) : (b.tm_score - a.tm_score) || (b.rs - a.rs);
+    const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
+    const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return c !== 0 ? c * state.tmDir : (b.rs - a.rs);
+  });
+  $("tmHead").innerHTML = cols.map(([label,key,al]) => `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (state.tmDir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+  document.querySelectorAll("#tmHead th").forEach(th => th.onclick = () => {
+    if (!th.dataset.k) return;
+    if (state.tmSort === th.dataset.k) state.tmDir *= -1; else { state.tmSort = th.dataset.k; state.tmDir = th.dataset.k === "e21abs" ? 1 : -1; }
+    renderTM();
+  });
+  const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
+  const scoreTag = s => `<span class="tag ${s.tm_score >= 20 ? "g" : s.tm_score <= -20 ? "r" : "y"}">${s.tm_label} ${s.tm_score > 0 ? "+" : ""}${s.tm_score}</span><span class="nm">Price ${s.tm_price} · Trend ${s.tm_trend} · Thrust ${s.tm_thrust}</span>`;
+  const thrust = s => {
+    const dir = s.thrust === 1 ? "up" : s.thrust === -1 ? "down" : "none";
+    const now = s.buy ? `<span class="zone in">&#9650; buy today</span>` : s.sell ? `<span class="zone out">&#9660; sell today</span>` : `${dir === "up" ? "&#9650;" : dir === "down" ? "&#9660;" : ""} ${s.hl_since != null ? s.hl_since + "d ago" : ""}`;
+    return `${now}${s.hl_conf ? ` <b class="${s.thrust === 1 ? "pos" : "neg"}">Double</b>` : ""}${s.hl_ext ? ` <span class="tag y">Extreme</span>` : ""}<span class="nm">SlowD ${s.hl_d} vs trigger ${s.hl_x}</span>`;
+  };
+  const trend = s => {
+    const lab = s.to_res === 1 ? "Cross up" : s.to_res === -1 ? "Cross down" : s.to_res === 2 ? "Bullish" : s.to_res === -2 ? "Bearish" : "Flat";
+    return `<span class="${s.to_res > 0 ? "pos" : "neg"}"><b>${lab}</b></span> ${s.to_ext ? `<span class="tag y">Extreme</span>` : ""}<span class="nm">W ${s.to.toFixed(1)} vs ${s.to_ema.toFixed(1)}${s.to_m != null ? ` · M <b class="${s.to_m_res > 0 ? "pos" : "neg"}">${s.to_m.toFixed(1)} vs ${s.to_m_ema.toFixed(1)}</b>` : ""}</span>`;
+  };
+  const sqz = s => [["Pro", s.sqp, false], ["Ultra", s.squ, s.squ_ideal]].map(([n, lv, ideal]) =>
+    `<span class="sqd l${lv}"><i></i>${n} ${lv ? SQ_LVL[lv][0].toLowerCase() : "none"}${ideal ? " &#9650;ideal" : ""}</span>`).join("<br>");
+  const entry = s => [Math.abs(s.e21d) <= 1 ? `<span class="zone in">21 EMA</span>` : "", s.resp50 ? `<span class="zone in">50 SMA hold</span>` : ""].filter(Boolean).join(" ") || "&ndash;";
+  $("tmRows").innerHTML = rows.length ? rows.slice(0, 400).map((s,i) => `
+    <tr class="${s.tm_score >= 20 && s.buy && s.hl_conf ? "best" : ""}">
+      <td class="l">${i+1}</td>
+      <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
+      <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
+      <td class="l">${scoreTag(s)}</td><td class="l">${thrust(s)}</td><td class="l">${trend(s)}</td><td class="l">${sqz(s)}</td>
+      <td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td class="${Math.abs(s.e21d) <= 1 ? "hit" : ""}">${pct(s.e21d)}</td><td class="l">${entry(s)}</td>
+      <td>${s.sw_lo != null ? money(s.sw_lo) : "&ndash;"}</td><td>${s.sw_hi != null ? money(s.sw_hi) : "&ndash;"}</td><td>${money(s.atr_trail)}</td>
+      <td>${fmtVol(s.vol_ema20)}</td><td>${capTxt(s.cap)}</td>
+      <td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td><td><b>${s.rs}</b></td><td>${jtDots(s)}</td>
+    </tr>`).join("") : `<tr><td colspan="${cols.length}" class="empty">No stocks match this scan right now. Try a looser squeeze level or a smaller market cap.</td></tr>`;
+  $("tmCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing 400)":""}`;
+}
+
 function showTab(){
-  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#moxie":"moxie", "#sqpro":"sqpro", "#squltra":"squltra", "#backtest":"backtest"}[location.hash] || "home";
+  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#moxie":"moxie", "#sqpro":"sqpro", "#squltra":"squltra", "#truemo":"truemo", "#backtest":"backtest"}[location.hash] || "home";
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== "tab-" + tab);
   document.querySelectorAll(".tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
 }
@@ -1693,6 +1849,15 @@ seg("suBeta", [0,1,1.5], ["Any","1+","1.5+"], "suBeta", renderSU);
 seg("suJt", ["any","dg"], ["Any","Double green"], "suJt", renderSU);
 $("suSec").onchange = e => { state.suSector = e.target.value; renderSU(); };
 $("suq").oninput = e => { state.suq = e.target.value.trim().toUpperCase(); renderSU(); };
+seg("tmSqInd", ["pro","ultra"], ["Squeeze Pro","Squeeze Ultra"], "tmSqInd", () => { if (state.tmSqInd === "pro" && state.tmSqLvl === "ideal") state.tmSqLvl = "2"; renderTM(); });
+seg("tmSqLvl", ["2","3","1","mid+","any","ideal"], ["Mid (red)","High (orange)","Low (black)","Mid or tighter","Any","Ideal (Ultra)"], "tmSqLvl", () => { if (state.tmSqLvl === "ideal" && state.tmSqInd !== "ultra") { state.tmSqInd = "ultra"; seg("tmSqInd", ["pro","ultra"], ["Squeeze Pro","Squeeze Ultra"], "tmSqInd", renderTM); } renderTM(); });
+seg("tmEntry", ["any","e21","s50","either"], ["Any","At 21 EMA","50 SMA hold","Either"], "tmEntry", renderTM);
+seg("tmCap", [5,2,10], ["$5B+","$2B+","$10B+"], "tmCap", renderTM);
+seg("tmPx", [5,10,20], ["$5+","$10+","$20+"], "tmPx", renderTM);
+seg("tmVol", [500000,1000000,0], ["500K+","1M+","Any"], "tmVol", renderTM);
+seg("tmJt", ["any","dg"], ["Any","Double green"], "tmJt", renderTM);
+$("tmSec").onchange = e => { state.tmSector = e.target.value; renderTM(); };
+$("tmq").oninput = e => { state.tmq = e.target.value.trim().toUpperCase(); renderTM(); };
 loadBT();
 window.addEventListener("hashchange", showTab);
 showTab();

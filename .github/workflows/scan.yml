@@ -10,7 +10,7 @@ on:
   # Redeploy right away when the scanner code or page changes
   push:
     branches: [main]
-    paths: ["scan.py", "site/**", "requirements.txt"]
+    paths: ["scan.py", "true_momentum.py", "site/**", "requirements.txt"]
 
 permissions:
   contents: write
