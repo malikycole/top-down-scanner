@@ -175,6 +175,7 @@
   .bars .val{text-align:right;font-weight:700}
   .grp{display:inline-block;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--chip-text)}
   .grp.Home{background:#38bdf8} .grp.Big3{background:#facc15} .grp.StdDev{background:#a78bfa} .grp.Edge{background:#4ade80} .grp.ACDC{background:#fb923c} .grp.Moxie{background:#f472b6} .grp.SqPro{background:#22d3ee}
+  [hidden]{display:none !important}
   .picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:10px}
   .pickc{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
   .pickc.top{border-color:#22c55e;box-shadow:0 0 0 1px #22c55e inset}
@@ -503,6 +504,9 @@
   </section>
 
   <section class="panel">
+    <div class="controls" id="teAcdcCtl" hidden>
+      <div><span class="row-label" style="margin-right:6px">Trend</span><span class="seg" id="teTrend"></span></div>
+    </div>
     <div class="controls" id="teEdgeCtl">
       <div><span class="row-label" style="margin-right:6px">Setup</span><span class="seg" id="teSet"></span></div>
       <div><span class="row-label" style="margin-right:6px">Pattern</span><span class="seg" id="tePat"></span></div>
@@ -876,7 +880,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any",
   sdMode:"se", sdSetup:"qual", sdTrend:0.7, sdShow:"buy", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
   sdSort:"stretch", sdDir:-1,
-  teAcc:0.25, teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
+  teTrend:"any", teAcc:0.25, teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
   b3Opt:"any", mxOpt:"any", sqOpt:"any", tmOpt:"any",
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
@@ -1374,11 +1378,13 @@ function renderTE(){
     `<button data-v="${k}" class="${k===v?"on":""}">${TF_NAME[k]} <b>${counts[k]}</b><small>${TF_SUB[k]}${k!=="ACDC"?", edge reversals":""}</small></button>`).join("");
   document.querySelectorAll("#teView button").forEach(b => b.onclick = () => { state.teView = b.dataset.v; state.teSort = "default"; renderTE(); trackRecords(); });
   $("teEdgeCtl").hidden = acdc;
+  $("teAcdcCtl").hidden = !acdc;
   $("tectx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Health Care included</span><span>&middot;</span><span>Option open interest fills in as Cboe allows (cached for the day)</span>`;
   const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
   let rows, cols;
   if (acdc) {
-    rows = (d.acdc || []).filter(s => s.cap >= state.teCap && teOptPass(s));
+    rows = (d.acdc || []).filter(s => s.cap >= state.teCap && teOptPass(s)
+      && (state.teTrend === "any" || (state.teTrend === "strong" ? s.tlabel === "Strong" : s.tlabel !== "Weak")));
     cols = [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Trend","tstr"],["ADX","adx"],["In pocket","pos"],["Price","px"],["Day","day"],
       ["Month 38.2","m_up"],["Month 50","m_mid"],["Month 61.8","m_lo"],["Last month high","m_hi"],["Week 38.2","w_up"],["Cap","cap"],["Options","oi_all"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
   } else {
@@ -1919,6 +1925,7 @@ seg("sdCandle", ["any","green"], ["Any","Green only"], "sdCandle", renderSD);
 $("sdSec").onchange = e => { state.sdSector = e.target.value; renderSD(); };
 $("sdq").oninput = e => { state.sdq = e.target.value.trim().toUpperCase(); renderSD(); };
 seg("teSet", ["Edge reversal","Edge rejection","Accelerator hold","Breakout retest","all"], ["Edge reversal","Edge rejection","Accelerator hold","Breakout retest","All"], "teSet", renderTE);
+seg("teTrend", ["any","strong","building"], ["Any","Strong","Building or strong"], "teTrend", renderTE);
 seg("teAcc", [0.25,0.1,0.5,1], ["Within 25%","Within 10%","Within 50%","Any"], "teAcc", renderTE);
 seg("tePat", ["any","Minor low","Inside and up"], ["Any","Minor low","Inside and up"], "tePat", renderTE);
 seg("teBn", ["any","agree","noneutral"], ["Any","D W M agree","Skip neutral monthly"], "teBn", renderTE);
