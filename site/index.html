@@ -174,7 +174,7 @@
   .bars .track b{position:absolute;top:2px;height:12px;border-radius:3px}
   .bars .val{text-align:right;font-weight:700}
   .grp{display:inline-block;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--chip-text)}
-  .grp.Home{background:#38bdf8} .grp.Big3{background:#facc15} .grp.StdDev{background:#a78bfa} .grp.Edge{background:#4ade80} .grp.ACDC{background:#fb923c} .grp.Moxie{background:#f472b6}
+  .grp.Home{background:#38bdf8} .grp.Big3{background:#facc15} .grp.StdDev{background:#a78bfa} .grp.Edge{background:#4ade80} .grp.ACDC{background:#fb923c} .grp.Moxie{background:#f472b6} .grp.SqPro{background:#22d3ee}
   td.small{color:var(--faint)}
   .track-rec{font-size:13px;color:var(--muted);margin-top:8px}
   .track-rec b{color:var(--text)}
@@ -707,7 +707,7 @@
         <li><b>Exit.</b> A common rule is out on the second dark blue momentum bar after the fire, or a close under the 21 EMA.</li>
       </ol>
     </div>
-    <p class="note">Stop, target and exit follow common Squeeze Pro practice; your study does not define them, and this setup is not backtested yet. Research tool only, not investment advice.</p>
+    <p class="note">Stop, target and exit follow common Squeeze Pro practice; your study does not define them. Backtest 2008 to 2026 (Backtests tab): with these exits every variant trailed random buying by about 0.5% per trade, most likely because the second dark blue bar exit cuts winners short. Research tool only, not investment advice.</p>
   </section>
   </div>
 
@@ -1240,14 +1240,15 @@ function calcEdges(){
   $("calcText").textContent = z[2];
 }
 
-const BT_GROUP = n => n.startsWith("Pullback") ? "Home" : n.startsWith("Big 3") ? "Big3" : n.startsWith("Std Dev") ? "StdDev" : n.startsWith("Edge") ? "Edge" : n.startsWith("Moxie") ? "Moxie" : "ACDC";
-const BT_GROUP_NAME = {Home:"Home pullbacks", Big3:"Big 3", StdDev:"Std Dev", Edge:"Trendy Edge", ACDC:"AC/DC", Moxie:"Moxie"};
+const BT_GROUP = n => n.startsWith("Pullback") ? "Home" : n.startsWith("Big 3") ? "Big3" : n.startsWith("Std Dev") ? "StdDev" : n.startsWith("Edge") ? "Edge" : n.startsWith("Moxie") ? "Moxie" : n.startsWith("Squeeze Pro") ? "SqPro" : "ACDC";
+const BT_GROUP_NAME = {Home:"Home pullbacks", Big3:"Big 3", StdDev:"Std Dev", Edge:"Trendy Edge", ACDC:"AC/DC", Moxie:"Moxie", SqPro:"Squeeze Pro"};
 const BT_RULES = [
   ["Home pullbacks", "close above the 50 SMA above the 200 SMA. Stop: the page's stop (pattern low, or lowest low of 2 bars for the 21 EMA). Target: 2 times the risk. Time limit 20 days."],
   ["Big 3", "signal on the first day it appears. Stop: a daily close under the 21 EMA (exit next open). Target: 21 EMA + 3 ATR. Time limit 40 days."],
   ["Std Dev", "first day in the -2.5 to -4 zone (1 year regression channel). Target: the middle line. Stop: 20% under entry. Time limit 120 days."],
   ["Trendy Edge", "levels from the prior day, week, month or year. Edge reversal: stop the pattern low, target the upper edge. Edge rejection: stop the wick low, target the decelerator. Accelerator hold: stop a close under the mid, target the upper edge. Breakout retest: stop a close back under the upper edge, no target. Time limit: daily 10, weekly 20, monthly 40, yearly 120 days."],
   ["Moxie", "daily chart Moxie = weekly MACD (12, 26, 9) histogram as it stood that day (no peeking at the week's final close). Trampoline: first close back over the 50 SMA with Moxie up after a close under it; stop the dip low (or a close under the 50 SMA in the 50 SMA stop version); out the day after Moxie closes below zero; 40 day limit. Cross up: Moxie crosses above zero, out when it closes back below; 60 day limit. The hourly trampoline is not tested (free hourly history only covers about 2 years)."],
+  ["Squeeze Pro", "first day of: in a squeeze (Keltner 2.0 or tighter), price $20+, volume 150K+, within 10% of the 252 day high with no new high, plus each variant's filter. Out the next open after a close under the 50 SMA; after the squeeze fires, out after the second dark blue momentum bar or momentum below zero; 60 day limit."],
   ["AC/DC Bull", "first day the monthly pocket and weekly push line up. Stop: a close under the monthly 61.8 line. Target: last month's high. Time limit 40 days. Stop and target are my plan; the scan itself has no exit rules."],
 ];
 let BT = null;
@@ -1326,6 +1327,7 @@ function trackRecords(){
   const v = state.teView;
   put("#tectx", v === "ACDC" ? one("AC/DC Bull", "AC/DC Bull") :
     ["Edge reversal","Edge rejection","Accelerator hold","Breakout retest"].map(n => one(`Edge ${v}: ${n}`, n)).filter(Boolean).join(" · "));
+  put("#sqctx", [one("Squeeze Pro: 21 EMA or 50 SMA", "21 EMA or 50 SMA entry"), one("Squeeze Pro: high squeeze + entry", "High squeeze + entry"), one("Squeeze Pro: entry + beta 1+", "Beta 1+")].filter(Boolean).join(" · "));
   put("#mxctx", [one("Moxie: daily trampoline", "Daily trampoline"), one("Moxie: cross up", "Cross up")].filter(Boolean).join(" · "));
   put("#pbPanel .pbhead .row-label", ["21 EMA","Minor low","Inside and up"].map(n => one(`Pullback: ${n}`, n)).filter(Boolean).join(" · "));
 }
@@ -1533,7 +1535,7 @@ $("teSec").onchange = e => { state.teSector = e.target.value; renderTE(); };
 $("teq").oninput = e => { state.teq = e.target.value.trim().toUpperCase(); renderTE(); };
 ["cH","cL","cP"].forEach(id => $(id).oninput = calcEdges);
 calcEdges();
-seg("btGrp", ["all","Home","Big3","StdDev","Edge","ACDC","Moxie"], ["All","Home","Big 3","Std Dev","Trendy Edge","AC/DC","Moxie"], "btGrp", renderBT);
+seg("btGrp", ["all","Home","Big3","StdDev","Edge","ACDC","Moxie","SqPro"], ["All","Home","Big 3","Std Dev","Trendy Edge","AC/DC","Moxie","Squeeze Pro"], "btGrp", renderBT);
 seg("btRank", ["edge","pf","avg","perday","win"], ["Edge vs random","Profit factor","Avg trade","Per day","Win rate"], "btRank", renderBT);
 seg("btMin", [200,0], ["200+ trades","All"], "btMin", renderBT);
 seg("mxState", ["any","pot","conf"], ["Any","Potential","Trampoline"], "mxState", renderMX);

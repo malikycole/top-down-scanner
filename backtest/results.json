@@ -748,6 +748,153 @@
     "win": 33.5,
     "avg": 1.85
    }
+  },
+  "Squeeze Pro: any squeeze": {
+   "n": 91428,
+   "win": 43.2,
+   "avg": 0.32,
+   "avg_win": 4.8,
+   "avg_loss": -3.09,
+   "pf": 1.18,
+   "bars": 10.4,
+   "worst": -56.2,
+   "best": 193.1,
+   "old": {
+    "n": 37364,
+    "win": 44.4,
+    "avg": 0.34
+   },
+   "new": {
+    "n": 54064,
+    "win": 42.3,
+    "avg": 0.31
+   }
+  },
+  "Squeeze Pro: at 21 EMA": {
+   "n": 80227,
+   "win": 39.9,
+   "avg": 0.29,
+   "avg_win": 4.21,
+   "avg_loss": -2.31,
+   "pf": 1.21,
+   "bars": 9.0,
+   "worst": -48.3,
+   "best": 79.6,
+   "old": {
+    "n": 35343,
+    "win": 41.5,
+    "avg": 0.36
+   },
+   "new": {
+    "n": 44884,
+    "win": 38.7,
+    "avg": 0.24
+   }
+  },
+  "Squeeze Pro: 50 SMA hold": {
+   "n": 53382,
+   "win": 37.6,
+   "avg": 0.31,
+   "avg_win": 5.16,
+   "avg_loss": -2.62,
+   "pf": 1.19,
+   "bars": 9.8,
+   "worst": -44.7,
+   "best": 97.6,
+   "old": {
+    "n": 22889,
+    "win": 39.4,
+    "avg": 0.41
+   },
+   "new": {
+    "n": 30493,
+    "win": 36.2,
+    "avg": 0.23
+   }
+  },
+  "Squeeze Pro: 21 EMA or 50 SMA": {
+   "n": 91859,
+   "win": 40.7,
+   "avg": 0.3,
+   "avg_win": 4.39,
+   "avg_loss": -2.51,
+   "pf": 1.2,
+   "bars": 9.2,
+   "worst": -48.3,
+   "best": 97.6,
+   "old": {
+    "n": 39509,
+    "win": 42.4,
+    "avg": 0.38
+   },
+   "new": {
+    "n": 52350,
+    "win": 39.5,
+    "avg": 0.24
+   }
+  },
+  "Squeeze Pro: entry + cyan momentum": {
+   "n": 36341,
+   "win": 42.6,
+   "avg": 0.31,
+   "avg_win": 4.13,
+   "avg_loss": -2.53,
+   "pf": 1.22,
+   "bars": 8.9,
+   "worst": -39.3,
+   "best": 78.8,
+   "old": {
+    "n": 15596,
+    "win": 44.1,
+    "avg": 0.37
+   },
+   "new": {
+    "n": 20745,
+    "win": 41.6,
+    "avg": 0.27
+   }
+  },
+  "Squeeze Pro: high squeeze + entry": {
+   "n": 9678,
+   "win": 38.9,
+   "avg": 0.46,
+   "avg_win": 5.04,
+   "avg_loss": -2.45,
+   "pf": 1.31,
+   "bars": 10.7,
+   "worst": -31.7,
+   "best": 79.6,
+   "old": {
+    "n": 4267,
+    "win": 41.5,
+    "avg": 0.64
+   },
+   "new": {
+    "n": 5411,
+    "win": 36.8,
+    "avg": 0.32
+   }
+  },
+  "Squeeze Pro: entry + beta 1+": {
+   "n": 41030,
+   "win": 40.3,
+   "avg": 0.41,
+   "avg_win": 5.3,
+   "avg_loss": -2.89,
+   "pf": 1.24,
+   "bars": 9.6,
+   "worst": -44.7,
+   "best": 97.6,
+   "old": {
+    "n": 21162,
+    "win": 41.4,
+    "avg": 0.36
+   },
+   "new": {
+    "n": 19868,
+    "win": 39.1,
+    "avg": 0.46
+   }
   }
  },
  "baseline": {
