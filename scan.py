@@ -13,6 +13,7 @@ Educational research tool only. Not investment advice.
 from __future__ import annotations
 
 import json
+import re
 import time
 from datetime import datetime, timezone
 from io import StringIO
@@ -63,7 +64,13 @@ NASDAQ_TO_ETF = {
 }
 CHECKS = ["Stronger than sector", "Beats sector 1M", "Beats sector 3M", "RS line rising",
           "Trend stack", "Moves with sector", "Near 52w high", "Liquid"]
-_NON_EQUITY = ("warrant", "right", "unit", "depositary", "etf", "fund", "preferred", "notes")
+# Whole word patterns, so names like UnitedHealth, Brighthouse or Fundamental are not caught.
+# The screener lists stocks only; this drops the non stock securities mixed into it.
+_NON_EQUITY = re.compile(
+    r"\bwarrants?\b|\brights?\b|\bunits?\b|\betfs?\b|\bfunds?\b|\bpreferred\b|\bnotes?\b|\bdebentures?\b"
+    r"|\bzones\b|contingent value|%|\bsubordinated\b|\bbaby bonds?\b")
+_ADR = re.compile(r"american deposit[ao]ry|\bads\b|\badss\b|\badr\b|registry shares")
+_PREF_DEPOSITARY = re.compile(r"deposit[ao]ry shares?")
 
 
 # ---------------------------------------------------------------- universe
@@ -88,21 +95,27 @@ def build_universe() -> pd.DataFrame:
     rows = json.loads(_get("https://api.nasdaq.com/api/screener/stocks?tableonly=true&limit=10000&download=true"))["data"]["rows"]
     sp = pd.read_html(StringIO(_get("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")))[0]
     gics = {s.replace(".", "-"): GICS_TO_ETF.get(g, "") for s, g in zip(sp["Symbol"], sp["GICS Sector"])}
-    equity = ("common stock", "ordinary share", "common share", "class a", "class b", "class c")
     out = []
     for row in rows:
         symbol, name = row.get("symbol", ""), row.get("name", "").lower()
-        if not symbol or "^" in symbol or "/" in symbol:
+        if not symbol or "^" in symbol:
             continue
-        if not any(k in name for k in equity) or any(w in name for w in _NON_EQUITY):
+        # Foreign ADRs count as stocks ("right to receive" in their names is not a stock right).
+        # Other depositary shares are U.S. preferreds, skipped with warrants, units, notes and funds.
+        adr = bool(_ADR.search(name))
+        if adr:
+            if re.search(r"\bwarrants?\b|\bpreferred\b|\bnotes?\b|\bunits?\b", name):
+                continue
+        elif _NON_EQUITY.search(name) or _PREF_DEPOSITARY.search(name):
             continue
         cap, price = _num(row.get("marketCap")), _num(row.get("lastsale"))
         if cap < WIDE_MIN_CAP or price < WIDE_MIN_PRICE:
             continue
-        ticker = symbol.replace(".", "-")
+        ticker = symbol.replace(".", "-").replace("/", "-")
         etf = gics.get(ticker) or NASDAQ_TO_ETF.get(row.get("sector", ""), "")
         clean = row.get("name", "")
-        for junk in (" Common Stock", " Ordinary Shares", " Common Shares", " Class A", " Class B", " Class C"):
+        for junk in (" Common Stock", " Ordinary Shares", " Common Shares", " Class A", " Class B", " Class C",
+                     " American Depositary", " American depositary", " Sponsored ADR", " ADS"):
             clean = clean.split(junk)[0]
         out.append({"ticker": ticker, "name": clean.strip()[:60], "etf": etf, "cap": cap,
                     "sp500": ticker in gics, "core": cap >= MIN_CAP and price >= MIN_PRICE})

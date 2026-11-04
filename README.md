@@ -43,10 +43,12 @@ Open it with the **Big 3 Squeeze** tab or the link `#big3`. It is a port of the 
 Open it with the **Std Dev Channel** tab or the link `#stddev`. It ports the thinkorswim StandardDeviationChannel with full range on a 1 year daily chart: a regression line over the last 251 closes, plus or minus the standard deviation of those closes (`CHANNEL_BARS` in `scan.py`).
 
 * Uses the CustStdDevScan filters: price $1.25+, market cap $350M+, volume 500K+ (the scan downloads this wider set; Home and Big 3 still use $1B+ and $10+).
-* **Buyers** (top): -2.5 to -4 deviations. **Sellers** (bottom): +2.5 to +4. A Show filter picks either or both.
+* One table with a Show filter: **Buyers** (-2.5 to -4 deviations, the default), **Sellers** (+2.5 to +4) or Both.
 * Options from Cboe delayed quotes: Optionable, and Liquid options = open interest 500+ at the first expiration 20+ days out (MIN_OPT_OI, MIN_OPT_DTE). ATM call spread shown for reference.
 * Filters for channel slope (flat, rising, falling, not falling), green candle, price, cap, volume and sector. Columns: deviation today and yesterday, channel slope, bands, middle line (target), distance to it, 20% stop, top down score, RS and JT.
 * How to trade it at the bottom uses the deviation channel backtest results.
+
+The universe is every U.S. listed stock in the Nasdaq screener, foreign ADRs included, minus warrants, units, rights, preferreds, notes, funds and ETFs (whole word matching, so names like UnitedHealth are kept).
 
 Sectors come from the S&P 500 list (GICS) where the stock is in it, the Nasdaq screener sector otherwise, and the best correlated sector ETF if neither has one.
 

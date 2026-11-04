@@ -371,14 +371,9 @@
     </div>
   </section>
 
-  <section class="panel" id="sdBuyPanel">
-    <div class="sdhead"><h2>Buyers</h2><span class="row-label" style="margin:0"><span>at or below the lower 2.5 deviation line, stretched furthest first</span></span><span class="count" id="sdBuyCount"></span></div>
-    <div class="tablewrap" style="margin-top:10px"><table><thead><tr id="sdBuyHead"></tr></thead><tbody id="sdBuyRows"></tbody></table></div>
-  </section>
-
-  <section class="panel" id="sdSellPanel">
-    <div class="sdhead"><h2>Sellers</h2><span class="row-label" style="margin:0"><span>at or above the upper 2.5 deviation line, stretched furthest first</span></span><span class="count" id="sdSellCount"></span></div>
-    <div class="tablewrap" style="margin-top:10px"><table><thead><tr id="sdSellHead"></tr></thead><tbody id="sdSellRows"></tbody></table></div>
+  <section class="panel">
+    <div class="sdhead"><h2 id="sdTitle">Buyers</h2><span class="row-label" style="margin:0"><span id="sdSub"></span></span><span class="count" id="sdCount"></span></div>
+    <div class="tablewrap" style="margin-top:10px"><table><thead><tr id="sdHead"></tr></thead><tbody id="sdRows"></tbody></table></div>
   </section>
 
   <section class="panel">
@@ -418,8 +413,8 @@
 <script>
 const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort:"pass", dir:-1,
   pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any",
-  sdShow:"both", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
-  sdSort:{buy:"dev", sell:"dev"}, sdDir:{buy:1, sell:-1},
+  sdShow:"buy", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
+  sdSort:"stretch", sdDir:-1,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -732,13 +727,17 @@ function buildB3Sig(){
   seg("b3Sig", sigs.map(x => x[0]), sigs.map(x => x[1]), "b3Sig", renderB3);
 }
 
-const SD_COLS = side => [
-  ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Deviation", "dev"], ["Yesterday", "dev1"], ["Channel", "angle"],
-  ["Price", "px"], ["Day", "day"], ["Candle", "green"],
-  ...(side === "buy" ? [["-2.5 line", "b25"], ["-4 line", "b4"]] : [["+2.5 line", "u25"], ["+4 line", "u4"]]),
-  ["Middle (target)", "mean"], ["To middle", "to_mean"], ...(side === "buy" ? [["20% stop", "stop"]] : []),
+const SD_COLS = [
+  ["#", null, "l"], ["Symbol", "t", "l"], ["Sector", "etf", "l"], ["Side", "side", "l"], ["Deviation", "stretch"], ["Yesterday", "dev1"], ["Channel", "angle"],
+  ["Price", "px"], ["Day", "day"], ["Candle", "green"], ["2.5 line", "l25"], ["4 line", "l4"],
+  ["Middle (target)", "mean"], ["To middle", "to_mean"], ["20% stop", "stop"],
   ["Vol today", "vol1"], ["Cap", "cap"], ["Options", "oi"], ["ATM spread", "spr"], ["Top down", "pass"], ["RS", "rs"], ["JT", "jtv"]
 ];
+const SD_TEXT = {
+  buy: ["Buyers", "at or below the lower 2.5 deviation line, stretched furthest first"],
+  sell: ["Sellers", "at or above the upper 2.5 deviation line, stretched furthest first"],
+  both: ["Buyers and sellers", "everything 2.5 or more deviations from the line, stretched furthest first"]
+};
 
 function renderSD(){
   const d = state.data;
@@ -755,46 +754,50 @@ function renderSD(){
   if (state.sdOpt === "liq") base = base.filter(s => s.liq);
   if (state.sdCandle === "green") base = base.filter(s => s.green);
   if (state.sdq) base = base.filter(s => s.t.includes(state.sdq) || s.n.toUpperCase().includes(state.sdq));
-  const inRange = (s, side) => side === "buy"
-    ? (state.sdRange === "zone" ? s.dev <= -2.5 && s.dev >= -4 : s.dev <= -2.5)
-    : (state.sdRange === "zone" ? s.dev >= 2.5 && s.dev <= 4 : s.dev >= 2.5);
+  const lim = state.sdRange === "zone" ? 4 : Infinity;
   const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
   const devCls = v => Math.abs(v) > 4 ? "out" : Math.abs(v) >= 3.5 ? "l4" : Math.abs(v) >= 3 ? "l3" : "l25";
   const regCls = r => r === "Flat" ? "flat" : /Mild/.test(r) ? "mild" : "steep";
-  for (const side of ["buy", "sell"]) {
-    const P = side === "buy" ? "sdBuy" : "sdSell";
-    $(P + "Panel").hidden = !(state.sdShow === "both" || state.sdShow === side);
-    let rows = base.filter(s => inRange(s, side)).map(s => ({...s, stop: +(s.px * 0.8).toFixed(2), jtv: jtv(s)}));
-    const k = state.sdSort[side], dir = state.sdDir[side];
-    rows.sort((a,b) => {
-      const av = a[k], bv = b[k];
-      const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
-      return c !== 0 ? c * dir : a.dev - b.dev;
+  const show = state.sdShow;
+  [$("sdTitle").textContent, $("sdSub").textContent] = SD_TEXT[show];
+  let rows = base.filter(s => Math.abs(s.dev) >= 2.5 && Math.abs(s.dev) <= lim)
+    .filter(s => show === "both" || (show === "buy" ? s.dev < 0 : s.dev > 0))
+    .map(s => {
+      const buy = s.dev < 0;
+      return {...s, side: buy ? "Buyer" : "Seller", stretch: Math.abs(s.dev), l25: buy ? s.b25 : s.u25, l4: buy ? s.b4 : s.u4,
+              stop: buy ? +(s.px * 0.8).toFixed(2) : null, jtv: jtv(s)};
     });
-    const cols = SD_COLS(side);
-    $(P + "Head").innerHTML = cols.map(([label,key,al]) =>
-      `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (dir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
-    document.querySelectorAll("#" + P + "Head th").forEach(th => th.onclick = () => {
-      if (!th.dataset.k) return;
-      if (state.sdSort[side] === th.dataset.k) state.sdDir[side] *= -1;
-      else { state.sdSort[side] = th.dataset.k; state.sdDir[side] = th.dataset.k === "dev" ? (side === "buy" ? 1 : -1) : -1; }
-      renderSD();
-    });
-    $(P + "Rows").innerHTML = rows.length ? rows.map((s,i) => `
-      <tr class="${side === "buy" && s.regime === "Flat" && s.green ? "best" : ""}">
+  const k = state.sdSort, dir = state.sdDir;
+  rows.sort((a,b) => {
+    const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
+    const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return c !== 0 ? c * dir : b.stretch - a.stretch;
+  });
+  $("sdHead").innerHTML = SD_COLS.map(([label,key,al]) =>
+    `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (dir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+  document.querySelectorAll("#sdHead th").forEach(th => th.onclick = () => {
+    if (!th.dataset.k) return;
+    if (state.sdSort === th.dataset.k) state.sdDir *= -1;
+    else { state.sdSort = th.dataset.k; state.sdDir = -1; }
+    renderSD();
+  });
+  {
+    $("sdRows").innerHTML = rows.length ? rows.map((s,i) => `
+      <tr class="${s.dev < 0 && s.regime === "Flat" && s.green ? "best" : ""}">
         <td class="l">${i+1}</td>
         <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
         <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
+        <td class="l"><span class="zone ${s.dev < 0 ? "in" : "out"}">${s.side}</span></td>
         <td><span class="devv ${devCls(s.dev)}">${s.dev > 0 ? "+" : ""}${s.dev.toFixed(2)}</span></td>
         <td>${s.dev1 > 0 ? "+" : ""}${s.dev1.toFixed(2)}</td>
         <td><span class="reg ${regCls(s.regime)}" title="slope ${s.angle} deviations per 20 bars">${s.regime}</span></td>
         <td>$${s.px.toFixed(2)}</td>
         <td class="${pn(s.day)}">${pct(s.day)}</td>
         <td>${s.green ? `<span class="zone in">Green</span>` : `<span class="zone out">Red</span>`}</td>
-        ${side === "buy" ? `<td>$${s.b25.toFixed(2)}</td><td>$${s.b4.toFixed(2)}</td>` : `<td>$${s.u25.toFixed(2)}</td><td>$${s.u4.toFixed(2)}</td>`}
+        <td>$${s.l25.toFixed(2)}</td><td>$${s.l4.toFixed(2)}</td>
         <td>$${s.mean.toFixed(2)}</td>
         <td class="${pn(s.to_mean)}">${pct(s.to_mean,1)}</td>
-        ${side === "buy" ? `<td>$${s.stop.toFixed(2)}</td>` : ""}
+        <td>${s.stop != null ? "$" + s.stop.toFixed(2) : "&ndash;"}</td>
         <td>${fmtVol(s.vol1)}</td>
         <td>${s.cap >= 1 ? "$" + s.cap.toFixed(1) + "B" : "$" + Math.round(s.cap * 1000) + "M"}</td>
         <td>${s.opt ? `<span class="zone ${s.liq ? "in" : "out"}" title="open interest at the ${s.exp || ""} expiration">${s.liq ? "Liquid" : "Thin"} ${fmtVol(s.oi || 0).replace("K","K OI").replace("M","M OI")}${(s.oi||0) < 1000 ? " OI" : ""}</span>` : s.opt === false ? `<span class="zone out">None</span>` : "&ndash;"}</td>
@@ -802,8 +805,8 @@ function renderSD(){
         <td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td>
         <td><b>${s.rs}</b></td>
         <td>${jtDots(s)}</td>
-      </tr>`).join("") : `<tr><td colspan="${cols.length}" class="empty">No ${side === "buy" ? "buyers" : "sellers"} match these filters right now.</td></tr>`;
-    $(P + "Count").textContent = `${rows.length} stock${rows.length===1?"":"s"}`;
+      </tr>`).join("") : `<tr><td colspan="${SD_COLS.length}" class="empty">No stocks match these filters right now.</td></tr>`;
+    $("sdCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}`;
   }
 }
 
@@ -849,7 +852,7 @@ seg("b3Zone", ["any","zone"], ["Any","In zone"], "b3Zone", renderB3);
 seg("b3Jt", ["any","dg"], ["Any","Double green"], "b3Jt", renderB3);
 $("b3Sec").onchange = e => { state.b3Sector = e.target.value; renderB3(); };
 $("b3q").oninput = e => { state.b3q = e.target.value.trim().toUpperCase(); renderB3(); };
-seg("sdShow", ["both","buy","sell"], ["Both","Buyers","Sellers"], "sdShow", renderSD);
+seg("sdShow", ["buy","sell","both"], ["Buyers","Sellers","Both"], "sdShow", renderSD);
 seg("sdRange", ["zone","all"], ["2.5 to 4","All past 2.5"], "sdRange", renderSD);
 seg("sdReg", ["any","flat","rising","falling","notdown"], ["Any","Flat","Rising","Falling","Not falling"], "sdReg", renderSD);
 seg("sdOpt", ["any","opt","liq"], ["Any","Optionable","Liquid options"], "sdOpt", renderSD);
