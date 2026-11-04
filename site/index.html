@@ -162,6 +162,23 @@
   .setgrid figcaption b{color:var(--text);display:block;font-size:13px;margin-bottom:4px}
   .setgrid svg{width:100%;height:auto;display:block;margin-bottom:6px}
   @media (max-width:700px){ .calc,.calcout{grid-template-columns:1fr} }
+  .btcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:12px}
+  .btcard{background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:10px;padding:12px 14px}
+  .btcard .l{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .btcard .v{font-size:18px;font-weight:800;margin:4px 0 2px}
+  .btcard .s{font-size:13px;color:var(--muted)}
+  .bars{display:grid;grid-template-columns:minmax(150px,260px) 1fr 70px;gap:5px 10px;align-items:center;font-size:13px}
+  .bars .nm2{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bars .track{position:relative;height:16px;background:#162033;border-radius:4px}
+  .bars .track .zero{position:absolute;top:-3px;bottom:-3px;width:1px;background:#64748b}
+  .bars .track b{position:absolute;top:2px;height:12px;border-radius:3px}
+  .bars .val{text-align:right;font-weight:700}
+  .grp{display:inline-block;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--chip-text)}
+  .grp.Home{background:#38bdf8} .grp.Big3{background:#facc15} .grp.StdDev{background:#a78bfa} .grp.Edge{background:#4ade80} .grp.ACDC{background:#fb923c}
+  td.small{color:var(--faint)}
+  .track-rec{font-size:13px;color:var(--muted);margin-top:8px}
+  .track-rec b{color:var(--text)}
+  .track-rec a{color:var(--accent);text-decoration:none}
 </style>
 </head>
 <body>
@@ -179,6 +196,7 @@
     <a href="#big3" data-tab="big3">Big 3 Squeeze</a>
     <a href="#stddev" data-tab="stddev">Std Dev Channel</a>
     <a href="#edges" data-tab="edges">Trendy Edge</a>
+    <a href="#backtest" data-tab="backtest">Backtests</a>
   </nav>
 
   <div class="tab" id="tab-home">
@@ -538,6 +556,34 @@
   </section>
   </div>
 
+  <div class="tab" id="tab-backtest" hidden>
+  <section class="panel">
+    <p class="row-label">Backtests <span id="btMeta"></span></p>
+    <div class="btcards" id="btCards"></div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Group</span><span class="seg" id="btGrp"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Rank by</span><span class="seg" id="btRank"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Sample</span><span class="seg" id="btMin"></span></div>
+    </div>
+    <p class="row-label" id="btChartLbl"></p>
+    <div class="bars" id="btBars"></div>
+  </section>
+
+  <section class="panel">
+    <div class="tablewrap"><table><thead><tr id="btHead"></tr></thead><tbody id="btRows"></tbody></table></div>
+    <p class="note">Edge vs random = the setup's average trade minus what buying on a random day earned over the same number of days on the same stocks. It removes market drift and the survivorship of today's stock list, so it is the fairest single number here. Avg return is per trade, from the next day's open to the exit. Profit factor = total gains divided by total losses (above 1 makes money, above 1.5 is strong). Grey rows have fewer than 200 trades. 2008 to 2017 and 2018 to 2026 show whether the edge held up in recent years.</p>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">How each setup was tested</p>
+    <div class="legend" id="btRules"></div>
+    <p class="note">All trades: entry at the next day's open after the signal, one trade at a time per stock per setup, stops checked on the low and targets on the high (if one day hits both, the stop counts first), no commissions or slippage. The stock list is today's 1,755 U.S. stocks worth $2B or more, so stocks that went bust are missing and long results lean optimistic. Top down filters (sector strength, RS) are not applied: each setup is tested on its own. Not investment advice.</p>
+  </section>
+  </div>
+
   <footer>Data from Yahoo Finance, refreshed about every 15 minutes during market hours. Daily bars. Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months. Research tool only, not investment advice.</footer>
 </div>
 
@@ -547,6 +593,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   sdShow:"buy", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
   sdSort:"stretch", sdDir:-1,
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
+  btGrp:"all", btRank:"edge", btMin:200,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -970,7 +1017,7 @@ function renderTE(){
   counts.ACDC = (d.acdc || []).filter(r => r.cap >= state.teCap).length;
   $("teView").innerHTML = ["D","W","M","Y","ACDC"].map(k =>
     `<button data-v="${k}" class="${k===v?"on":""}">${TF_NAME[k]} <b>${counts[k]}</b><small>${TF_SUB[k]}${k!=="ACDC"?", edge reversals":""}</small></button>`).join("");
-  document.querySelectorAll("#teView button").forEach(b => b.onclick = () => { state.teView = b.dataset.v; state.teSort = "default"; renderTE(); });
+  document.querySelectorAll("#teView button").forEach(b => b.onclick = () => { state.teView = b.dataset.v; state.teSort = "default"; renderTE(); trackRecords(); });
   $("teEdgeCtl").hidden = acdc;
   $("tectx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Health Care included</span><span>&middot;</span><span>Option open interest fills in as Cboe allows (cached for the day)</span>`;
   const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
@@ -1060,8 +1107,96 @@ function calcEdges(){
   $("calcText").textContent = z[2];
 }
 
+const BT_GROUP = n => n.startsWith("Pullback") ? "Home" : n.startsWith("Big 3") ? "Big3" : n.startsWith("Std Dev") ? "StdDev" : n.startsWith("Edge") ? "Edge" : "ACDC";
+const BT_GROUP_NAME = {Home:"Home pullbacks", Big3:"Big 3", StdDev:"Std Dev", Edge:"Trendy Edge", ACDC:"AC/DC"};
+const BT_RULES = [
+  ["Home pullbacks", "close above the 50 SMA above the 200 SMA. Stop: the page's stop (pattern low, or lowest low of 2 bars for the 21 EMA). Target: 2 times the risk. Time limit 20 days."],
+  ["Big 3", "signal on the first day it appears. Stop: a daily close under the 21 EMA (exit next open). Target: 21 EMA + 3 ATR. Time limit 40 days."],
+  ["Std Dev", "first day in the -2.5 to -4 zone (1 year regression channel). Target: the middle line. Stop: 20% under entry. Time limit 120 days."],
+  ["Trendy Edge", "levels from the prior day, week, month or year. Edge reversal: stop the pattern low, target the upper edge. Edge rejection: stop the wick low, target the decelerator. Accelerator hold: stop a close under the mid, target the upper edge. Breakout retest: stop a close back under the upper edge, no target. Time limit: daily 10, weekly 20, monthly 40, yearly 120 days."],
+  ["AC/DC Bull", "first day the monthly pocket and weekly push line up. Stop: a close under the monthly 61.8 line. Target: last month's high. Time limit 40 days. Stop and target are my plan; the scan itself has no exit rules."],
+];
+let BT = null;
+
+async function loadBT(){
+  try { BT = await (await fetch("backtest.json?ts=" + Date.now(), {cache:"no-store"})).json(); } catch(e) { BT = null; }
+  renderBT(); trackRecords();
+}
+
+function btList(){
+  if (!BT) return [];
+  const base = BT.baseline || {}, Ns = Object.keys(base).map(Number);
+  // what random buying earned over the same hold: nearest tested hold length, per day x days held
+  const rand = bars => { if (!Ns.length) return 0; const k = Ns.reduce((a,b) => Math.abs(b - bars) < Math.abs(a - bars) ? b : a); return base[k].per_day * bars; };
+  return Object.entries(BT.setups).filter(([,v]) => v.n).map(([name,v]) => ({name, grp: BT_GROUP(name), ...v, rnd: rand(v.bars), edge: v.avg - rand(v.bars)}));
+}
+
+function renderBT(){
+  if (!BT) { $("btMeta").textContent = "results not loaded"; return; }
+  const m = BT.meta;
+  $("btMeta").textContent = `${m.stocks.toLocaleString()} stocks, ${m.from.slice(0,4)} to ${m.to.slice(0,4)}, every setup tested on its own`;
+  const all = btList();
+  const big = all.filter(x => x.n >= 200);
+  const best = (arr, f) => arr.slice().sort((a,b) => f(b) - f(a))[0];
+  const bEdge = best(big, x => x.edge), bPf = best(big, x => x.pf || 0), bWin = best(big, x => x.win);
+  const bNew = best(big.filter(x => x.new.n >= 200), x => (x.new.avg ?? -99) / Math.max(1, x.bars));
+  const beat = big.filter(x => x.edge > 0).length;
+  const card = (l, x, v) => x ? `<div class="btcard"><div class="l">${l}</div><div class="v">${x.name}</div><div class="s">${v}</div></div>` : "";
+  $("btCards").innerHTML = card("Biggest edge over random buying", bEdge, `${pct(bEdge?.avg||0)} per trade vs ${pct(bEdge?.rnd||0)} random over ${bEdge?.bars} days · ${bEdge?.win}% win`)
+    + card("Best profit factor", bPf, `PF ${bPf?.pf} · ${bPf?.win}% win · ${pct(bPf?.avg||0)} per trade · ${bPf?.n.toLocaleString()} trades`)
+    + card("Highest win rate", bWin, `${bWin?.win}% win · ${pct(bWin?.avg||0)} per trade · PF ${bWin?.pf}`)
+    + card("Best in 2018 to 2026", bNew, `${pct(bNew?.new.avg||0)} per trade · ${bNew?.new.win}% win · ${bNew?.new.n.toLocaleString()} trades`)
+    + `<div class="btcard" style="border-left-color:var(--yellow)"><div class="l">Random buying</div><div class="v">${pct((BT.baseline?.["40"]?.per_day)||0, 3)} per day held</div><div class="s">Buying any stock on any day earned this from market drift alone (${pct((BT.baseline?.["40"]?.avg)||0)} over 40 days). Only ${beat} of ${big.length} setups beat it.</div></div>`;
+  let rows = all.filter(x => state.btGrp === "all" || x.grp === state.btGrp).filter(x => x.n >= state.btMin);
+  const key = {edge: x => x.edge, pf: x => x.pf || 0, avg: x => x.avg, win: x => x.win, perday: x => x.avg / Math.max(1, x.bars)}[state.btRank];
+  rows.sort((a,b) => key(b) - key(a));
+  const lbl = {edge:"Edge over random buying (avg trade minus what random buying made over the same days)", pf:"Profit factor", avg:"Average return per trade", win:"Win rate", perday:"Average return per day held"}[state.btRank];
+  $("btChartLbl").innerHTML = `${lbl} <span>by setup</span>`;
+  const vals = rows.map(key), mx = Math.max(...vals.map(Math.abs), 0.0001);
+  const isPct = state.btRank !== "pf";
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals), span = (hi - lo) || 1;
+  const zeroAt = state.btRank === "pf" ? 1 : 0;
+  const lo2 = Math.min(zeroAt, ...vals), span2 = (Math.max(zeroAt, ...vals) - lo2) || 1;
+  $("btBars").innerHTML = rows.map((x,i) => {
+    const v = vals[i], z = (zeroAt - lo2) / span2 * 100, p = (v - lo2) / span2 * 100;
+    const left = Math.min(z, p), width = Math.max(Math.abs(p - z), 0.5);
+    const good = state.btRank === "pf" ? v >= 1 : state.btRank === "win" ? v >= 50 : state.btRank === "perday" ? v >= ((BT.baseline?.["40"]?.per_day) || 0) : v >= 0;
+    return `<div class="nm2" title="${x.name}">${x.name}</div><div class="track"><span class="zero" style="left:${z}%"></span><b style="left:${left}%;width:${width}%;background:${good ? "var(--green)" : "var(--red)"}"></b></div>
+      <div class="val">${state.btRank === "pf" ? v.toFixed(2) : state.btRank === "win" ? v.toFixed(1) + "%" : (v > 0 ? "+" : "") + v.toFixed(2) + "%"}</div>`;
+  }).join("") || `<div class="empty">No setups match.</div><div></div><div></div>`;
+  const cols = ["#","Setup","Group","Trades","Win","Avg trade","Random, same days","Edge vs random","Avg win","Avg loss","Profit factor","Days held","Worst","2008 to 2017","2018 to 2026"];
+  $("btHead").innerHTML = cols.map((c,i) => `<th class="${i<3?"l":""}">${c}</th>`).join("");
+  const era = e => e.n ? `${e.win}% · ${e.avg > 0 ? "+" : ""}${e.avg}% <span class="small">(${e.n.toLocaleString()})</span>` : "&ndash;";
+  $("btRows").innerHTML = rows.map((x,i) => `<tr class="${x.n < 200 ? "small" : x.edge > 0 && (x.pf || 0) >= 1.3 ? "best" : ""}">
+    <td class="l">${i+1}</td><td class="l"><b>${x.name}</b></td><td class="l"><span class="grp ${x.grp}">${BT_GROUP_NAME[x.grp]}</span></td>
+    <td>${x.n.toLocaleString()}</td><td>${x.win}%</td><td class="${pn(x.avg)}">${pct(x.avg)}</td>
+    <td class="small">${pct(x.rnd)}</td><td class="${pn(x.edge)}"><b>${pct(x.edge)}</b></td>
+    <td class="pos">${pct(x.avg_win)}</td><td class="neg">${pct(x.avg_loss)}</td>
+    <td><b>${x.pf ?? "&ndash;"}</b></td><td>${x.bars}</td><td class="neg">${x.worst}%</td><td>${era(x.old)}</td><td>${era(x.new)}</td></tr>`).join("");
+  $("btRules").innerHTML = BT_RULES.map(([a,b]) => `<div><b>${a}</b>: ${b}</div>`).join("");
+}
+
+function trackRecords(){
+  if (!BT) return;
+  const S = Object.fromEntries(btList().map(x => [x.name, x]));
+  const one = (name, label) => { const x = S[name]; return x && x.n ? `${label || name.split(": ").pop()} <b>${x.win}% win, ${pct(x.avg)} per trade, PF ${x.pf}</b>, <span class="${x.edge > 0 ? "pos" : "neg"}">${x.edge > 0 ? "beats" : "trails"} random buying by ${Math.abs(x.edge).toFixed(2)}%</span>` : ""; };
+  const put = (anchor, html) => {
+    const el = document.querySelector(anchor);
+    if (!el || !html) return;
+    let box = el.parentElement.querySelector(".track-rec");
+    if (!box) { box = document.createElement("div"); box.className = "track-rec"; el.after(box); }
+    box.innerHTML = `Backtest 2008 to 2026: ${html} · <a href="#backtest">all results</a>`;
+  };
+  put("#b3ctx", [one("Big 3: +12 Bull Squeeze"), one("Big 3: A+ Bull"), one("Big 3: Slingshot bull")].filter(Boolean).join(" · "));
+  put("#sdctx", [one("Std Dev: buyer -2.5 to -4", "Buyers"), one("Std Dev: buyer, flat + green candle", "Flat + green")].filter(Boolean).join(" · "));
+  const v = state.teView;
+  put("#tectx", v === "ACDC" ? one("AC/DC Bull", "AC/DC Bull") :
+    ["Edge reversal","Edge rejection","Accelerator hold","Breakout retest"].map(n => one(`Edge ${v}: ${n}`, n)).filter(Boolean).join(" · "));
+  put("#pbPanel .pbhead .row-label", ["21 EMA","Minor low","Inside and up"].map(n => one(`Pullback: ${n}`, n)).filter(Boolean).join(" · "));
+}
+
 function showTab(){
-  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges"}[location.hash] || "home";
+  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#backtest":"backtest"}[location.hash] || "home";
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== "tab-" + tab);
   document.querySelectorAll(".tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
 }
@@ -1121,6 +1256,10 @@ $("teSec").onchange = e => { state.teSector = e.target.value; renderTE(); };
 $("teq").oninput = e => { state.teq = e.target.value.trim().toUpperCase(); renderTE(); };
 ["cH","cL","cP"].forEach(id => $(id).oninput = calcEdges);
 calcEdges();
+seg("btGrp", ["all","Home","Big3","StdDev","Edge","ACDC"], ["All","Home","Big 3","Std Dev","Trendy Edge","AC/DC"], "btGrp", renderBT);
+seg("btRank", ["edge","pf","avg","perday","win"], ["Edge vs random","Profit factor","Avg trade","Per day","Win rate"], "btRank", renderBT);
+seg("btMin", [200,0], ["200+ trades","All"], "btMin", renderBT);
+loadBT();
 window.addEventListener("hashchange", showTab);
 showTab();
 $("pbSec").onchange = e => { state.pbSector = e.target.value; renderPullbacks(); };

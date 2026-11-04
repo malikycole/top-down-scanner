@@ -1,0 +1,713 @@
+{
+ "meta": {
+  "stocks": 1755,
+  "from": "2008-01-02",
+  "to": "2026-10-30"
+ },
+ "setups": {
+  "Pullback: 21 EMA": {
+   "n": 210050,
+   "win": 37.0,
+   "avg": 0.09,
+   "avg_win": 3.17,
+   "avg_loss": -1.72,
+   "pf": 1.08,
+   "bars": 3.8,
+   "worst": -54.3,
+   "best": 148.8,
+   "old": {
+    "n": 105576,
+    "win": 36.9,
+    "avg": 0.08
+   },
+   "new": {
+    "n": 104474,
+    "win": 37.0,
+    "avg": 0.1
+   }
+  },
+  "Pullback: Minor low": {
+   "n": 127074,
+   "win": 41.3,
+   "avg": 0.4,
+   "avg_win": 6.63,
+   "avg_loss": -3.97,
+   "pf": 1.17,
+   "bars": 9.2,
+   "worst": -79.7,
+   "best": 250.8,
+   "old": {
+    "n": 58723,
+    "win": 42.0,
+    "avg": 0.38
+   },
+   "new": {
+    "n": 68351,
+    "win": 40.7,
+    "avg": 0.42
+   }
+  },
+  "Pullback: Inside and up": {
+   "n": 14946,
+   "win": 38.8,
+   "avg": 0.21,
+   "avg_win": 5.09,
+   "avg_loss": -2.88,
+   "pf": 1.12,
+   "bars": 7.6,
+   "worst": -33.9,
+   "best": 92.4,
+   "old": {
+    "n": 7980,
+    "win": 38.6,
+    "avg": 0.14
+   },
+   "new": {
+    "n": 6966,
+    "win": 39.0,
+    "avg": 0.3
+   }
+  },
+  "Big 3: +12 Bull Squeeze": {
+   "n": 52429,
+   "win": 50.1,
+   "avg": 0.23,
+   "avg_win": 3.77,
+   "avg_loss": -3.33,
+   "pf": 1.14,
+   "bars": 6.1,
+   "worst": -52.8,
+   "best": 125.3,
+   "old": {
+    "n": 25421,
+    "win": 50.9,
+    "avg": 0.28
+   },
+   "new": {
+    "n": 27008,
+    "win": 49.4,
+    "avg": 0.18
+   }
+  },
+  "Big 3: A+ Bull": {
+   "n": 52429,
+   "win": 50.1,
+   "avg": 0.23,
+   "avg_win": 3.77,
+   "avg_loss": -3.33,
+   "pf": 1.14,
+   "bars": 6.1,
+   "worst": -52.8,
+   "best": 125.3,
+   "old": {
+    "n": 25421,
+    "win": 50.9,
+    "avg": 0.28
+   },
+   "new": {
+    "n": 27008,
+    "win": 49.4,
+    "avg": 0.18
+   }
+  },
+  "Big 3: Bull squeeze": {
+   "n": 91558,
+   "win": 46.7,
+   "avg": 0.29,
+   "avg_win": 4.45,
+   "avg_loss": -3.35,
+   "pf": 1.16,
+   "bars": 6.0,
+   "worst": -67.3,
+   "best": 228.1,
+   "old": {
+    "n": 42258,
+    "win": 47.6,
+    "avg": 0.35
+   },
+   "new": {
+    "n": 49300,
+    "win": 46.0,
+    "avg": 0.24
+   }
+  },
+  "Big 3: Slingshot bull": {
+   "n": 65121,
+   "win": 42.0,
+   "avg": 0.28,
+   "avg_win": 4.62,
+   "avg_loss": -2.86,
+   "pf": 1.17,
+   "bars": 6.0,
+   "worst": -65.8,
+   "best": 58.5,
+   "old": {
+    "n": 31885,
+    "win": 42.2,
+    "avg": 0.28
+   },
+   "new": {
+    "n": 33236,
+    "win": 41.9,
+    "avg": 0.29
+   }
+  },
+  "Std Dev: buyer -2.5 to -4": {
+   "n": 7346,
+   "win": 58.3,
+   "avg": 7.71,
+   "avg_win": 25.68,
+   "avg_loss": -17.39,
+   "pf": 2.06,
+   "bars": 64.6,
+   "worst": -50.1,
+   "best": 1357.2,
+   "old": {
+    "n": 2342,
+    "win": 65.6,
+    "avg": 8.0
+   },
+   "new": {
+    "n": 5004,
+    "win": 54.8,
+    "avg": 7.57
+   }
+  },
+  "Std Dev: buyer, flat channel": {
+   "n": 5384,
+   "win": 59.8,
+   "avg": 8.26,
+   "avg_win": 25.27,
+   "avg_loss": -17.01,
+   "pf": 2.21,
+   "bars": 65.9,
+   "worst": -46.3,
+   "best": 1357.2,
+   "old": {
+    "n": 1736,
+    "win": 65.8,
+    "avg": 8.1
+   },
+   "new": {
+    "n": 3648,
+    "win": 56.9,
+    "avg": 8.33
+   }
+  },
+  "Std Dev: buyer, flat + green candle": {
+   "n": 4345,
+   "win": 60.4,
+   "avg": 10.16,
+   "avg_win": 27.61,
+   "avg_loss": -16.43,
+   "pf": 2.56,
+   "bars": 68.5,
+   "worst": -45.7,
+   "best": 255.6,
+   "old": {
+    "n": 1351,
+    "win": 65.1,
+    "avg": 8.11
+   },
+   "new": {
+    "n": 2994,
+    "win": 58.3,
+    "avg": 11.09
+   }
+  },
+  "Edge D: Edge reversal": {
+   "n": 0
+  },
+  "Edge D: Edge reversal (minor low)": {
+   "n": 0
+  },
+  "Edge D: Edge reversal (inside and up)": {
+   "n": 0
+  },
+  "Edge D: Edge rejection": {
+   "n": 324822,
+   "win": 44.7,
+   "avg": -0.23,
+   "avg_win": 0.64,
+   "avg_loss": -0.94,
+   "pf": 0.55,
+   "bars": 1.1,
+   "worst": -56.1,
+   "best": 311.4,
+   "old": {
+    "n": 141260,
+    "win": 44.4,
+    "avg": -0.22
+   },
+   "new": {
+    "n": 183562,
+    "win": 44.9,
+    "avg": -0.25
+   }
+  },
+  "Edge D: Accelerator hold": {
+   "n": 483915,
+   "win": 75.3,
+   "avg": 0.05,
+   "avg_win": 0.76,
+   "avg_loss": -2.12,
+   "pf": 1.09,
+   "bars": 1.4,
+   "worst": -76.8,
+   "best": 210.4,
+   "old": {
+    "n": 217360,
+    "win": 75.6,
+    "avg": 0.05
+   },
+   "new": {
+    "n": 266555,
+    "win": 75.1,
+    "avg": 0.04
+   }
+  },
+  "Edge W: Edge reversal": {
+   "n": 224634,
+   "win": 57.6,
+   "avg": 0.33,
+   "avg_win": 3.39,
+   "avg_loss": -3.84,
+   "pf": 1.2,
+   "bars": 4.6,
+   "worst": -73.7,
+   "best": 260.0,
+   "old": {
+    "n": 96993,
+    "win": 59.0,
+    "avg": 0.31
+   },
+   "new": {
+    "n": 127641,
+    "win": 56.6,
+    "avg": 0.34
+   }
+  },
+  "Edge W: Edge reversal (minor low)": {
+   "n": 181801,
+   "win": 58.1,
+   "avg": 0.33,
+   "avg_win": 3.32,
+   "avg_loss": -3.83,
+   "pf": 1.2,
+   "bars": 4.5,
+   "worst": -73.7,
+   "best": 225.1,
+   "old": {
+    "n": 77113,
+    "win": 59.5,
+    "avg": 0.3
+   },
+   "new": {
+    "n": 104688,
+    "win": 57.0,
+    "avg": 0.34
+   }
+  },
+  "Edge W: Edge reversal (inside and up)": {
+   "n": 52411,
+   "win": 57.0,
+   "avg": 0.3,
+   "avg_win": 3.43,
+   "avg_loss": -3.84,
+   "pf": 1.18,
+   "bars": 4.8,
+   "worst": -58.4,
+   "best": 260.0,
+   "old": {
+    "n": 24256,
+    "win": 57.7,
+    "avg": 0.3
+   },
+   "new": {
+    "n": 28155,
+    "win": 56.4,
+    "avg": 0.3
+   }
+  },
+  "Edge W: Edge rejection": {
+   "n": 321250,
+   "win": 52.2,
+   "avg": -0.08,
+   "avg_win": 1.2,
+   "avg_loss": -1.47,
+   "pf": 0.89,
+   "bars": 1.4,
+   "worst": -82.9,
+   "best": 151.8,
+   "old": {
+    "n": 138412,
+    "win": 52.3,
+    "avg": -0.08
+   },
+   "new": {
+    "n": 182838,
+    "win": 52.2,
+    "avg": -0.08
+   }
+  },
+  "Edge W: Accelerator hold": {
+   "n": 552482,
+   "win": 71.7,
+   "avg": 0.08,
+   "avg_win": 1.14,
+   "avg_loss": -2.6,
+   "pf": 1.11,
+   "bars": 1.9,
+   "worst": -90.4,
+   "best": 311.4,
+   "old": {
+    "n": 246142,
+    "win": 71.9,
+    "avg": 0.07
+   },
+   "new": {
+    "n": 306340,
+    "win": 71.5,
+    "avg": 0.08
+   }
+  },
+  "Edge W: Breakout retest": {
+   "n": 214532,
+   "win": 33.2,
+   "avg": 0.61,
+   "avg_win": 8.72,
+   "avg_loss": -3.42,
+   "pf": 1.27,
+   "bars": 10.8,
+   "worst": -83.6,
+   "best": 1545.6,
+   "old": {
+    "n": 94600,
+    "win": 35.0,
+    "avg": 0.69
+   },
+   "new": {
+    "n": 119932,
+    "win": 31.7,
+    "avg": 0.54
+   }
+  },
+  "Edge M: Edge reversal": {
+   "n": 169187,
+   "win": 40.1,
+   "avg": 1.14,
+   "avg_win": 9.83,
+   "avg_loss": -4.68,
+   "pf": 1.41,
+   "bars": 11.7,
+   "worst": -85.7,
+   "best": 20784.6,
+   "old": {
+    "n": 70585,
+    "win": 42.7,
+    "avg": 1.05
+   },
+   "new": {
+    "n": 98602,
+    "win": 38.3,
+    "avg": 1.21
+   }
+  },
+  "Edge M: Edge reversal (minor low)": {
+   "n": 137715,
+   "win": 40.3,
+   "avg": 1.18,
+   "avg_win": 9.73,
+   "avg_loss": -4.61,
+   "pf": 1.43,
+   "bars": 11.5,
+   "worst": -81.9,
+   "best": 20784.6,
+   "old": {
+    "n": 56399,
+    "win": 43.0,
+    "avg": 1.08
+   },
+   "new": {
+    "n": 81316,
+    "win": 38.5,
+    "avg": 1.24
+   }
+  },
+  "Edge M: Edge reversal (inside and up)": {
+   "n": 65957,
+   "win": 39.5,
+   "avg": 0.85,
+   "avg_win": 9.25,
+   "avg_loss": -4.63,
+   "pf": 1.3,
+   "bars": 11.5,
+   "worst": -85.7,
+   "best": 504.5,
+   "old": {
+    "n": 29085,
+    "win": 41.5,
+    "avg": 0.86
+   },
+   "new": {
+    "n": 36872,
+    "win": 37.9,
+    "avg": 0.84
+   }
+  },
+  "Edge M: Edge rejection": {
+   "n": 181177,
+   "win": 47.5,
+   "avg": 0.12,
+   "avg_win": 2.7,
+   "avg_loss": -2.21,
+   "pf": 1.11,
+   "bars": 2.4,
+   "worst": -90.2,
+   "best": 176.6,
+   "old": {
+    "n": 75508,
+    "win": 48.4,
+    "avg": 0.13
+   },
+   "new": {
+    "n": 105669,
+    "win": 46.9,
+    "avg": 0.12
+   }
+  },
+  "Edge M: Accelerator hold": {
+   "n": 323239,
+   "win": 67.4,
+   "avg": 0.2,
+   "avg_win": 2.16,
+   "avg_loss": -3.85,
+   "pf": 1.16,
+   "bars": 3.6,
+   "worst": -73.0,
+   "best": 357.6,
+   "old": {
+    "n": 147782,
+    "win": 68.3,
+    "avg": 0.18
+   },
+   "new": {
+    "n": 175457,
+    "win": 66.6,
+    "avg": 0.21
+   }
+  },
+  "Edge M: Breakout retest": {
+   "n": 107315,
+   "win": 30.1,
+   "avg": 1.03,
+   "avg_win": 13.15,
+   "avg_loss": -4.18,
+   "pf": 1.35,
+   "bars": 19.4,
+   "worst": -68.8,
+   "best": 698.9,
+   "old": {
+    "n": 48545,
+    "win": 32.4,
+    "avg": 1.25
+   },
+   "new": {
+    "n": 58770,
+    "win": 28.2,
+    "avg": 0.85
+   }
+  },
+  "Edge Y: Edge reversal": {
+   "n": 37699,
+   "win": 26.0,
+   "avg": 7.15,
+   "avg_win": 46.52,
+   "avg_loss": -6.66,
+   "pf": 2.45,
+   "bars": 40.1,
+   "worst": -93.9,
+   "best": 20784.6,
+   "old": {
+    "n": 12943,
+    "win": 27.1,
+    "avg": 8.62
+   },
+   "new": {
+    "n": 24756,
+    "win": 25.3,
+    "avg": 6.37
+   }
+  },
+  "Edge Y: Edge reversal (minor low)": {
+   "n": 33816,
+   "win": 25.8,
+   "avg": 7.12,
+   "avg_win": 46.32,
+   "avg_loss": -6.5,
+   "pf": 2.47,
+   "bars": 39.8,
+   "worst": -93.9,
+   "best": 20784.6,
+   "old": {
+    "n": 11363,
+    "win": 27.4,
+    "avg": 8.85
+   },
+   "new": {
+    "n": 22453,
+    "win": 24.9,
+    "avg": 6.24
+   }
+  },
+  "Edge Y: Edge reversal (inside and up)": {
+   "n": 22960,
+   "win": 23.6,
+   "avg": 5.86,
+   "avg_win": 45.53,
+   "avg_loss": -6.42,
+   "pf": 2.2,
+   "bars": 38.1,
+   "worst": -90.0,
+   "best": 1274.2,
+   "old": {
+    "n": 8232,
+    "win": 24.0,
+    "avg": 7.52
+   },
+   "new": {
+    "n": 14728,
+    "win": 23.4,
+    "avg": 4.94
+   }
+  },
+  "Edge Y: Edge rejection": {
+   "n": 33679,
+   "win": 25.2,
+   "avg": 1.16,
+   "avg_win": 15.81,
+   "avg_loss": -3.76,
+   "pf": 1.41,
+   "bars": 10.4,
+   "worst": -80.6,
+   "best": 360.5,
+   "old": {
+    "n": 12062,
+    "win": 24.5,
+    "avg": 1.72
+   },
+   "new": {
+    "n": 21617,
+    "win": 25.6,
+    "avg": 0.85
+   }
+  },
+  "Edge Y: Accelerator hold": {
+   "n": 43178,
+   "win": 54.6,
+   "avg": 1.25,
+   "avg_win": 9.21,
+   "avg_loss": -8.33,
+   "pf": 1.33,
+   "bars": 22.2,
+   "worst": -87.5,
+   "best": 93.4,
+   "old": {
+    "n": 16857,
+    "win": 58.7,
+    "avg": 1.87
+   },
+   "new": {
+    "n": 26321,
+    "win": 52.0,
+    "avg": 0.85
+   }
+  },
+  "Edge Y: Breakout retest": {
+   "n": 29141,
+   "win": 32.8,
+   "avg": 3.48,
+   "avg_win": 25.33,
+   "avg_loss": -7.19,
+   "pf": 1.72,
+   "bars": 60.0,
+   "worst": -54.1,
+   "best": 1754.7,
+   "old": {
+    "n": 13319,
+    "win": 37.1,
+    "avg": 3.67
+   },
+   "new": {
+    "n": 15822,
+    "win": 29.3,
+    "avg": 3.33
+   }
+  },
+  "AC/DC Bull": {
+   "n": 152322,
+   "win": 37.8,
+   "avg": 0.47,
+   "avg_win": 6.49,
+   "avg_loss": -3.19,
+   "pf": 1.24,
+   "bars": 6.7,
+   "worst": -61.0,
+   "best": 319.5,
+   "old": {
+    "n": 64108,
+    "win": 38.8,
+    "avg": 0.46
+   },
+   "new": {
+    "n": 88214,
+    "win": 37.1,
+    "avg": 0.48
+   }
+  }
+ },
+ "baseline": {
+  "2": {
+   "n": 1234365,
+   "win": 51.3,
+   "avg": 0.12,
+   "per_day": 0.061
+  },
+  "5": {
+   "n": 1233958,
+   "win": 53.7,
+   "avg": 0.45,
+   "per_day": 0.09
+  },
+  "10": {
+   "n": 1232203,
+   "win": 54.8,
+   "avg": 0.88,
+   "per_day": 0.088
+  },
+  "20": {
+   "n": 1228693,
+   "win": 56.3,
+   "avg": 1.78,
+   "per_day": 0.089
+  },
+  "40": {
+   "n": 1221673,
+   "win": 58.5,
+   "avg": 3.61,
+   "per_day": 0.09
+  },
+  "65": {
+   "n": 1212898,
+   "win": 60.5,
+   "avg": 5.91,
+   "per_day": 0.091
+  },
+  "120": {
+   "n": 1193593,
+   "win": 63.4,
+   "avg": 10.94,
+   "per_day": 0.091
+  }
+ }
+}
