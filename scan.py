@@ -576,6 +576,44 @@ def moxie_hourly(tickers: list[str], daily: dict[str, pd.DataFrame]) -> dict[str
     return out
 
 
+def squeeze_pro(frame: pd.DataFrame) -> dict:
+    """Port of ST_SqueezePRO (Simpler Trading): Bollinger (20, 2.0) upper band against Keltner upper bands
+    at 1.0 (high squeeze, orange), 1.5 (mid, red) and 2.0 (low, black). Momentum = TTM Squeeze histogram:
+    20 bar linear regression of close minus the average of the Donchian mid and the 20 SMA."""
+    o, h, l, c = (frame[k] for k in ("Open", "High", "Low", "Close"))
+    tr = pd.concat([h - l, (h - c.shift()).abs(), (l - c.shift()).abs()], axis=1).max(axis=1)
+    sma20 = c.rolling(20).mean()
+    bb_up = sma20 + 2.0 * c.rolling(20).std(ddof=0)
+    atr20 = tr.rolling(20).mean()
+    lvl = np.select([bb_up <= sma20 + 1.0 * atr20, bb_up <= sma20 + 1.5 * atr20, bb_up <= sma20 + 2.0 * atr20],
+                    [3, 2, 1], 0)                      # 3 high, 2 mid, 1 low, 0 no squeeze
+    delta = c - ((h.rolling(20).max() + l.rolling(20).min()) / 2 + sma20) / 2
+    x = np.arange(20)
+    w = (x - x.mean()) / ((x - x.mean()) ** 2).sum()
+    dv = delta.to_numpy()
+    reg_end = lambda y: y.mean() + 9.5 * (w * y).sum()      # 20 bar regression line value at its last bar
+    m, m1 = float(reg_end(dv[-20:])), float(reg_end(dv[-21:-1]))
+    color = ("cyan" if m >= 0 else "yellow") if m > m1 else ("blue" if m >= 0 else "red")
+    on = lvl > 0
+    bars = 0
+    while bars < len(on) and on[len(on) - 1 - bars]:
+        bars += 1
+    fired = bool(lvl[-1] == 0 and lvl[-2] > 0)
+    cv, hv = c.to_numpy(), h.to_numpy()
+    hi252 = float(hv[-253:-1].max())                    # the 252 day high before today
+    e21 = float(c.ewm(span=21, adjust=False).mean().iloc[-1])
+    s50_all = c.rolling(50).mean().to_numpy()
+    s50, s50_3 = float(s50_all[-1]), s50_all[-3:]
+    # respects the 50 SMA: a low reached it (within 1%) in the last 3 bars and every close held above it
+    respect50 = bool((l.to_numpy()[-3:] <= s50_3 * 1.01).any() and (cv[-3:] >= s50_3).all())
+    return {"lvl": int(lvl[-1]), "lvl1": int(lvl[-2]), "sq_bars": bars, "fired": fired,
+            "mom": round(m, 3), "mom_c": color, "hi252": round(hi252, 2),
+            "off_hi": round((1 - cv[-1] / hi252) * 100, 2), "new_hi": bool(hv[-1] >= hi252),
+            "e21": round(e21, 2), "e21d": round((cv[-1] / e21 - 1) * 100, 2),
+            "s50": round(s50, 2), "s50d": round((cv[-1] / s50 - 1) * 100, 2), "resp50": respect50,
+            "avgvol": int(frame["Volume"].iloc[-50:].mean())}
+
+
 def _fib_pocket(bar: pd.Series) -> tuple[float, float, float]:
     """AC/DC levels off one bar: upper = high - 38.2% of range, mid = 50%, lower = 61.8%."""
     h, l = float(bar["High"]), float(bar["Low"])
@@ -798,7 +836,7 @@ def scan() -> dict:
         passed = int(sum(checks))
         base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
-            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame),
+            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame), "sqp": squeeze_pro(frame),
             "cap": round(float(rec.cap) / 1e9, 2), "core": core,
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
@@ -846,8 +884,12 @@ def scan() -> dict:
     mox_rows = [r for r in mox_rows if r.get("h_scan") or r["d_state"] in (1, 2) or r.get("h_state") in (1, 2)
                 or r["cross"] is not None]
     print(f"moxie: {len(hourly)} hourly checked, {len(mox_rows)} rows")
+    # Squeeze Pro tab: in a squeeze (any level) or fired today, within 15% of the 252 day high
+    sqp_rows = [{**{k: s[k] for k in keep_m}, **s["sqp"], "vol1": s["b3"]["vol1"]} for s in stocks
+                if (s["sqp"]["lvl"] > 0 or s["sqp"]["fired"]) and s["sqp"]["off_hi"] <= 15]
+    attach_options(sqp_rows)
     for s in stocks:
-        del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"]
+        del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"], s["sqp"]
     wide_count = len(stocks)
     stocks = [s for s in stocks if s.pop("core")]
     listed = [s for s in stocks if s["pass"] >= MIN_SETUP_TO_LIST]
@@ -867,7 +909,7 @@ def scan() -> dict:
                    "sma50": round(float(sma50), 2), "sma200": round(float(sma200), 2)},
         "indexes": index_rows, "leader_index": leader_index,
         "sectors": sector_rows, "leader_sector": sector_rows[0]["ticker"],
-        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows, "moxie": mox_rows,
+        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows, "moxie": mox_rows, "sqpro": sqp_rows,
     }
 
 

@@ -92,3 +92,7 @@ Open it with **Moxie** or `#moxie`. Port of ST_MoxieIndicator and ST_MoxiePriceS
 * **Hourly trampoline:** the thinkorswim Moxie Trampoline Hourly Scan (weekly Moxie up, price $1.25+, volume 500K+, hourly close under the hourly 50 SMA and over the hourly 200 SMA) plus the hourly chart's trampoline state. Hourly bars (60 days) are downloaded only for stocks with weekly Moxie up.
 * **Daily trampoline:** weekly Moxie up and the daily close under the 50 SMA (potential), then back over it (trampoline), using the study's state machine.
 * **Moxie cross up:** weekly Moxie above zero this week after being below zero last week.
+
+## Squeeze Pro tab
+
+Open it with **Squeeze Pro** or `#sqpro`. Port of ST_SqueezePRO: Bollinger (20, 2) upper band inside the Keltner (20) upper band at 1.0 (high), 1.5 (mid) or 2.0 (low), momentum = TTM Squeeze histogram with the study's colors. Defaults: price $20+, volume 150K+, within 10% of the 252 day high with no new high yet. Entry filter: at the 21 EMA (within 1%) or a pullback that held the 50 SMA (a low within 1% of it in the last 3 bars, every close above it). Not backtested yet.

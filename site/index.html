@@ -182,6 +182,10 @@
   .mxs{display:inline-block;border-radius:5px;padding:2px 7px;font-size:12px;font-weight:700;margin:1px 4px 1px 0}
   .mxs.pot{background:#475569;color:#fff} .mxs.conf{background:var(--green);color:var(--chip-text)} .mxs.scan{background:#38bdf8;color:var(--chip-text)}
   .mxs.inv{background:var(--red);color:#fff} .mxs.cross{background:#facc15;color:var(--chip-text)}
+  .sqd{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12px}
+  .sqd i{width:12px;height:12px;border-radius:50%;display:inline-block;box-shadow:0 0 0 1px rgba(255,255,255,.35)}
+  .sqd.l3 i{background:#f97316} .sqd.l2 i{background:#ef4444} .sqd.l1 i{background:#111} .sqd.l0 i{background:#22c55e}
+  .momc{font-weight:700} .momc.cyan{color:#22d3ee} .momc.blue{color:#3b82f6} .momc.red{color:#ef4444} .momc.yellow{color:#facc15}
 </style>
 </head>
 <body>
@@ -200,6 +204,7 @@
     <a href="#stddev" data-tab="stddev">Std Dev Channel</a>
     <a href="#edges" data-tab="edges">Trendy Edge</a>
     <a href="#moxie" data-tab="moxie">Moxie</a>
+    <a href="#sqpro" data-tab="sqpro">Squeeze Pro</a>
     <a href="#backtest" data-tab="backtest">Backtests</a>
   </nav>
 
@@ -642,6 +647,69 @@
   </section>
   </div>
 
+  <div class="tab" id="tab-sqpro" hidden>
+  <section class="panel">
+    <p class="row-label">Squeeze Pro <span>your ST_SqueezePRO: stocks coiling near their 52 week high, not broken out yet</span></p>
+    <div class="ctx" id="sqctx"></div>
+    <div class="kpis" id="sqKpis"></div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Entry</span><span class="seg" id="sqEntry"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Momentum</span><span class="seg" id="sqMom"></span></div>
+      <div><span class="row-label" style="margin-right:6px">From high</span><span class="seg" id="sqHi"></span></div>
+    </div>
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Price</span><span class="seg" id="sqPx"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Volume</span><span class="seg" id="sqVol"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="sqCap"></span></div>
+      <div><span class="row-label" style="margin-right:6px">JT Trend</span><span class="seg" id="sqJt"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Sector</span><select id="sqSec"></select></div>
+      <input type="search" id="sqq" placeholder="Find symbol">
+      <span class="count" id="sqCount"></span>
+    </div>
+    <div class="tablewrap"><table><thead><tr id="sqHead"></tr></thead><tbody id="sqRows"></tbody></table></div>
+    <p class="note">Squeeze: Bollinger (20, 2) upper band inside the Keltner (20) upper band at 1.0 (high, orange), 1.5 (mid, red) or 2.0 (low, black). Fired = the squeeze ended on this bar. Momentum colors as in the study: cyan rising above zero, blue falling above zero, yellow rising below zero, red falling below zero. From high = distance under the 252 day high before today; no new high yet. 21 EMA entry = price within 1% of the 21 EMA. 50 SMA entry = a low reached the 50 SMA (within 1%) in the last 3 bars and every close held above it.</p>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">How to trade it</p>
+    <div class="howto">
+      <svg viewBox="0 0 420 300" role="img" aria-label="Squeeze Pro: price coils under the 52 week high while the squeeze dots go from black to red to orange, then fires">
+        <line x1="20" y1="40" x2="410" y2="40" stroke="#94a3b8" stroke-dasharray="5 4"/><text x="24" y="34" fill="#cbd5e1">252 day high</text>
+        <line x1="20" y1="62" x2="410" y2="62" stroke="#64748b" stroke-dasharray="2 4"/><text x="300" y="58" fill="#94a3b8">10% under</text>
+        <line x1="20" y1="132" x2="410" y2="96" stroke="#facc15" stroke-width="2"/><text x="24" y="146" fill="#facc15">21 EMA</text>
+        <line x1="20" y1="160" x2="410" y2="122" stroke="#a78bfa" stroke-width="2"/><text x="24" y="174" fill="#c4b5fd">50 SMA</text>
+        <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="25,100 55,80 85,72 115,88 140,96 165,86 190,92 215,84 240,90 262,82 285,88 305,74 330,52 360,34 400,18"/>
+        <circle cx="285" cy="88" r="7" fill="none" stroke="#22c55e" stroke-width="2.5"/><text x="250" y="114" fill="#86efac">buy at the 21 EMA</text>
+        <line x1="20" y1="215" x2="410" y2="215" stroke="#334155"/>
+        <g>
+          <circle cx="40" cy="215" r="5" fill="#22c55e"/><circle cx="70" cy="215" r="5" fill="#22c55e"/><circle cx="100" cy="215" r="5" fill="#111" stroke="#cbd5e1"/>
+          <circle cx="130" cy="215" r="5" fill="#111" stroke="#cbd5e1"/><circle cx="160" cy="215" r="5" fill="#ef4444"/><circle cx="190" cy="215" r="5" fill="#ef4444"/>
+          <circle cx="220" cy="215" r="5" fill="#f97316"/><circle cx="250" cy="215" r="5" fill="#f97316"/><circle cx="280" cy="215" r="5" fill="#f97316"/>
+          <circle cx="310" cy="215" r="5" fill="#22c55e"/><circle cx="340" cy="215" r="5" fill="#22c55e"/><circle cx="370" cy="215" r="5" fill="#22c55e"/>
+        </g>
+        <text x="96" y="236" fill="#94a3b8">low</text><text x="160" y="236" fill="#fca5a5">mid</text><text x="226" y="236" fill="#fdba74">high squeeze</text><text x="306" y="236" fill="#86efac">fired</text>
+        <g><rect x="160" y="262" width="12" height="8" fill="#22d3ee"/><rect x="190" y="258" width="12" height="12" fill="#22d3ee"/><rect x="220" y="252" width="12" height="18" fill="#22d3ee"/>
+          <rect x="250" y="246" width="12" height="24" fill="#22d3ee"/><rect x="280" y="240" width="12" height="30" fill="#22d3ee"/><rect x="310" y="236" width="12" height="34" fill="#22d3ee"/>
+          <rect x="340" y="240" width="12" height="30" fill="#3b82f6"/></g>
+        <text x="24" y="268" fill="#67e8f9">momentum cyan and rising</text>
+      </svg>
+      <ol>
+        <li><b>Coiling near the highs.</b> The stock sits within 10% of its 252 day high and has not made a new high yet: buyers are close to a breakout.</li>
+        <li><b>The squeeze.</b> Dots show how tight the coil is: black (low), red (mid), orange (high, the tightest). Tighter and longer usually means a bigger move when it fires.</li>
+        <li><b>Momentum.</b> Best when the histogram is cyan: above zero and rising. Blue means it is fading.</li>
+        <li><b>Your entry.</b> Buy at the 21 EMA, or on a pullback to the 50 SMA that holds (Entry filter). Volume at least 150,000.</li>
+        <li><b>Stop.</b> Under the 50 SMA (or the pullback low) on a 21 EMA entry; under the pullback low on a 50 SMA entry.</li>
+        <li><b>Target.</b> A move through the 252 day high once the squeeze fires. Trail the rest.</li>
+        <li><b>Exit.</b> A common rule is out on the second dark blue momentum bar after the fire, or a close under the 21 EMA.</li>
+      </ol>
+    </div>
+    <p class="note">Stop, target and exit follow common Squeeze Pro practice; your study does not define them, and this setup is not backtested yet. Research tool only, not investment advice.</p>
+  </section>
+  </div>
+
   <footer>Data from Yahoo Finance, refreshed about every 15 minutes during market hours. Daily bars. Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months. Research tool only, not investment advice.</footer>
 </div>
 
@@ -653,6 +721,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
+  sqLvl:"any", sqEntry:"any", sqMom:"any", sqHi:10, sqPx:20, sqVol:150000, sqCap:0.35, sqJt:"any", sqSector:"all", sqq:"", sqSort:"default", sqDir:-1,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -734,6 +803,7 @@ function render(){
   renderSD();
   renderTE();
   renderMX();
+  renderSQ();
 }
 
 const PB_COLS = [
@@ -811,6 +881,7 @@ function syncSelect(){
   $("sdSec").innerHTML = $("b3Sec").innerHTML; $("sdSec").value = state.sdSector;
   $("teSec").innerHTML = $("b3Sec").innerHTML; $("teSec").value = state.teSector;
   $("mxSec").innerHTML = $("b3Sec").innerHTML; $("mxSec").value = state.mxSector;
+  $("sqSec").innerHTML = $("b3Sec").innerHTML; $("sqSec").value = state.sqSector;
 }
 
 function seg(id, values, labels, key, after){
@@ -1339,8 +1410,68 @@ function renderMX(){
     : "Weekly Moxie is above zero this week after being below zero last week (the green arrow on a daily chart). It can still flip back before Friday's close. Green rows: trend label green.";
 }
 
+const SQ_LVL = {3:["High","l3"], 2:["Mid","l2"], 1:["Low","l1"], 0:["Fired","l0"]};
+const SQ_KPI = [["any","In a squeeze or fired"], ["3","High (orange)"], ["2","Mid (red)"], ["1","Low (black)"], ["fired","Fired today"]];
+
+function sqBase(){
+  const d = state.data;
+  let rows = (d.sqpro || []).filter(s => s.px >= state.sqPx && s.vol1 >= state.sqVol && s.cap >= state.sqCap && s.off_hi <= state.sqHi && !s.new_hi);
+  if (state.sqSector !== "all") rows = rows.filter(s => s.etf === state.sqSector);
+  if (state.sqEntry === "e21") rows = rows.filter(s => Math.abs(s.e21d) <= 1);
+  if (state.sqEntry === "s50") rows = rows.filter(s => s.resp50);
+  if (state.sqEntry === "either") rows = rows.filter(s => Math.abs(s.e21d) <= 1 || s.resp50);
+  if (state.sqMom === "pos") rows = rows.filter(s => s.mom > 0);
+  if (state.sqMom === "cyan") rows = rows.filter(s => s.mom_c === "cyan");
+  if (state.sqJt === "dg") rows = rows.filter(s => s.wave === 1);
+  if (state.sqq) rows = rows.filter(s => s.t.includes(state.sqq) || s.n.toUpperCase().includes(state.sqq));
+  return rows;
+}
+const sqLvlMatch = (s, k) => k === "any" ? true : k === "fired" ? s.fired : s.lvl === +k;
+
+function renderSQ(){
+  const d = state.data;
+  if (!d.sqpro) return;
+  const base = sqBase();
+  $("sqctx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Price $${state.sqPx}+, volume ${fmtVol(state.sqVol)}+, within ${state.sqHi}% of the 252 day high, no new high</span>`;
+  $("sqKpis").innerHTML = SQ_KPI.map(([k,label]) => `<button class="kpi ${state.sqLvl===k?"on":""}" data-k="${k}"><div class="n">${base.filter(s => sqLvlMatch(s,k)).length}</div><div class="l">${label}</div></button>`).join("");
+  document.querySelectorAll("#sqKpis .kpi").forEach(b => b.onclick = () => { state.sqLvl = b.dataset.k; renderSQ(); });
+  let rows = base.filter(s => sqLvlMatch(s, state.sqLvl)).map(s => ({...s, jtv: jtv(s), lvlr: s.fired ? 0.5 : s.lvl, e21abs: Math.abs(s.e21d)}));
+  const cols = [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Squeeze","lvlr","l"],["Bars","sq_bars"],["Momentum","mom"],["Price","px"],["Day","day"],
+    ["From high","off_hi"],["252 day high","hi252"],["vs 21 EMA","e21abs"],["vs 50 SMA","s50d"],["Entry",null,"l"],["Vol today","vol1"],["Avg vol","avgvol"],["Cap","cap"],["Options","oi_all"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
+  const k = state.sqSort;
+  rows.sort((a,b) => {
+    if (k === "default") return (b.lvlr - a.lvlr) || ((b.mom_c === "cyan") - (a.mom_c === "cyan")) || (a.off_hi - b.off_hi);
+    const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
+    const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return c !== 0 ? c * state.sqDir : (b.rs - a.rs);
+  });
+  $("sqHead").innerHTML = cols.map(([label,key,al]) => `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (state.sqDir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+  document.querySelectorAll("#sqHead th").forEach(th => th.onclick = () => {
+    if (!th.dataset.k) return;
+    if (state.sqSort === th.dataset.k) state.sqDir *= -1; else { state.sqSort = th.dataset.k; state.sqDir = ["off_hi","e21abs"].includes(th.dataset.k) ? 1 : -1; }
+    renderSQ();
+  });
+  const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
+  const entry = s => [Math.abs(s.e21d) <= 1 ? `<span class="zone in">21 EMA</span>` : "", s.resp50 ? `<span class="zone in">50 SMA hold</span>` : ""].filter(Boolean).join(" ") || "&ndash;";
+  $("sqRows").innerHTML = rows.length ? rows.slice(0, 400).map((s,i) => `
+    <tr class="${(Math.abs(s.e21d) <= 1 || s.resp50) && s.mom_c === "cyan" ? "best" : ""}">
+      <td class="l">${i+1}</td>
+      <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
+      <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
+      <td class="l"><span class="sqd ${s.fired ? "l0" : "l" + s.lvl}"><i></i>${s.fired ? "Fired (was " + SQ_LVL[s.lvl1][0].toLowerCase() + ")" : SQ_LVL[s.lvl][0]}</span></td>
+      <td>${s.fired ? "&ndash;" : s.sq_bars}</td>
+      <td><span class="momc ${s.mom_c}">${s.mom > 0 ? "+" : ""}${s.mom.toFixed(2)} ${s.mom_c === "cyan" || s.mom_c === "yellow" ? "&uarr;" : "&darr;"}</span></td>
+      <td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td>${s.off_hi.toFixed(1)}%</td><td>${money(s.hi252)}</td>
+      <td class="${Math.abs(s.e21d) <= 1 ? "hit" : ""}">${pct(s.e21d)}</td><td class="${pn(s.s50d)}">${pct(s.s50d)}</td>
+      <td class="l">${entry(s)}</td><td>${fmtVol(s.vol1)}</td><td>${fmtVol(s.avgvol)}</td><td>${capTxt(s.cap)}</td><td>${optCell(s)}</td>
+      <td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td><td><b>${s.rs}</b></td><td>${jtDots(s)}</td>
+    </tr>`).join("") : `<tr><td colspan="${cols.length}" class="empty">No stocks match these filters right now.</td></tr>`;
+  $("sqCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing 400)":""}`;
+}
+
 function showTab(){
-  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#moxie":"moxie", "#backtest":"backtest"}[location.hash] || "home";
+  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#moxie":"moxie", "#sqpro":"sqpro", "#backtest":"backtest"}[location.hash] || "home";
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== "tab-" + tab);
   document.querySelectorAll(".tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
 }
@@ -1410,6 +1541,15 @@ seg("mxVol", [500000,0], ["500K+","Any"], "mxVol", renderMX);
 seg("mxCap", [0.35,1,10], ["$350M+","$1B+","$10B+"], "mxCap", renderMX);
 $("mxSec").onchange = e => { state.mxSector = e.target.value; renderMX(); };
 $("mxq").oninput = e => { state.mxq = e.target.value.trim().toUpperCase(); renderMX(); };
+seg("sqEntry", ["any","e21","s50","either"], ["Any","At 21 EMA","50 SMA hold","Either"], "sqEntry", renderSQ);
+seg("sqMom", ["any","pos","cyan"], ["Any","Above zero","Cyan (rising)"], "sqMom", renderSQ);
+seg("sqHi", [10,5,15], ["10%","5%","15%"], "sqHi", renderSQ);
+seg("sqPx", [20,50,10], ["$20+","$50+","$10+"], "sqPx", renderSQ);
+seg("sqVol", [150000,500000,1000000], ["150K+","500K+","1M+"], "sqVol", renderSQ);
+seg("sqCap", [0.35,1,10], ["$350M+","$1B+","$10B+"], "sqCap", renderSQ);
+seg("sqJt", ["any","dg"], ["Any","Double green"], "sqJt", renderSQ);
+$("sqSec").onchange = e => { state.sqSector = e.target.value; renderSQ(); };
+$("sqq").oninput = e => { state.sqq = e.target.value.trim().toUpperCase(); renderSQ(); };
 loadBT();
 window.addEventListener("hashchange", showTab);
 showTab();
