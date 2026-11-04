@@ -44,7 +44,8 @@ Open it with the **Std Dev Channel** tab or the link `#stddev`. It ports the thi
 
 * Uses the CustStdDevScan filters: price $1.25+, market cap $350M+, volume 500K+ (the scan downloads this wider set; Home and Big 3 still use $1B+ and $10+).
 * **Buyers** (top): -2.5 to -4 deviations. **Sellers** (bottom): +2.5 to +4. A Show filter picks either or both.
-* Filters for channel slope (flat, not falling), green candle, price, cap, volume and sector. Columns: deviation today and yesterday, channel slope, bands, middle line (target), distance to it, 20% stop, top down score, RS and JT.
+* Options from Cboe delayed quotes: Optionable, and Liquid options = open interest 500+ at the first expiration 20+ days out (MIN_OPT_OI, MIN_OPT_DTE). ATM call spread shown for reference.
+* Filters for channel slope (flat, rising, falling, not falling), green candle, price, cap, volume and sector. Columns: deviation today and yesterday, channel slope, bands, middle line (target), distance to it, 20% stop, top down score, RS and JT.
 * How to trade it at the bottom uses the deviation channel backtest results.
 
 Sectors come from the S&P 500 list (GICS) where the stock is in it, the Nasdaq screener sector otherwise, and the best correlated sector ETF if neither has one.

@@ -365,6 +365,7 @@
       <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="sdCap"></span></div>
       <div><span class="row-label" style="margin-right:6px">Volume</span><span class="seg" id="sdVol"></span></div>
       <div><span class="row-label" style="margin-right:6px">Candle</span><span class="seg" id="sdCandle"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Options</span><span class="seg" id="sdOpt"></span></div>
       <div><span class="row-label" style="margin-right:6px">Sector</span><select id="sdSec"></select></div>
       <input type="search" id="sdq" placeholder="Find symbol">
     </div>
@@ -407,7 +408,7 @@
         <li><b>Bands are probability zones, not support.</b> About 1 in 5 trades fell a full extra deviation before working. Size small enough to sit through it.</li>
       </ol>
     </div>
-    <p class="note">Channel = regression line over the last 251 daily closes plus or minus the standard deviation of those closes, matching your study on a 1 year daily chart. Deviation numbers can differ slightly from thinkorswim because these prices are split and dividend adjusted. Research tool only, not investment advice.</p>
+    <p class="note">Channel = regression line over the last 251 daily closes plus or minus the standard deviation of those closes, matching your study on a 1 year daily chart. Deviation numbers can differ slightly from thinkorswim because these prices are split and dividend adjusted. Options data is Cboe delayed quotes: Liquid options = open interest 500+ at the first expiration 20+ days out, the same rule as your thinkorswim scans. ATM spread is shown for reference; it is only meaningful during market hours. Research tool only, not investment advice.</p>
   </section>
   </div>
 
@@ -417,7 +418,7 @@
 <script>
 const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort:"pass", dir:-1,
   pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any",
-  sdShow:"both", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdSector:"all", sdq:"",
+  sdShow:"both", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
   sdSort:{buy:"dev", sell:"dev"}, sdDir:{buy:1, sell:-1},
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
@@ -736,7 +737,7 @@ const SD_COLS = side => [
   ["Price", "px"], ["Day", "day"], ["Candle", "green"],
   ...(side === "buy" ? [["-2.5 line", "b25"], ["-4 line", "b4"]] : [["+2.5 line", "u25"], ["+4 line", "u4"]]),
   ["Middle (target)", "mean"], ["To middle", "to_mean"], ...(side === "buy" ? [["20% stop", "stop"]] : []),
-  ["Vol today", "vol1"], ["Cap", "cap"], ["Top down", "pass"], ["RS", "rs"], ["JT", "jtv"]
+  ["Vol today", "vol1"], ["Cap", "cap"], ["Options", "oi"], ["ATM spread", "spr"], ["Top down", "pass"], ["RS", "rs"], ["JT", "jtv"]
 ];
 
 function renderSD(){
@@ -748,6 +749,10 @@ function renderSD(){
   if (state.sdSector !== "all") base = base.filter(s => s.etf === state.sdSector);
   if (state.sdReg === "flat") base = base.filter(s => s.regime === "Flat");
   if (state.sdReg === "notdown") base = base.filter(s => !/down/.test(s.regime));
+  if (state.sdReg === "rising") base = base.filter(s => /up/.test(s.regime));
+  if (state.sdReg === "falling") base = base.filter(s => /down/.test(s.regime));
+  if (state.sdOpt === "opt") base = base.filter(s => s.opt);
+  if (state.sdOpt === "liq") base = base.filter(s => s.liq);
   if (state.sdCandle === "green") base = base.filter(s => s.green);
   if (state.sdq) base = base.filter(s => s.t.includes(state.sdq) || s.n.toUpperCase().includes(state.sdq));
   const inRange = (s, side) => side === "buy"
@@ -792,6 +797,8 @@ function renderSD(){
         ${side === "buy" ? `<td>$${s.stop.toFixed(2)}</td>` : ""}
         <td>${fmtVol(s.vol1)}</td>
         <td>${s.cap >= 1 ? "$" + s.cap.toFixed(1) + "B" : "$" + Math.round(s.cap * 1000) + "M"}</td>
+        <td>${s.opt ? `<span class="zone ${s.liq ? "in" : "out"}" title="open interest at the ${s.exp || ""} expiration">${s.liq ? "Liquid" : "Thin"} ${fmtVol(s.oi || 0).replace("K","K OI").replace("M","M OI")}${(s.oi||0) < 1000 ? " OI" : ""}</span>` : s.opt === false ? `<span class="zone out">None</span>` : "&ndash;"}</td>
+        <td>${s.spr != null ? s.spr.toFixed(1) + "%" : "&ndash;"}</td>
         <td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td>
         <td><b>${s.rs}</b></td>
         <td>${jtDots(s)}</td>
@@ -844,7 +851,8 @@ $("b3Sec").onchange = e => { state.b3Sector = e.target.value; renderB3(); };
 $("b3q").oninput = e => { state.b3q = e.target.value.trim().toUpperCase(); renderB3(); };
 seg("sdShow", ["both","buy","sell"], ["Both","Buyers","Sellers"], "sdShow", renderSD);
 seg("sdRange", ["zone","all"], ["2.5 to 4","All past 2.5"], "sdRange", renderSD);
-seg("sdReg", ["any","flat","notdown"], ["Any","Flat","Not falling"], "sdReg", renderSD);
+seg("sdReg", ["any","flat","rising","falling","notdown"], ["Any","Flat","Rising","Falling","Not falling"], "sdReg", renderSD);
+seg("sdOpt", ["any","opt","liq"], ["Any","Optionable","Liquid options"], "sdOpt", renderSD);
 seg("sdPx", [1.25,4,10], ["$1.25+","$4+","$10+"], "sdPx", renderSD);
 seg("sdCap", [0.35,1,10], ["$350M+","$1B+","$10B+"], "sdCap", renderSD);
 seg("sdVol", [500000,200000,0], ["500K+","200K+","Any"], "sdVol", renderSD);

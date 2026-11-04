@@ -36,7 +36,9 @@ MAX_OFF_HIGH = 25.0
 WIDE_MIN_CAP = 350_000_000
 WIDE_MIN_PRICE = 1.25
 MIN_SETUP_TO_LIST = 5  # stocks below this many checks are left out of the JSON
-CHANNEL_BARS = 251     # std dev channel length: a 1 year daily chart, as in thinkorswim
+MIN_OPT_DTE = 20       # option liquidity is read at the first expiration this many days out
+MIN_OPT_OI = 500       # open interest at that expiration for "liquid options"
+CHANNEL_BARS = 251    # std dev channel length: a 1 year daily chart, as in thinkorswim
 EMA21_ZONE = 0.01      # current price within 1% of the 21 EMA counts as at the 21 EMA
 MIN_PULLBACK = 0.04    # or a pattern low at least 4% under the prior 10 bar high
 
@@ -334,6 +336,48 @@ def std_channel(frame: pd.DataFrame) -> dict:
     }
 
 
+def options_info(ticker: str) -> dict:
+    """Optionable and option liquidity from Cboe's free delayed quotes. Liquidity follows the
+    thinkorswim scans: open interest MIN_OPT_OI+ at the first expiration MIN_OPT_DTE+ days out.
+    The bid/ask spread of the call closest to the money there is reported for reference."""
+    from curl_cffi import requests
+    try:
+        r = requests.get(f"https://cdn.cboe.com/api/global/delayed_quotes/options/{ticker.replace('-', '.')}.json",
+                         impersonate="chrome", timeout=20)
+        if r.status_code != 200:
+            return {"opt": False}
+        data = r.json()["data"]
+        px = float(data.get("current_price") or 0)
+        today = pd.Timestamp.now().normalize()
+        rows = []
+        for o in data.get("options", []):
+            code = o["option"][-15:]           # YYMMDD + C/P + strike x 1000
+            rows.append((pd.Timestamp("20" + code[:6]), code[6], int(code[7:]) / 1000,
+                         o.get("open_interest") or 0, o.get("volume") or 0, o.get("bid") or 0, o.get("ask") or 0))
+        if not rows:
+            return {"opt": False}
+        chain = pd.DataFrame(rows, columns=["exp", "cp", "strike", "oi", "vol", "bid", "ask"])
+        far = chain[(chain["exp"] - today).dt.days >= MIN_OPT_DTE]
+        if far.empty:
+            return {"opt": True, "oi": 0, "ovol": int(chain["vol"].sum()), "spr": None, "liq": False}
+        exp = far["exp"].min()
+        leg = far[far["exp"] == exp]
+        oi = int(leg["oi"].sum())
+        calls = leg[leg["cp"] == "C"]
+        atm = calls.iloc[(calls["strike"] - px).abs().argsort()[:1]] if len(calls) else calls
+        spr = None
+        if len(atm):
+            bid, ask = float(atm["bid"].iloc[0]), float(atm["ask"].iloc[0])
+            if ask > 0 and bid > 0:
+                spr = round((ask - bid) / ((ask + bid) / 2) * 100, 1)
+        return {"opt": True, "oi": oi, "oi_all": int(chain["oi"].sum()), "ovol": int(chain["vol"].sum()),
+                "exp": str(exp.date()), "spr": spr,
+                "liq": bool(oi >= MIN_OPT_OI)}
+    except Exception as exc:  # noqa: BLE001  a bad feed for one name must not sink the scan
+        print(f"options {ticker}: {exc}")
+        return {"opt": None}
+
+
 def returns(c: np.ndarray, n: int = 60) -> np.ndarray:
     return c[-n:] / c[-n - 1:-1] - 1
 
@@ -447,6 +491,10 @@ def scan() -> dict:
     sd_rows = [{**{k: s[k] for k in keep}, **s["sdc"], "vol1": s["b3"]["vol1"]}
                for s in stocks if abs(s["sdc"]["dev"]) >= 2.5]
     sd_rows.sort(key=lambda s: s["dev"])
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(8) as pool:
+        for row, info in zip(sd_rows, pool.map(options_info, [r["t"] for r in sd_rows])):
+            row.update(info)
     for s in stocks:
         del s["b3"], s["sdc"]
     wide_count = len(stocks)
