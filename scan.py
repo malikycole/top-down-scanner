@@ -748,6 +748,16 @@ def options_info(ticker: str) -> dict:
         return {"opt": None}
 
 
+def beta_vs(frame: pd.DataFrame, bench: pd.DataFrame, n: int = 252) -> float | None:
+    """Beta against SPY from the last year of daily returns: cov(stock, SPY) / var(SPY)."""
+    sc, bc = aligned_closes(frame, bench)
+    if len(sc) < n + 1:
+        return None
+    rs, rb = returns(sc, n), returns(bc, n)
+    vb = float(np.var(rb))
+    return round(float(np.cov(rs, rb, ddof=0)[0, 1] / vb), 2) if vb > 0 else None
+
+
 def returns(c: np.ndarray, n: int = 60) -> np.ndarray:
     return c[-n:] / c[-n - 1:-1] - 1
 
@@ -836,7 +846,7 @@ def scan() -> dict:
         passed = int(sum(checks))
         base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
-            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame), "sqp": squeeze_pro(frame),
+            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame), "sqp": {**squeeze_pro(frame), "beta": beta_vs(frame, frames["SPY"])},
             "cap": round(float(rec.cap) / 1e9, 2), "core": core,
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),

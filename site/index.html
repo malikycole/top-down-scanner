@@ -664,6 +664,7 @@
       <div><span class="row-label" style="margin-right:6px">Price</span><span class="seg" id="sqPx"></span></div>
       <div><span class="row-label" style="margin-right:6px">Volume</span><span class="seg" id="sqVol"></span></div>
       <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="sqCap"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Beta</span><span class="seg" id="sqBeta"></span></div>
       <div><span class="row-label" style="margin-right:6px">JT Trend</span><span class="seg" id="sqJt"></span></div>
       <div><span class="row-label" style="margin-right:6px">Sector</span><select id="sqSec"></select></div>
       <input type="search" id="sqq" placeholder="Find symbol">
@@ -721,7 +722,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
-  sqLvl:"any", sqEntry:"any", sqMom:"any", sqHi:10, sqPx:20, sqVol:150000, sqCap:0.35, sqJt:"any", sqSector:"all", sqq:"", sqSort:"default", sqDir:-1,
+  sqLvl:"any", sqEntry:"any", sqMom:"any", sqHi:10, sqPx:20, sqVol:150000, sqCap:0.35, sqBeta:0, sqJt:"any", sqSector:"all", sqq:"", sqSort:"default", sqDir:-1,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -1422,6 +1423,7 @@ function sqBase(){
   if (state.sqEntry === "either") rows = rows.filter(s => Math.abs(s.e21d) <= 1 || s.resp50);
   if (state.sqMom === "pos") rows = rows.filter(s => s.mom > 0);
   if (state.sqMom === "cyan") rows = rows.filter(s => s.mom_c === "cyan");
+  if (state.sqBeta > 0) rows = rows.filter(s => s.beta != null && s.beta >= state.sqBeta);
   if (state.sqJt === "dg") rows = rows.filter(s => s.wave === 1);
   if (state.sqq) rows = rows.filter(s => s.t.includes(state.sqq) || s.n.toUpperCase().includes(state.sqq));
   return rows;
@@ -1437,7 +1439,7 @@ function renderSQ(){
   document.querySelectorAll("#sqKpis .kpi").forEach(b => b.onclick = () => { state.sqLvl = b.dataset.k; renderSQ(); });
   let rows = base.filter(s => sqLvlMatch(s, state.sqLvl)).map(s => ({...s, jtv: jtv(s), lvlr: s.fired ? 0.5 : s.lvl, e21abs: Math.abs(s.e21d)}));
   const cols = [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Squeeze","lvlr","l"],["Bars","sq_bars"],["Momentum","mom"],["Price","px"],["Day","day"],
-    ["From high","off_hi"],["252 day high","hi252"],["vs 21 EMA","e21abs"],["vs 50 SMA","s50d"],["Entry",null,"l"],["Vol today","vol1"],["Avg vol","avgvol"],["Cap","cap"],["Options","oi_all"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
+    ["From high","off_hi"],["252 day high","hi252"],["vs 21 EMA","e21abs"],["vs 50 SMA","s50d"],["Entry",null,"l"],["Vol today","vol1"],["Avg vol","avgvol"],["Beta","beta"],["Cap","cap"],["Options","oi_all"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
   const k = state.sqSort;
   rows.sort((a,b) => {
     if (k === "default") return (b.lvlr - a.lvlr) || ((b.mom_c === "cyan") - (a.mom_c === "cyan")) || (a.off_hi - b.off_hi);
@@ -1464,7 +1466,7 @@ function renderSQ(){
       <td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
       <td>${s.off_hi.toFixed(1)}%</td><td>${money(s.hi252)}</td>
       <td class="${Math.abs(s.e21d) <= 1 ? "hit" : ""}">${pct(s.e21d)}</td><td class="${pn(s.s50d)}">${pct(s.s50d)}</td>
-      <td class="l">${entry(s)}</td><td>${fmtVol(s.vol1)}</td><td>${fmtVol(s.avgvol)}</td><td>${capTxt(s.cap)}</td><td>${optCell(s)}</td>
+      <td class="l">${entry(s)}</td><td>${fmtVol(s.vol1)}</td><td>${fmtVol(s.avgvol)}</td><td>${s.beta != null ? s.beta.toFixed(2) : "&ndash;"}</td><td>${capTxt(s.cap)}</td><td>${optCell(s)}</td>
       <td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td><td><b>${s.rs}</b></td><td>${jtDots(s)}</td>
     </tr>`).join("") : `<tr><td colspan="${cols.length}" class="empty">No stocks match these filters right now.</td></tr>`;
   $("sqCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing 400)":""}`;
@@ -1547,6 +1549,7 @@ seg("sqHi", [10,5,15], ["10%","5%","15%"], "sqHi", renderSQ);
 seg("sqPx", [20,50,10], ["$20+","$50+","$10+"], "sqPx", renderSQ);
 seg("sqVol", [150000,500000,1000000], ["150K+","500K+","1M+"], "sqVol", renderSQ);
 seg("sqCap", [0.35,1,10], ["$350M+","$1B+","$10B+"], "sqCap", renderSQ);
+seg("sqBeta", [0,1,1.5], ["Any","1+","1.5+"], "sqBeta", renderSQ);
 seg("sqJt", ["any","dg"], ["Any","Double green"], "sqJt", renderSQ);
 $("sqSec").onchange = e => { state.sqSector = e.target.value; renderSQ(); };
 $("sqq").oninput = e => { state.sqq = e.target.value.trim().toUpperCase(); renderSQ(); };
