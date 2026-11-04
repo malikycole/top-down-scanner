@@ -16,6 +16,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  actions: write
 
 concurrency:
   group: scan
@@ -58,6 +59,20 @@ jobs:
 
       - id: deploy
         uses: actions/deploy-pages@v4
+
+      # Watchdog: GitHub sometimes skips every scheduled start of the ticker. If a scan finishes
+      # during market hours and no ticker is running, start one so the 15 minute scans keep going.
+      - name: Restart the ticker if it is not running
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          now=$(date -u +%H%M); dow=$(date -u +%u)
+          if [ "$dow" -le 5 ] && [ "$now" -ge 1300 ] && [ "$now" -lt 2100 ]; then
+            running=$(gh run list --workflow ticker.yml --limit 5 --json status --jq '[.[] | select(.status=="in_progress" or .status=="queued")] | length')
+            if [ "$running" = "0" ]; then gh workflow run ticker.yml --ref main && echo "ticker restarted"; else echo "ticker already running"; fi
+          fi
 
       - name: Keepalive commit (Mondays only)
         if: github.event.schedule == '0 12 * * 1'

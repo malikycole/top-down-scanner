@@ -3,6 +3,7 @@ name: Market hours ticker
 # GitHub drops many scheduled runs, so the scan workflow cannot rely on its own
 # 15 minute cron. This job starts once (several start times, in case some are
 # skipped), stays alive through the session and kicks off a scan every 15 minutes.
+# scan.yml also restarts this ticker when a scan finishes in market hours and it is not running.
 on:
   schedule:
     - cron: "25 13 * * 1-5"
