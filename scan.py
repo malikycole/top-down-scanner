@@ -474,6 +474,108 @@ def tr3ndy_edges(frame: pd.DataFrame) -> dict:
     return {"bn": banners, "tf": setups}
 
 
+def _macd_hist(closes: pd.Series) -> pd.Series:
+    """Moxie core: EMA12 - EMA26 of the higher timeframe closes, minus its EMA9."""
+    vc = closes.ewm(span=12, adjust=False).mean() - closes.ewm(span=26, adjust=False).mean()
+    return vc - vc.ewm(span=9, adjust=False).mean()
+
+
+def trampoline(moxie_up: np.ndarray, close: np.ndarray, ma_mid: np.ndarray, clear: int = 1) -> tuple[int, int]:
+    """Port of the ST_MoxiePriceSignal trampoline state machine. Returns (state, bars in state) for the
+    last bar: 0 idle, 1 trampoline potential (Moxie up, close under the 50 SMA), 2 trampoline confirmed
+    (closed back over the 50 SMA), 3 inverse potential, 4 inverse confirmed."""
+    code = 0
+    for up, c, m in zip(moxie_up, close, ma_mid):
+        if np.isnan(m):
+            code = 0
+            continue
+        dn = not up
+        bull_setup, bear_setup = up and c < m, dn and c > m
+        if 1000 <= code < 2000:
+            code = (3000 if bear_setup else 0) if not up else (2001 if c > m else 1000)
+        elif 2000 <= code < 3000:
+            if not up:
+                code = 3000 if bear_setup else 0
+            elif c <= m:
+                code = 1000
+            elif clear > 0 and code - 2000 >= clear:
+                code = 0
+            else:
+                code = 2000 + min(code - 2000 + 1, 999)
+        elif 3000 <= code < 4000:
+            code = (1000 if bull_setup else 0) if not dn else (4001 if c < m else 3000)
+        elif code >= 4000:
+            if not dn:
+                code = 1000 if bull_setup else 0
+            elif c >= m:
+                code = 3000
+            elif clear > 0 and code - 4000 >= clear:
+                code = 0
+            else:
+                code = 4000 + min(code - 4000 + 1, 999)
+        else:
+            code = 1000 if bull_setup else 3000 if bear_setup else 0
+    return code // 1000, code % 1000
+
+
+def moxie_daily(frame: pd.DataFrame) -> dict:
+    """Moxie on a daily chart (ST_MoxieIndicator / ST_MoxiePriceSignal): the higher timeframe is the
+    week, so Moxie = MACD(12, 26, 9) histogram of weekly closes (x3 for the indicator line). Every daily
+    bar carries its week's value. Also the daily trampoline, the zero line cross and the trend stack."""
+    c = frame["Close"]
+    weeks = c.resample("W-FRI").last().dropna()
+    hist_w = _macd_hist(weeks)
+    per = frame.index.to_period("W-FRI")
+    mox = per.map(pd.Series(hist_w.values, index=hist_w.index.to_period("W-FRI"))).to_numpy(float) * 3
+    sma50 = c.rolling(50).mean().to_numpy()
+    sma200 = c.rolling(200).mean().to_numpy()
+    cv = c.to_numpy()
+    st, bars = trampoline(mox[-300:] > 0, cv[-300:], sma50[-300:], clear=1)
+    # weekly Moxie only changes at a new week, so the cross is this week's value over zero after last week's under
+    cross = 0 if len(hist_w) > 1 and hist_w.iloc[-2] < 0 < hist_w.iloc[-1] else None
+    e8, e21 = c.ewm(span=8, adjust=False).mean().iloc[-1], c.ewm(span=21, adjust=False).mean().iloc[-1]
+    trend = 1 if e8 > e21 > sma50[-1] else -1 if e8 < e21 < sma50[-1] else 0
+    return {"mox": round(float(mox[-1]), 4), "mox_up": bool(mox[-1] > 0),
+            "mox_rising": bool(mox[-1] > mox[-1 - 5]) if len(mox) > 6 else False,
+            "d_state": st, "d_bars": bars, "cross": cross, "trend": trend,
+            "s50": round(float(sma50[-1]), 2), "s200": round(float(sma200[-1]), 2),
+            "d50": round(float((cv[-1] / sma50[-1] - 1) * 100), 2)}
+
+
+def moxie_hourly(tickers: list[str], daily: dict[str, pd.DataFrame]) -> dict[str, dict]:
+    """Hourly Moxie trampoline (the thinkorswim "Moxie Trampoline Hourly Scan"): on an hourly chart the
+    higher timeframe is the day, so Moxie = MACD(12, 26, 9) histogram of daily closes. Scan: hourly close
+    under the hourly 50 SMA and over the hourly 200 SMA."""
+    out = {}
+    for start in range(0, len(tickers), 300):
+        batch = tickers[start:start + 300]
+        try:
+            raw = yf.download(batch, period="60d", interval="1h", auto_adjust=True, group_by="ticker",
+                              threads=True, progress=False)
+        except Exception as exc:  # noqa: BLE001
+            print(f"hourly batch {start} failed: {exc}")
+            continue
+        for t in batch:
+            try:
+                hf = raw[t].dropna(subset=["Close"])
+            except KeyError:
+                continue
+            if len(hf) < 210:
+                continue
+            hd = _macd_hist(daily[t]["Close"])
+            day_of = hf.index.tz_convert(daily[t].index.tz).normalize() if daily[t].index.tz else hf.index.tz_localize(None).normalize()
+            mox = pd.Series(hd.values, index=hd.index.normalize()).reindex(day_of).to_numpy(float)
+            hc = hf["Close"].to_numpy(float)
+            h50 = hf["Close"].rolling(50).mean().to_numpy()
+            h200 = hf["Close"].rolling(200).mean().to_numpy()
+            st, bars = trampoline(np.nan_to_num(mox) > 0, hc, h50, clear=1)
+            out[t] = {"h_mox": round(float(mox[-1]), 4) if not np.isnan(mox[-1]) else None,
+                      "h_scan": bool(hc[-1] < h50[-1] and hc[-1] > h200[-1]),
+                      "h_state": st, "h50": round(float(h50[-1]), 2), "h200": round(float(h200[-1]), 2),
+                      "h_d50": round(float((hc[-1] / h50[-1] - 1) * 100), 2)}
+    return out
+
+
 def _fib_pocket(bar: pd.Series) -> tuple[float, float, float]:
     """AC/DC levels off one bar: upper = high - 38.2% of range, mid = 50%, lower = 61.8%."""
     h, l = float(bar["High"]), float(bar["Low"])
@@ -696,7 +798,7 @@ def scan() -> dict:
         passed = int(sum(checks))
         base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
-            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame),
+            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame),
             "cap": round(float(rec.cap) / 1e9, 2), "core": core,
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
@@ -733,8 +835,19 @@ def scan() -> dict:
     edge_rows.sort(key=lambda r: [tf in r["ed"]["tf"] for tf in "YMWD"], reverse=True)
     attach_options(sd_rows, acdc_rows, edge_rows)
     edge_rows.sort(key=lambda r: r["rs"], reverse=True)
+    # Moxie tab: daily chart Moxie up (ST_MoxieScan on D), price $1.25+, volume 500K+, then the hourly check
+    keep_m = ("t", "n", "etf", "px", "day", "rs", "pass", "sec_state", "momo", "wave", "cap")
+    mox_rows = [{**{k: s[k] for k in keep_m}, **s["mx"], "vol1": s["b3"]["vol1"]} for s in stocks
+                if s["mx"]["mox_up"] or s["mx"]["d_state"] in (1, 2) or s["mx"]["cross"] is not None]
+    hourly = moxie_hourly([r["t"] for r in mox_rows if r["mox_up"] and r["px"] >= 1.25 and r["vol1"] >= 500_000],
+                          frames)
+    for r in mox_rows:
+        r.update(hourly.get(r["t"], {}))
+    mox_rows = [r for r in mox_rows if r.get("h_scan") or r["d_state"] in (1, 2) or r.get("h_state") in (1, 2)
+                or r["cross"] is not None]
+    print(f"moxie: {len(hourly)} hourly checked, {len(mox_rows)} rows")
     for s in stocks:
-        del s["b3"], s["sdc"], s["acdc"], s["edges"]
+        del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"]
     wide_count = len(stocks)
     stocks = [s for s in stocks if s.pop("core")]
     listed = [s for s in stocks if s["pass"] >= MIN_SETUP_TO_LIST]
@@ -754,7 +867,7 @@ def scan() -> dict:
                    "sma50": round(float(sma50), 2), "sma200": round(float(sma200), 2)},
         "indexes": index_rows, "leader_index": leader_index,
         "sectors": sector_rows, "leader_sector": sector_rows[0]["ticker"],
-        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows,
+        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows, "moxie": mox_rows,
     }
 
 

@@ -179,6 +179,9 @@
   .track-rec{font-size:13px;color:var(--muted);margin-top:8px}
   .track-rec b{color:var(--text)}
   .track-rec a{color:var(--accent);text-decoration:none}
+  .mxs{display:inline-block;border-radius:5px;padding:2px 7px;font-size:12px;font-weight:700;margin:1px 4px 1px 0}
+  .mxs.pot{background:#475569;color:#fff} .mxs.conf{background:var(--green);color:var(--chip-text)} .mxs.scan{background:#38bdf8;color:var(--chip-text)}
+  .mxs.inv{background:var(--red);color:#fff} .mxs.cross{background:#facc15;color:var(--chip-text)}
 </style>
 </head>
 <body>
@@ -196,6 +199,7 @@
     <a href="#big3" data-tab="big3">Big 3 Squeeze</a>
     <a href="#stddev" data-tab="stddev">Std Dev Channel</a>
     <a href="#edges" data-tab="edges">Trendy Edge</a>
+    <a href="#moxie" data-tab="moxie">Moxie</a>
     <a href="#backtest" data-tab="backtest">Backtests</a>
   </nav>
 
@@ -584,6 +588,60 @@
   </section>
   </div>
 
+  <div class="tab" id="tab-moxie" hidden>
+  <section class="panel">
+    <p class="row-label">Moxie <span>your ST_MoxieIndicator and ST_MoxiePriceSignal: Moxie = MACD (12, 26, 9) histogram of the next timeframe up, trampoline = Moxie up while price dips under the 50 SMA</span></p>
+    <div class="ctx" id="mxctx"></div>
+    <div class="subtabs" id="mxView"></div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Trampoline</span><span class="seg" id="mxState"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Trend</span><span class="seg" id="mxTrend"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Price</span><span class="seg" id="mxPx"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Volume</span><span class="seg" id="mxVol"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="mxCap"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Sector</span><select id="mxSec"></select></div>
+      <input type="search" id="mxq" placeholder="Find symbol">
+      <span class="count" id="mxCount"></span>
+    </div>
+    <div class="tablewrap"><table><thead><tr id="mxHead"></tr></thead><tbody id="mxRows"></tbody></table></div>
+    <p class="note" id="mxNote"></p>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">How to trade it</p>
+    <div class="howto">
+      <svg viewBox="0 0 420 300" role="img" aria-label="Moxie trampoline: Moxie stays above zero while price dips under the 50 SMA and closes back over it">
+        <line x1="20" y1="120" x2="410" y2="96" stroke="#facc15" stroke-width="2.5"/><text x="330" y="88" fill="#facc15">50 SMA</text>
+        <line x1="20" y1="176" x2="410" y2="150" stroke="#f472b6" stroke-width="1.5" stroke-dasharray="5 4"/><text x="330" y="146" fill="#f9a8d4">200 SMA</text>
+        <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="25,80 60,70 95,86 130,104 160,128 185,140 205,134 225,118 245,104 280,84 320,66 360,52 400,40"/>
+        <rect x="150" y="118" width="70" height="34" fill="rgba(148,163,184,.18)"/><text x="152" y="166" fill="#cbd5e1">Potential</text>
+        <circle cx="245" cy="104" r="7" fill="none" stroke="#22c55e" stroke-width="2.5"/><text x="232" y="128" fill="#86efac">Trampoline</text>
+        <line x1="20" y1="250" x2="410" y2="250" stroke="#64748b"/><text x="24" y="244" fill="#94a3b8">Moxie (higher timeframe)</text>
+        <g fill="#16a34a">
+          <rect x="40" y="226" width="14" height="24"/><rect x="70" y="230" width="14" height="20"/><rect x="100" y="236" width="14" height="14"/><rect x="130" y="240" width="14" height="10"/>
+          <rect x="160" y="242" width="14" height="8"/><rect x="190" y="240" width="14" height="10"/><rect x="220" y="234" width="14" height="16"/><rect x="250" y="226" width="14" height="24"/>
+          <rect x="280" y="220" width="14" height="30"/><rect x="310" y="216" width="14" height="34"/><rect x="340" y="214" width="14" height="36"/><rect x="370" y="212" width="14" height="38"/>
+        </g>
+        <text x="24" y="282" fill="#86efac">stays above zero the whole dip = momentum still up</text>
+      </svg>
+      <ol>
+        <li><b>Higher timeframe first.</b> Moxie reads the next timeframe up: weekly Moxie on a daily chart, daily Moxie on an hourly chart. It has to be above zero (green) for a long.</li>
+        <li><b>Trampoline potential.</b> Price dips under the 50 SMA while Moxie stays up: the pullback is against the bigger trend. Gray label. Wait.</li>
+        <li><b>Trampoline.</b> Price closes back over the 50 SMA with Moxie still up: green square. That close is the trigger.</li>
+        <li><b>Your hourly scan</b> looks for the setup forming: weekly Moxie up, and on the hourly chart price under the 50 SMA but still above the 200 SMA (the floor). Watch those for the hourly trampoline.</li>
+        <li><b>Stop</b> under the pullback low, or out on a close back under the 50 SMA.</li>
+        <li><b>Exit</b> when Moxie turns down (red) on the higher timeframe or crosses below zero.</li>
+        <li><b>Moxie cross up</b> (green arrow) is Moxie crossing above zero: momentum just turned up on the higher timeframe.</li>
+        <li><b>Trend label</b> is the 8 EMA above the 21 EMA above the 50 SMA. Trampolines with the trend label green are the cleaner ones.</li>
+      </ol>
+    </div>
+    <p class="note">Entry, stop and exit above follow the indicator's logic; your scripts do not define exits, and these setups are not backtested yet. Hourly bars come from Yahoo (regular hours only), and the higher timeframe Moxie uses the live week or day, the same as thinkorswim. Research tool only, not investment advice.</p>
+  </section>
+  </div>
+
   <footer>Data from Yahoo Finance, refreshed about every 15 minutes during market hours. Daily bars. Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months. Research tool only, not investment advice.</footer>
 </div>
 
@@ -594,6 +652,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   sdSort:"stretch", sdDir:-1,
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
+  mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -674,6 +733,7 @@ function render(){
   renderB3();
   renderSD();
   renderTE();
+  renderMX();
 }
 
 const PB_COLS = [
@@ -750,6 +810,7 @@ function syncSelect(){
   $("b3Sec").value = state.b3Sector;
   $("sdSec").innerHTML = $("b3Sec").innerHTML; $("sdSec").value = state.sdSector;
   $("teSec").innerHTML = $("b3Sec").innerHTML; $("teSec").value = state.teSector;
+  $("mxSec").innerHTML = $("b3Sec").innerHTML; $("mxSec").value = state.mxSector;
 }
 
 function seg(id, values, labels, key, after){
@@ -1195,8 +1256,89 @@ function trackRecords(){
   put("#pbPanel .pbhead .row-label", ["21 EMA","Minor low","Inside and up"].map(n => one(`Pullback: ${n}`, n)).filter(Boolean).join(" · "));
 }
 
+const MX_NAME = {H:"Hourly trampoline", D:"Daily trampoline", X:"Moxie cross up"};
+const MX_SUB = {H:"your thinkorswim scan", D:"weekly Moxie, daily 50 SMA", X:"weekly Moxie turned positive this week"};
+const TRAMP = {1:["Potential","pot"], 2:["Trampoline","conf"], 3:["Inverse potential","pot"], 4:["Inverse","inv"]};
+const trampTag = st => st && TRAMP[st] ? `<span class="mxs ${TRAMP[st][1]}">${TRAMP[st][0]}</span>` : "&ndash;";
+
+function mxBase(){
+  const d = state.data;
+  let rows = (d.moxie || []).filter(s => s.px >= state.mxPx && s.vol1 >= state.mxVol && s.cap >= state.mxCap);
+  if (state.mxSector !== "all") rows = rows.filter(s => s.etf === state.mxSector);
+  if (state.mxTrend === "up") rows = rows.filter(s => s.trend === 1);
+  if (state.mxq) rows = rows.filter(s => s.t.includes(state.mxq) || s.n.toUpperCase().includes(state.mxq));
+  return rows;
+}
+
+function mxView(rows, v){
+  const st = v === "H" ? "h_state" : "d_state";
+  if (v === "H") rows = rows.filter(s => s.mox_up && (s.h_scan || s.h_state === 1 || s.h_state === 2));
+  if (v === "D") rows = rows.filter(s => s.d_state === 1 || s.d_state === 2);
+  if (v === "X") rows = rows.filter(s => s.cross !== null && s.cross !== undefined);
+  if (state.mxState === "pot" && v !== "X") rows = rows.filter(s => s[st] === 1);
+  if (state.mxState === "conf" && v !== "X") rows = rows.filter(s => s[st] === 2);
+  return rows;
+}
+
+function renderMX(){
+  const d = state.data;
+  if (!d.moxie) return;
+  const base = mxBase(), v = state.mxView;
+  $("mxView").innerHTML = ["H","D","X"].map(k => `<button data-v="${k}" class="${k===v?"on":""}">${MX_NAME[k]} <b>${mxView(base, k).length}</b><small>${MX_SUB[k]}</small></button>`).join("");
+  document.querySelectorAll("#mxView button").forEach(b => b.onclick = () => { state.mxView = b.dataset.v; state.mxSort = "default"; renderMX(); });
+  $("mxctx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Price $1.25+, volume 500K+ like your scan (cap $350M+ is the scanner's floor)</span>`;
+  $("mxState").parentElement.hidden = v === "X";
+  const rank = st => ({2: 3, 1: 2, 0: 1})[st] ?? 0;      // trampoline, potential, none, then inverse
+  let rows = mxView(base, v).map(s => ({...s, jtv: jtv(s), hstate: rank(s.h_state), dstate: rank(s.d_state), mxpct: s.mox / s.px * 100}));
+  const cols = v === "H"
+    ? [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Hourly",null,"l"],["Weekly Moxie","mxpct"],["Daily Moxie","h_mox"],["Price","px"],["Day","day"],
+       ["Hourly 50","h50"],["Hourly 200","h200"],["vs hourly 50","h_d50"],["Daily trampoline","d_state"],["Trend","trend"],["Vol today","vol1"],["Cap","cap"],["Top down","pass"],["RS","rs"],["JT","jtv"]]
+    : [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],[v === "X" ? "Signal" : "Daily",null,"l"],["Weekly Moxie","mxpct"],["Rising","mox_rising"],["Price","px"],["Day","day"],
+       ["50 SMA","s50"],["vs 50","d50"],["200 SMA","s200"],["Hourly",null],["Trend","trend"],["Vol today","vol1"],["Cap","cap"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
+  const k = state.mxSort;
+  rows.sort((a,b) => {
+    if (k === "default") return v === "H" ? (b.hstate - a.hstate) || (b.trend - a.trend) || (b.mxpct - a.mxpct)
+      : v === "D" ? (b.dstate - a.dstate) || (b.trend - a.trend) || (b.mxpct - a.mxpct) : (b.trend - a.trend) || (b.mxpct - a.mxpct);
+    const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
+    const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return c !== 0 ? c * state.mxDir : (b.rs - a.rs);
+  });
+  $("mxHead").innerHTML = cols.map(([label,key,al]) => `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (state.mxDir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+  document.querySelectorAll("#mxHead th").forEach(th => th.onclick = () => {
+    if (!th.dataset.k) return;
+    if (state.mxSort === th.dataset.k) state.mxDir *= -1; else { state.mxSort = th.dataset.k; state.mxDir = -1; }
+    renderMX();
+  });
+  const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
+  const trendTag = t => t === 1 ? `<span class="zone in">Trend</span>` : t === -1 ? `<span class="zone out">Down</span>` : `<span class="small">No trend</span>`;
+  const moxCell = (val, px) => val == null ? "&ndash;" : `<span class="${val > 0 ? "pos" : "neg"}">${val > 0 ? "Up" : "Down"} ${(val / px * 100).toFixed(2)}%</span>`;
+  const hourlyTags = s => [s.h_scan ? `<span class="mxs scan">Scan match</span>` : "", s.h_state ? trampTag(s.h_state) : ""].join("") || "&ndash;";
+  $("mxRows").innerHTML = rows.length ? rows.slice(0, 400).map((s,i) => `
+    <tr class="${(v === "H" ? s.h_state === 2 : v === "D" ? s.d_state === 2 : s.trend === 1) ? "best" : ""}">
+      <td class="l">${i+1}</td>
+      <td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
+      <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>
+      ${v === "H" ? `
+      <td class="l">${hourlyTags(s)}</td><td>${moxCell(s.mox, s.px)}</td><td>${moxCell(s.h_mox, s.px)}</td>
+      <td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td>${money(s.h50)}</td><td>${money(s.h200)}</td><td class="${pn(s.h_d50)}">${s.h_d50 != null ? pct(s.h_d50) : "&ndash;"}</td>
+      <td>${trampTag(s.d_state)}</td>` : `
+      <td class="l">${v === "X" ? `<span class="mxs cross">Crossed up this week</span>` : trampTag(s.d_state)}</td>
+      <td>${moxCell(s.mox, s.px)}</td><td>${s.mox_rising ? `<span class="pos">Rising</span>` : `<span class="neg">Fading</span>`}</td>
+      <td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td>${money(s.s50)}</td><td class="${pn(s.d50)}">${pct(s.d50)}</td><td>${money(s.s200)}</td><td>${hourlyTags(s)}</td>`}
+      <td>${trendTag(s.trend)}</td><td>${fmtVol(s.vol1)}</td><td>${capTxt(s.cap)}</td>
+      <td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td><td><b>${s.rs}</b></td><td>${jtDots(s)}</td>
+    </tr>`).join("") : `<tr><td colspan="${cols.length}" class="empty">No stocks match these filters right now.</td></tr>`;
+  $("mxCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing 400)":""}`;
+  $("mxNote").textContent = v === "H"
+    ? "Scan match = your thinkorswim Moxie Trampoline Hourly Scan: weekly Moxie up (ST_MoxieScan on the daily), hourly close under the hourly 50 SMA and over the hourly 200 SMA. Potential / Trampoline = the hourly chart's own trampoline, where Moxie is the daily one. Green rows: hourly trampoline confirmed."
+    : v === "D" ? "Daily chart: Moxie is the weekly one. Potential = weekly Moxie up and the daily close under the 50 SMA. Trampoline = closed back over the 50 SMA (shows for 1 bar, like the study). Green rows: confirmed."
+    : "Weekly Moxie is above zero this week after being below zero last week (the green arrow on a daily chart). It can still flip back before Friday's close. Green rows: trend label green.";
+}
+
 function showTab(){
-  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#backtest":"backtest"}[location.hash] || "home";
+  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges", "#moxie":"moxie", "#backtest":"backtest"}[location.hash] || "home";
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== "tab-" + tab);
   document.querySelectorAll(".tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
 }
@@ -1259,6 +1401,13 @@ calcEdges();
 seg("btGrp", ["all","Home","Big3","StdDev","Edge","ACDC"], ["All","Home","Big 3","Std Dev","Trendy Edge","AC/DC"], "btGrp", renderBT);
 seg("btRank", ["edge","pf","avg","perday","win"], ["Edge vs random","Profit factor","Avg trade","Per day","Win rate"], "btRank", renderBT);
 seg("btMin", [200,0], ["200+ trades","All"], "btMin", renderBT);
+seg("mxState", ["any","pot","conf"], ["Any","Potential","Trampoline"], "mxState", renderMX);
+seg("mxTrend", ["any","up"], ["Any","Trend label green"], "mxTrend", renderMX);
+seg("mxPx", [1.25,10], ["$1.25+","$10+"], "mxPx", renderMX);
+seg("mxVol", [500000,0], ["500K+","Any"], "mxVol", renderMX);
+seg("mxCap", [0.35,1,10], ["$350M+","$1B+","$10B+"], "mxCap", renderMX);
+$("mxSec").onchange = e => { state.mxSector = e.target.value; renderMX(); };
+$("mxq").oninput = e => { state.mxq = e.target.value.trim().toUpperCase(); renderMX(); };
 loadBT();
 window.addEventListener("hashchange", showTab);
 showTab();

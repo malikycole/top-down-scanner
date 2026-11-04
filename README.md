@@ -84,3 +84,11 @@ Then open http://localhost:5070
 ## Backtests tab
 
 `backtest/bt_scanner.py` tests every scanner setup on 1,755 U.S. stocks worth $2B+ from 2008 to 2026 (price history saved by the deviation channel backtests), signals with no lookahead, entry at the next open, each setup's own stop, target and time limit. `backtest/baseline.py` adds random entry: buy on any day and hold N days. The page ranks setups by edge over random buying (the setup's average trade minus what random buying made over the same number of days), which removes market drift and the survivorship of today's stock list. Rerun both scripts and copy `backtest/results.json` to `site/backtest.json` to refresh the tab.
+
+## Moxie tab
+
+Open it with **Moxie** or `#moxie`. Port of ST_MoxieIndicator and ST_MoxiePriceSignal: Moxie = MACD (12, 26, 9) histogram of the next timeframe up (weekly on a daily chart, daily on an hourly chart). Views:
+
+* **Hourly trampoline:** the thinkorswim Moxie Trampoline Hourly Scan (weekly Moxie up, price $1.25+, volume 500K+, hourly close under the hourly 50 SMA and over the hourly 200 SMA) plus the hourly chart's trampoline state. Hourly bars (60 days) are downloaded only for stocks with weekly Moxie up.
+* **Daily trampoline:** weekly Moxie up and the daily close under the 50 SMA (potential), then back over it (trampoline), using the study's state machine.
+* **Moxie cross up:** weekly Moxie above zero this week after being below zero last week.
