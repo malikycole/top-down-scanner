@@ -507,6 +507,7 @@
       <div><span class="row-label" style="margin-right:6px">Setup</span><span class="seg" id="teSet"></span></div>
       <div><span class="row-label" style="margin-right:6px">Pattern</span><span class="seg" id="tePat"></span></div>
       <div><span class="row-label" style="margin-right:6px">Banners</span><span class="seg" id="teBn"></span></div>
+      <div><span class="row-label" style="margin-right:6px" title="Accelerator hold only: how much of the move from the accelerator up to the upper edge is already done">Near accelerator</span><span class="seg" id="teAcc"></span></div>
     </div>
     <div class="controls">
       <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="teCap"></span></div>
@@ -875,7 +876,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any",
   sdMode:"se", sdSetup:"qual", sdTrend:0.7, sdShow:"buy", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
   sdSort:"stretch", sdDir:-1,
-  teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
+  teAcc:0.25, teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
   b3Opt:"any", mxOpt:"any", sqOpt:"any", tmOpt:"any",
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
@@ -1385,7 +1386,9 @@ function renderTE(){
     for (const r of d.edges) {
       const tf = r.ed.tf[v];
       if (!tf || r.cap < state.teCap || !teOptPass(r)) continue;
-      let sets = tf.set.filter(x => state.teSet === "all" || x.n === state.teSet);
+      const accDone = tf.ue > tf.bu ? (r.px - tf.bu) / (tf.ue - tf.bu) : null;     // 0 = at the accelerator, 1 = at the upper edge
+      let sets = tf.set.filter(x => state.teSet === "all" || x.n === state.teSet)
+        .filter(x => x.n !== "Accelerator hold" || state.teAcc >= 1 || (accDone != null && accDone <= state.teAcc));
       if (state.tePat !== "any") sets = sets.filter(x => x.n === "Edge reversal" && x.pat && x.pat.includes(state.tePat));
       if (!sets.length) continue;
       const bn = r.ed.bn;
@@ -1393,12 +1396,12 @@ function renderTE(){
       if (state.teBn === "noneutral" && bn.M === 0) continue;
       const main = sets[0];
       const risk = r.px - main.stop, reward = main.tgt != null ? main.tgt - r.px : null;
-      rows.push({...r, ...tf, sets, main, age: Math.min(...sets.map(x => x.age)), stop: main.stop, tgt: main.tgt,
+      rows.push({...r, ...tf, sets, main, accDone, age: Math.min(...sets.map(x => x.age)), stop: main.stop, tgt: main.tgt,
         rr: reward != null && risk > 0 && reward > 0 ? reward / risk : -1, totgt: main.tgt != null ? (main.tgt / r.px - 1) * 100 : null,
         bnsum: (bn.D||0) + (bn.W||0) + (bn.M||0)});
     }
     cols = [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Setup",null,"l"],["When","age","l"],["Banners D W M Y","bnsum"],["Price","px"],["Day","day"],
-      ["Lower edge","le"],["Decel","be"],["Mid","mid"],["Accel","bu"],["Upper edge","ue"],["Stop","stop"],["Target","tgt"],["R:R","rr"],["To target","totgt"],
+      ["Lower edge","le"],["Decel","be"],["Mid","mid"],["Accel","bu"],["Move done","accDone"],["Upper edge","ue"],["Stop","stop"],["Target","tgt"],["R:R","rr"],["To target","totgt"],
       ["Cap","cap"],["Options","oi_all"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
   }
   if (state.teSector !== "all") rows = rows.filter(s => s.etf === state.teSector);
@@ -1432,7 +1435,7 @@ function renderTE(){
       <td class="l">${s.sets.map(x => `<span class="setn ${SET_CLS[x.n]}">${x.n}</span>${x.pat ? `<span class="pat">${x.pat.join(" + ")}</span>` : ""}`).join("")}</td>
       <td class="l"><span class="when ${s.age===0?"now":""}">${s.age===0 ? (open ? "This bar (live)" : "This bar") : "1 bar ago"}</span></td>
       <td>${bnChips(s.ed.bn)}</td><td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
-      <td>${money(s.le)}</td><td>${money(s.be)}</td><td>${money(s.mid)}</td><td>${money(s.bu)}</td><td>${money(s.ue)}</td>
+      <td>${money(s.le)}</td><td>${money(s.be)}</td><td>${money(s.mid)}</td><td>${money(s.bu)}</td><td class="${s.accDone != null && s.accDone <= 0.25 ? "hit" : ""}" title="how far price has run from the accelerator toward the upper edge">${s.accDone != null && s.accDone >= 0 && s.accDone <= 1.2 ? Math.round(s.accDone * 100) + "%" : "&ndash;"}</td><td>${money(s.ue)}</td>
       <td>${money(s.stop)}</td><td>${s.tgt != null ? money(s.tgt) : "trail"}</td><td>${s.rr > 0 ? s.rr.toFixed(1) : "&ndash;"}</td>
       <td class="${s.totgt != null ? pn(s.totgt) : ""}">${s.totgt != null ? pct(s.totgt,1) : "&ndash;"}</td>${tail(s)}</tr>`).join("")
     : `<tr><td colspan="${cols.length}" class="empty">No stocks match these filters right now.</td></tr>`;
@@ -1916,6 +1919,7 @@ seg("sdCandle", ["any","green"], ["Any","Green only"], "sdCandle", renderSD);
 $("sdSec").onchange = e => { state.sdSector = e.target.value; renderSD(); };
 $("sdq").oninput = e => { state.sdq = e.target.value.trim().toUpperCase(); renderSD(); };
 seg("teSet", ["Edge reversal","Edge rejection","Accelerator hold","Breakout retest","all"], ["Edge reversal","Edge rejection","Accelerator hold","Breakout retest","All"], "teSet", renderTE);
+seg("teAcc", [0.25,0.1,0.5,1], ["Within 25%","Within 10%","Within 50%","Any"], "teAcc", renderTE);
 seg("tePat", ["any","Minor low","Inside and up"], ["Any","Minor low","Inside and up"], "tePat", renderTE);
 seg("teBn", ["any","agree","noneutral"], ["Any","D W M agree","Skip neutral monthly"], "teBn", renderTE);
 seg("teCap", [1,0.35], ["$1B+","$350M+"], "teCap", renderTE);
