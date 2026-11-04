@@ -2,7 +2,7 @@ name: Scan market and publish
 
 on:
   schedule:
-    # Backup runs in case the ticker workflow fails to start; ticker.yml does the 15 minute cadence
+    # Backup runs in case the ticker workflow fails to start; ticker.yml does the 5 minute cadence
     - cron: "0 15,18,21 * * 1-5"
     # Weekly keepalive so GitHub never pauses the schedules for inactivity
     - cron: "0 12 * * 1"
@@ -61,7 +61,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
       # Watchdog: GitHub sometimes skips every scheduled start of the ticker. If a scan finishes
-      # during market hours and no ticker is running, start one so the 15 minute scans keep going.
+      # during market hours and no ticker is running, start one so the 5 minute scans keep going.
       - name: Restart the ticker if it is not running
         if: always()
         env:
