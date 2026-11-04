@@ -1217,12 +1217,13 @@ function renderSD(){
   if (state.sdOpt === "none") base = base.filter(s => s.opt === false);
   if (state.sdCandle === "green") base = base.filter(s => s.green);
   if (state.sdq) base = base.filter(s => s.t.includes(state.sdq) || s.n.toUpperCase().includes(state.sdq));
-  const lim = state.sdRange === "zone" ? 4 : Infinity;
+  const lim = state.sdRange === "all" ? Infinity : 4, lo = state.sdRange === "z3" ? 3 : 2.5;
   const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
   const devCls = v => Math.abs(v) > 4 ? "out" : Math.abs(v) >= 3.5 ? "l4" : Math.abs(v) >= 3 ? "l3" : "l25";
   const regCls = r => r === "Flat" ? "flat" : /Mild/.test(r) ? "mild" : "steep";
   const show = state.sdShow;
   [$("sdTitle").textContent, $("sdSub").textContent] = SD_TEXT[show];
+  if (lo === 3) $("sdSub").textContent = $("sdSub").textContent.replace("2.5", "3");
   if (state.sdMode === "se" && state.sdSetup !== "qual") $("sdSub").textContent = $("sdSub").textContent.replace(/deviation/g, "standard error");
   const se = state.sdMode === "se";
 
@@ -1235,8 +1236,8 @@ function renderSD(){
   let rows = (qual
       // qualified: a low of the last 3 days reached -2.5 to -4, every close of the year held above -4,
       // the close is still near the zone (-4 to -2) and today closed up, turning back toward the line
-      ? base.filter(s => s.lo3x != null && s.lo3x <= -2.5 && s.minx >= -4 && s.dev >= -4 && s.dev <= -2 && s.up)
-      : base.filter(s => Math.abs(s.dev) >= 2.5 && Math.abs(s.dev) <= lim)
+      ? base.filter(s => s.lo3x != null && s.lo3x <= -lo && s.minx >= -4 && s.dev >= -4 && s.dev <= -2 && s.up)
+      : base.filter(s => Math.abs(s.dev) >= lo && Math.abs(s.dev) <= lim)
           .filter(s => show === "both" || (show === "buy" ? s.dev < 0 : s.dev > 0)))
     .map(s => {
       const buy = s.dev < 0;
@@ -1244,7 +1245,7 @@ function renderSD(){
               stop: buy ? +(qual ? s.b4 * 0.98 : s.px * 0.8).toFixed(2) : null, jtv: jtv(s)};
     });
   const unit = se ? "standard errors" : "deviations";
-  if (qual) { $("sdTitle").textContent = `Qualified ${se ? "Std Error" : "Std Dev"} uptrend pullbacks`; $("sdSub").textContent = `uptrend, pulled back to -2.5 to -4 ${unit}, every close held above -4, closing up`; }
+  if (qual) { $("sdTitle").textContent = `Qualified ${se ? "Std Error" : "Std Dev"} uptrend pullbacks`; $("sdSub").textContent = `uptrend, pulled back to -${lo} to -4 ${unit}, every close held above -4, closing up`; }
   const k = state.sdSort, dir = state.sdDir;
   rows.sort((a,b) => {
     const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
@@ -1845,7 +1846,7 @@ seg("sdMode", ["sd","se"], ["Std Dev","Std Error"], "sdMode", renderSD);
 seg("sdSetup", ["qual","zone"], ["Qualified pullback","Any in the zone"], "sdSetup", renderSD);
 seg("sdTrend", [0.7,0.85,-1,0], ["Strong (R&sup2; 0.7+)","Very strong (0.85+)","Any rising","Any"], "sdTrend", renderSD);
 seg("sdShow", ["buy","sell","both"], ["Buyers","Sellers","Both"], "sdShow", renderSD);
-seg("sdRange", ["zone","all"], ["2.5 to 4","All past 2.5"], "sdRange", renderSD);
+seg("sdRange", ["zone","z3","all"], ["2.5 to 4","3 to 4","All past 2.5"], "sdRange", renderSD);
 seg("sdReg", ["any","flat","rising","falling","notdown"], ["Any","Flat","Rising","Falling","Not falling"], "sdReg", renderSD);
 seg("sdOpt", ["any","opt","liq","none"], ["Any","Optionable","Liquid options","No options"], "sdOpt", renderSD);
 seg("sdPx", [1.25,4,10], ["$1.25+","$4+","$10+"], "sdPx", renderSD);
