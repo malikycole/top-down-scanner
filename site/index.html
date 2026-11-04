@@ -134,6 +134,34 @@
   .reg{font-size:12px;font-weight:700} .reg.flat{color:#86efac} .reg.mild{color:#fde68a} .reg.steep{color:#fca5a5}
   .sdhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
   .sdhead h2{margin:0;font-size:18px} .sdhead .count{margin-left:0}
+  .subtabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .subtabs button{background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:10px 14px;font:700 14px inherit;cursor:pointer;text-align:left}
+  .subtabs button small{display:block;font-weight:600;font-size:11px;color:var(--faint);margin-top:2px}
+  .subtabs button.on{border-color:var(--accent);color:var(--text);box-shadow:0 0 0 1px var(--accent) inset}
+  .subtabs button b{color:var(--text)}
+  .bn{display:inline-flex;gap:3px}
+  .bn span{min-width:22px;height:20px;padding:0 4px;border-radius:4px;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;color:var(--chip-text)}
+  .bn .x{background:#ea580c}
+  .setn{display:inline-block;border-radius:5px;padding:2px 7px;font-size:12px;font-weight:700;margin:1px 4px 1px 0;color:var(--chip-text)}
+  .setn.rev{background:#a78bfa} .setn.rej{background:#60a5fa} .setn.acc{background:#4ade80} .setn.brk{background:#facc15}
+  .pat{font-size:11px;color:var(--muted);display:block}
+  .pocket{display:inline-block;width:70px;height:8px;border-radius:4px;background:linear-gradient(90deg,#dc2626,#ca8a04,#16a34a);position:relative;vertical-align:middle}
+  .pocket i{position:absolute;top:-3px;width:3px;height:14px;background:#fff;border-radius:2px}
+  .calc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+  .calc label{font-size:12px;color:var(--muted);font-weight:600}
+  .calc input{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:14px inherit;margin-top:4px}
+  .calcout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+  .calcout table{min-width:0}
+  .calcout td{padding:6px 10px}
+  .calcout tr.hit td{background:#0c2a4a;color:#7dd3fc;font-weight:700}
+  .zonebox{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .zonebox .z{font-size:22px;font-weight:800;margin:4px 0 8px}
+  .setgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:14px 0}
+  .setgrid figure{margin:0;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px}
+  .setgrid figcaption{font-size:12px;color:var(--muted);line-height:1.5}
+  .setgrid figcaption b{color:var(--text);display:block;font-size:13px;margin-bottom:4px}
+  .setgrid svg{width:100%;height:auto;display:block;margin-bottom:6px}
+  @media (max-width:700px){ .calc,.calcout{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
@@ -150,6 +178,7 @@
     <a href="#home" data-tab="home">Home</a>
     <a href="#big3" data-tab="big3">Big 3 Squeeze</a>
     <a href="#stddev" data-tab="stddev">Std Dev Channel</a>
+    <a href="#edges" data-tab="edges">Trendy Edge</a>
   </nav>
 
   <div class="tab" id="tab-home">
@@ -407,6 +436,108 @@
   </section>
   </div>
 
+  <div class="tab" id="tab-edges" hidden>
+  <section class="panel">
+    <p class="row-label">Trendy Edge <span>Tr3ndy Edges levels from the prior daily, weekly, monthly and yearly bar, plus your AC/DC BULL scan. Long setups only.</span></p>
+    <div class="ctx" id="tectx"></div>
+    <div class="subtabs" id="teView"></div>
+  </section>
+
+  <section class="panel">
+    <div class="controls" id="teEdgeCtl">
+      <div><span class="row-label" style="margin-right:6px">Setup</span><span class="seg" id="teSet"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Pattern</span><span class="seg" id="tePat"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Banners</span><span class="seg" id="teBn"></span></div>
+    </div>
+    <div class="controls">
+      <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="teCap"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Options</span><span class="seg" id="teOpt"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Sector</span><select id="teSec"></select></div>
+      <input type="search" id="teq" placeholder="Find symbol">
+      <span class="count" id="teCount"></span>
+    </div>
+    <div class="tablewrap"><table><thead><tr id="teHead"></tr></thead><tbody id="teRows"></tbody></table></div>
+    <p class="note" id="teNote"></p>
+  </section>
+
+  <section class="panel">
+    <p class="row-label">How to trade it</p>
+    <div class="howto">
+      <svg viewBox="0 0 420 330" role="img" aria-label="Tr3ndy Edges seven zones built from last period's high and low">
+        <text x="10" y="14" fill="#94a3b8">Example: last month high 600, low 560</text>
+        <rect x="10" y="26" width="200" height="22" fill="#3f6212"/><text x="110" y="41" text-anchor="middle">Extreme bullish</text>
+        <rect x="10" y="48" width="200" height="40" fill="#365314"/><text x="110" y="72" text-anchor="middle">Super bullish</text>
+        <rect x="10" y="88" width="200" height="48" fill="#1f3a1a"/><text x="110" y="116" text-anchor="middle">Bullish</text>
+        <rect x="10" y="136" width="200" height="88" fill="#2b2f36"/><text x="110" y="176" text-anchor="middle">Neutral</text><text x="110" y="192" text-anchor="middle" fill="#94a3b8">chop, no trade</text>
+        <rect x="10" y="224" width="200" height="48" fill="#3b1d1d"/><text x="110" y="252" text-anchor="middle">Bearish</text>
+        <rect x="10" y="272" width="200" height="30" fill="#5b1f1f"/><text x="110" y="291" text-anchor="middle">Super bearish</text>
+        <rect x="10" y="302" width="200" height="22" fill="#7f1d1d"/><text x="110" y="317" text-anchor="middle">Extreme bearish</text>
+        <line x1="10" y1="26" x2="300" y2="26" stroke="#64748b"/><text x="304" y="30" fill="#94a3b8">High 600.00</text>
+        <line x1="10" y1="48" x2="300" y2="48" stroke="#a78bfa" stroke-width="2.5"/><text x="304" y="52">Upper edge 595.48</text>
+        <line x1="10" y1="88" x2="300" y2="88" stroke="#64748b" stroke-dasharray="2 3"/><text x="304" y="92" fill="#94a3b8">76.4 590.56</text>
+        <line x1="10" y1="136" x2="300" y2="136" stroke="#4ade80" stroke-width="2" stroke-dasharray="2 3"/><text x="304" y="140" fill="#86efac">Accelerator 584.72</text>
+        <line x1="10" y1="180" x2="300" y2="180" stroke="#a78bfa" stroke-dasharray="6 4"/><text x="304" y="184" fill="#c4b5fd">Mid 580.00</text>
+        <line x1="10" y1="224" x2="300" y2="224" stroke="#f87171" stroke-width="2" stroke-dasharray="2 3"/><text x="304" y="228" fill="#fca5a5">Decelerator 575.28</text>
+        <line x1="10" y1="272" x2="300" y2="272" stroke="#64748b" stroke-dasharray="2 3"/><text x="304" y="276" fill="#94a3b8">23.6 569.44</text>
+        <line x1="10" y1="302" x2="300" y2="302" stroke="#a78bfa" stroke-width="2.5"/><text x="304" y="306">Lower edge 564.52</text>
+        <line x1="10" y1="324" x2="300" y2="324" stroke="#64748b"/><text x="304" y="328" fill="#94a3b8">Low 560.00</text>
+      </svg>
+      <ol>
+        <li><b>Filter first.</b> Trade when the Daily, Weekly and Monthly banners agree (Banners filter). A neutral monthly means skip the ticker.</li>
+        <li><b>Pick the timeframe for the trade.</b> Daily edge for short swings, Weekly for swings, Monthly for position trades, Yearly blue edge for LEAP trades.</li>
+        <li><b>Enter at a level, never mid zone.</b> Time the entry on a 15 minute or 1 hour chart at the level the setup names.</li>
+        <li><b>Edge reversal (your main setup).</b> Price reaches the lower edge and prints a minor low or inside and up. Stop under the pattern low, target the upper edge.</li>
+        <li><b>Edge rejection.</b> Price drops under the lower edge and closes back above it. Stop under the wick low, target the decelerator.</li>
+        <li><b>Accelerator hold.</b> Banner bullish, price pulls back to the accelerator (green dots) and holds. Stop on a close under the mid, target the upper edge.</li>
+        <li><b>Breakout retest.</b> Price breaks last period's high, comes back to it and holds. Stop back under the upper edge, trail the rest.</li>
+        <li><b>Do not</b> chase longs in Extreme bullish, trade the Neutral zone, or take a setup when the timeframes disagree. The scanner already drops setups that hit their target or sit in Extreme bullish.</li>
+      </ol>
+    </div>
+
+    <div class="setgrid">
+      <figure>
+        <svg viewBox="0 0 200 120"><line x1="0" y1="18" x2="200" y2="18" stroke="#a78bfa" stroke-width="2"/><line x1="0" y1="100" x2="200" y2="100" stroke="#a78bfa" stroke-width="2"/>
+          <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="5,40 35,60 60,88 75,104 90,96 110,80 140,58 170,34 192,20"/>
+          <circle cx="90" cy="96" r="5" fill="#22c55e"/><text x="70" y="116" fill="#e5e7eb" font-size="11">x</text><circle cx="192" cy="20" r="6" fill="none" stroke="#4ade80" stroke-width="2"/></svg>
+        <figcaption><b>Edge reversal</b>Minor low or inside and up at the lower edge. Stop: pattern low. Target: upper edge.</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 200 120"><line x1="0" y1="90" x2="200" y2="90" stroke="#a78bfa" stroke-width="2"/><line x1="0" y1="40" x2="200" y2="40" stroke="#f87171" stroke-width="2" stroke-dasharray="2 3"/>
+          <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="5,55 40,72 70,86 90,108 105,84 130,68 160,52 190,42"/>
+          <circle cx="105" cy="84" r="5" fill="#22c55e"/><text x="86" y="118" fill="#e5e7eb" font-size="11">x</text><circle cx="190" cy="42" r="6" fill="none" stroke="#4ade80" stroke-width="2"/></svg>
+        <figcaption><b>Edge rejection</b>Drops under the lower edge, closes back above it. Stop: under the wick. Target: decelerator.</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 200 120"><line x1="0" y1="20" x2="200" y2="20" stroke="#a78bfa" stroke-width="2"/><line x1="0" y1="62" x2="200" y2="62" stroke="#4ade80" stroke-width="2" stroke-dasharray="2 3"/><line x1="0" y1="84" x2="200" y2="84" stroke="#a78bfa" stroke-dasharray="6 4"/>
+          <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="5,108 30,92 55,70 75,46 95,60 110,62 135,46 165,30 192,20"/>
+          <circle cx="110" cy="62" r="5" fill="#22c55e"/><text x="104" y="98" fill="#e5e7eb" font-size="11">x</text><circle cx="192" cy="20" r="6" fill="none" stroke="#4ade80" stroke-width="2"/></svg>
+        <figcaption><b>Accelerator hold</b>Banner bullish, pullback to the accelerator holds. Stop: close under the mid. Target: upper edge.</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 200 120"><line x1="0" y1="40" x2="200" y2="40" stroke="#64748b"/><text x="4" y="34" fill="#94a3b8" font-size="10">last high</text><line x1="0" y1="56" x2="200" y2="56" stroke="#a78bfa" stroke-width="2"/>
+          <polyline fill="none" stroke="#e5e7eb" stroke-width="2" points="5,108 30,86 55,62 80,40 100,22 118,40 140,30 165,18 192,8"/>
+          <circle cx="118" cy="40" r="5" fill="#22c55e"/><text x="112" y="70" fill="#e5e7eb" font-size="11">x</text><circle cx="192" cy="8" r="6" fill="none" stroke="#4ade80" stroke-width="2"/></svg>
+        <figcaption><b>Breakout retest</b>Breaks last period's high, retests it and holds. Stop: back under the upper edge. Target: trail it.</figcaption>
+      </figure>
+    </div>
+
+    <p class="row-label" style="margin-top:6px">Level calculator <span>type last period's high and low plus the current price</span></p>
+    <div class="calc">
+      <label>Last period high<input id="cH" type="number" step="any" value="600"></label>
+      <label>Last period low<input id="cL" type="number" step="any" value="560"></label>
+      <label>Current price<input id="cP" type="number" step="any" value="586"></label>
+    </div>
+    <div class="calcout">
+      <div class="tablewrap"><table><tbody id="calcRows"></tbody></table></div>
+      <div class="zonebox"><div class="row-label">Current zone</div><div class="z" id="calcZone"></div><div class="note" id="calcText" style="margin:0"></div></div>
+    </div>
+
+    <p class="row-label" style="margin-top:18px">AC/DC BULL</p>
+    <p class="note" style="margin-top:0">Monthly: this month's close is inside last month's 38.2 to 61.8 pocket (coiling). Weekly: this week's close is at or above last week's 38.2 line (pushing up). Strongest bull trends first. Watch for the weekly push to carry price out of the top of the monthly pocket.</p>
+    <p class="note">Edge rules come from your Tr3ndy Edges notes and are not backtested yet. Levels use split and dividend adjusted daily data, so they can be a few cents off thinkorswim. Research tool only, not investment advice.</p>
+  </section>
+  </div>
+
   <footer>Data from Yahoo Finance, refreshed about every 15 minutes during market hours. Daily bars. Strength = 40% of 1 month return + 35% of 3 months + 25% of 6 months. Research tool only, not investment advice.</footer>
 </div>
 
@@ -415,6 +546,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   pbSector:"green", pbTrig:"all", pbMin:7, pbJt:"any",
   sdShow:"buy", sdRange:"zone", sdReg:"any", sdPx:1.25, sdCap:0.35, sdVol:500000, sdCandle:"any", sdOpt:"any", sdSector:"all", sdq:"",
   sdSort:"stretch", sdDir:-1,
+  teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   b3Dir:"long", b3Sig:"+12 Bull", b3Cap:10, b3Td:"any", b3Zone:"any", b3Jt:"any", b3Sector:"all", b3q:"", b3Sort:"default", b3SortDir:-1, pbSort:"default", pbDir:-1 };
 const $ = id => document.getElementById(id);
 const cls = s => s === 2 ? "g" : s === 1 ? "y" : "r";
@@ -494,6 +626,7 @@ function render(){
   renderTable();
   renderB3();
   renderSD();
+  renderTE();
 }
 
 const PB_COLS = [
@@ -569,6 +702,7 @@ function syncSelect(){
   $("b3Sec").innerHTML = `<option value="all">All sectors</option>` + d.sectors.map(s => `<option value="${s.ticker}">${s.ticker} ${s.name}</option>`).join("");
   $("b3Sec").value = state.b3Sector;
   $("sdSec").innerHTML = $("b3Sec").innerHTML; $("sdSec").value = state.sdSector;
+  $("teSec").innerHTML = $("b3Sec").innerHTML; $("teSec").value = state.teSector;
 }
 
 function seg(id, values, labels, key, after){
@@ -810,8 +944,124 @@ function renderSD(){
   }
 }
 
+const TF_NAME = {D:"Daily edge", W:"Weekly edge", M:"Monthly edge", Y:"Yearly blue edge", ACDC:"AC/DC Bull"};
+const TF_SUB = {D:"short swings", W:"swings", M:"position trades", Y:"LEAP trades", ACDC:"monthly pocket + weekly push"};
+const BN_TXT = {3:"Extreme bullish", 2:"Super bullish", 1:"Bullish", 0:"Neutral", "-1":"Bearish", "-2":"Super bearish", "-3":"Extreme bearish"};
+const bnCls = v => v > 0 ? "g" : v < 0 ? "r" : "x";
+const bnChips = bn => `<span class="bn">${["D","W","M","Y"].filter(k => bn[k] !== undefined).map(k => `<span class="${bnCls(bn[k])}" title="${k}: ${BN_TXT[bn[k]]}">${k}${bn[k] > 0 ? "+" + bn[k] : bn[k]}</span>`).join("")}</span>`;
+const SET_CLS = {"Edge reversal":"rev","Edge rejection":"rej","Accelerator hold":"acc","Breakout retest":"brk"};
+const money = v => v == null ? "&ndash;" : "$" + (+v).toFixed(2);
+const capTxt = c => c >= 1 ? "$" + c.toFixed(1) + "B" : "$" + Math.round(c * 1000) + "M";
+const optCell = s => s.opt === undefined ? "&ndash;" : !s.opt ? `<span class="zone out">None</span>` :
+  s.oi_all != null ? `<span class="zone ${s.oi_all >= 1000 ? "in" : "out"}" title="total open interest">${fmtVol(s.oi_all)} OI</span>` : `<span class="zone in">Yes</span>`;
+
+function teOptPass(s){
+  if (state.teOpt === "opt") return s.opt;
+  if (state.teOpt === "oi") return (s.oi_all || 0) >= 1000;
+  return true;
+}
+
+function renderTE(){
+  const d = state.data;
+  if (!d.edges) return;
+  const v = state.teView, acdc = v === "ACDC";
+  const counts = {};
+  for (const k of ["D","W","M","Y"]) counts[k] = d.edges.filter(r => r.ed.tf[k] && r.ed.tf[k].set.some(x => x.n === "Edge reversal") && r.cap >= state.teCap).length;
+  counts.ACDC = (d.acdc || []).filter(r => r.cap >= state.teCap).length;
+  $("teView").innerHTML = ["D","W","M","Y","ACDC"].map(k =>
+    `<button data-v="${k}" class="${k===v?"on":""}">${TF_NAME[k]} <b>${counts[k]}</b><small>${TF_SUB[k]}${k!=="ACDC"?", edge reversals":""}</small></button>`).join("");
+  document.querySelectorAll("#teView button").forEach(b => b.onclick = () => { state.teView = b.dataset.v; state.teSort = "default"; renderTE(); });
+  $("teEdgeCtl").hidden = acdc;
+  $("tectx").innerHTML = `<span>Data through <b>${d.data_date}</b></span><span>&middot;</span><span>Health Care included</span><span>&middot;</span><span>Option open interest fills in as Cboe allows (cached for the day)</span>`;
+  const secName = Object.fromEntries(d.sectors.map(s => [s.ticker, s.name]));
+  let rows, cols;
+  if (acdc) {
+    rows = (d.acdc || []).filter(s => s.cap >= state.teCap && teOptPass(s));
+    cols = [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Trend","tstr"],["ADX","adx"],["In pocket","pos"],["Price","px"],["Day","day"],
+      ["Month 38.2","m_up"],["Month 50","m_mid"],["Month 61.8","m_lo"],["Last month high","m_hi"],["Week 38.2","w_up"],["Cap","cap"],["Options","oi_all"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
+  } else {
+    rows = [];
+    for (const r of d.edges) {
+      const tf = r.ed.tf[v];
+      if (!tf || r.cap < state.teCap || !teOptPass(r)) continue;
+      let sets = tf.set.filter(x => state.teSet === "all" || x.n === state.teSet);
+      if (state.tePat !== "any") sets = sets.filter(x => x.n === "Edge reversal" && x.pat && x.pat.includes(state.tePat));
+      if (!sets.length) continue;
+      const bn = r.ed.bn;
+      if (state.teBn === "agree" && !(bn.D > 0 && bn.W > 0 && bn.M > 0)) continue;
+      if (state.teBn === "noneutral" && bn.M === 0) continue;
+      const main = sets[0];
+      const risk = r.px - main.stop, reward = main.tgt != null ? main.tgt - r.px : null;
+      rows.push({...r, ...tf, sets, main, age: Math.min(...sets.map(x => x.age)), stop: main.stop, tgt: main.tgt,
+        rr: reward != null && risk > 0 && reward > 0 ? reward / risk : -1, totgt: main.tgt != null ? (main.tgt / r.px - 1) * 100 : null,
+        bnsum: (bn.D||0) + (bn.W||0) + (bn.M||0)});
+    }
+    cols = [["#",null,"l"],["Symbol","t","l"],["Sector","etf","l"],["Setup",null,"l"],["When","age","l"],["Banners D W M Y","bnsum"],["Price","px"],["Day","day"],
+      ["Lower edge","le"],["Decel","be"],["Mid","mid"],["Accel","bu"],["Upper edge","ue"],["Stop","stop"],["Target","tgt"],["R:R","rr"],["To target","totgt"],
+      ["Cap","cap"],["Options","oi_all"],["Top down","pass"],["RS","rs"],["JT","jtv"]];
+  }
+  if (state.teSector !== "all") rows = rows.filter(s => s.etf === state.teSector);
+  if (state.teq) rows = rows.filter(s => s.t.includes(state.teq) || s.n.toUpperCase().includes(state.teq));
+  rows = rows.map(s => ({...s, jtv: jtv(s)}));
+  const k = state.teSort;
+  rows.sort((a,b) => {
+    if (k === "default") return acdc ? (b.tstr - a.tstr) || (b.adx - a.adx) || (b.rs - a.rs) : (a.age - b.age) || (b.bnsum - a.bnsum) || (b.rr - a.rr);
+    const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
+    const c = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return c !== 0 ? c * state.teDir : (b.rs - a.rs);
+  });
+  $("teHead").innerHTML = cols.map(([label,key,al]) =>
+    `<th class="${al||""}" data-k="${key||""}">${label}${key===k ? (state.teDir<0?" &darr;":" &uarr;") : ""}</th>`).join("");
+  document.querySelectorAll("#teHead th").forEach(th => th.onclick = () => {
+    if (!th.dataset.k) return;
+    if (state.teSort === th.dataset.k) state.teDir *= -1; else { state.teSort = th.dataset.k; state.teDir = th.dataset.k === "age" ? 1 : -1; }
+    renderTE();
+  });
+  const open = marketOpen();
+  const common = s => `<td class="l"><a href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a><span class="nm">${esc(s.n)}</span></td>
+      <td class="l"><span class="tag ${cls(s.sec_state)}">${s.etf}</span> <span class="secname">${secName[s.etf]}</span></td>`;
+  const tail = s => `<td>${capTxt(s.cap)}</td><td>${optCell(s)}</td><td><span class="tag ${s.pass>=7?"g":s.pass>=5?"y":"r"}">${s.pass}/8</span></td><td><b>${s.rs}</b></td><td>${jtDots(s)}</td>`;
+  $("teRows").innerHTML = rows.length ? rows.slice(0, 400).map((s,i) => acdc ? `
+    <tr class="${s.tlabel === "Strong" ? "best" : ""}"><td class="l">${i+1}</td>${common(s)}
+      <td><span class="zone ${s.tlabel==="Strong"?"in":"out"}">${s.tlabel}</span> ${s.tstr}/6</td><td>${s.adx.toFixed(1)}</td>
+      <td><span class="pocket"><i style="left:${Math.max(0,Math.min(1,s.pos))*67}px"></i></span></td>
+      <td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td>${money(s.m_up)}</td><td>${money(s.m_mid)}</td><td>${money(s.m_lo)}</td><td>${money(s.m_hi)}</td><td>${money(s.w_up)}</td>${tail(s)}</tr>` : `
+    <tr class="${s.bnsum >= 3 && s.ed.bn.D > 0 && s.ed.bn.W > 0 && s.ed.bn.M > 0 ? "best" : ""}"><td class="l">${i+1}</td>${common(s)}
+      <td class="l">${s.sets.map(x => `<span class="setn ${SET_CLS[x.n]}">${x.n}</span>${x.pat ? `<span class="pat">${x.pat.join(" + ")}</span>` : ""}`).join("")}</td>
+      <td class="l"><span class="when ${s.age===0?"now":""}">${s.age===0 ? (open ? "This bar (live)" : "This bar") : "1 bar ago"}</span></td>
+      <td>${bnChips(s.ed.bn)}</td><td>${money(s.px)}</td><td class="${pn(s.day)}">${pct(s.day)}</td>
+      <td>${money(s.le)}</td><td>${money(s.be)}</td><td>${money(s.mid)}</td><td>${money(s.bu)}</td><td>${money(s.ue)}</td>
+      <td>${money(s.stop)}</td><td>${s.tgt != null ? money(s.tgt) : "trail"}</td><td>${s.rr > 0 ? s.rr.toFixed(1) : "&ndash;"}</td>
+      <td class="${s.totgt != null ? pn(s.totgt) : ""}">${s.totgt != null ? pct(s.totgt,1) : "&ndash;"}</td>${tail(s)}</tr>`).join("")
+    : `<tr><td colspan="${cols.length}" class="empty">No stocks match these filters right now.</td></tr>`;
+  $("teCount").textContent = `${rows.length} stock${rows.length===1?"":"s"}${rows.length>400?" (showing 400)":""}`;
+  $("teNote").textContent = acdc
+    ? "Your thinkorswim AC/DC BULL scan: market cap $1B+ and option open interest 1,000+ (Options filter). Health Care included. The marker shows where price sits in the monthly pocket, left = 61.8 line, right = 38.2 line."
+    : `${TF_NAME[v]} levels come from the prior ${({D:"day",W:"week",M:"month",Y:"year"})[v]}. Banners show where price sits on each timeframe: D W M Y, +3 extreme bullish down to -3 extreme bearish. Green rows: D, W and M banners all bullish.`;
+}
+
+function calcEdges(){
+  const H = +$("cH").value, L = +$("cL").value, P = +$("cP").value;
+  if (!(H > L)) { $("calcRows").innerHTML = ""; $("calcZone").textContent = "Enter a high above the low"; $("calcText").textContent = ""; return; }
+  const r = H - L, lv = [["Last period high", H], ["Upper edge", L + r*.887], ["76.4%", L + r*.764], ["Accelerator", L + r*.618], ["Mid", L + r*.5],
+    ["Decelerator", L + r*.382], ["23.6%", L + r*.236], ["Lower edge", L + r*.113], ["Last period low", L]];
+  const near = lv.reduce((a,b) => Math.abs(b[1]-P) < Math.abs(a[1]-P) ? b : a);
+  $("calcRows").innerHTML = lv.map(([n,x]) => `<tr class="${n===near[0]?"hit":""}"><td class="l">${n}</td><td>${x.toFixed(2)}</td></tr>`).join("");
+  const z = P >= lv[1][1] ? ["Extreme bullish","g","Do not chase longs here. Only a breakout retest of last period's high, or wait for a pullback."]
+    : P >= lv[2][1] ? ["Super bullish","g","Strong, but extended. Wait for a pullback to the accelerator."]
+    : P >= lv[3][1] ? ["Bullish","g","Accelerator hold zone. Buy pullbacks that hold the accelerator. Stop on a close under the mid. Target the upper edge."]
+    : P > lv[5][1] ? ["Neutral","x","Chop zone. No trade on this timeframe."]
+    : P > lv[6][1] ? ["Bearish","r","No long setup yet. Watch the lower edge."]
+    : P > lv[7][1] ? ["Super bearish","r","Getting close to the lower edge. Wait for a minor low or inside and up there."]
+    : ["Extreme bearish","r","Edge zone. Long only on a close back above the lower edge (edge rejection) or a reversal pattern there."];
+  $("calcZone").textContent = z[0];
+  $("calcZone").style.color = z[1] === "g" ? "#4ade80" : z[1] === "r" ? "#f87171" : "#fb923c";
+  $("calcText").textContent = z[2];
+}
+
 function showTab(){
-  const tab = location.hash === "#big3" ? "big3" : location.hash === "#stddev" ? "stddev" : "home";
+  const tab = {"#big3":"big3", "#stddev":"stddev", "#edges":"edges"}[location.hash] || "home";
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== "tab-" + tab);
   document.querySelectorAll(".tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
 }
@@ -862,6 +1112,15 @@ seg("sdVol", [500000,200000,0], ["500K+","200K+","Any"], "sdVol", renderSD);
 seg("sdCandle", ["any","green"], ["Any","Green only"], "sdCandle", renderSD);
 $("sdSec").onchange = e => { state.sdSector = e.target.value; renderSD(); };
 $("sdq").oninput = e => { state.sdq = e.target.value.trim().toUpperCase(); renderSD(); };
+seg("teSet", ["Edge reversal","Edge rejection","Accelerator hold","Breakout retest","all"], ["Edge reversal","Edge rejection","Accelerator hold","Breakout retest","All"], "teSet", renderTE);
+seg("tePat", ["any","Minor low","Inside and up"], ["Any","Minor low","Inside and up"], "tePat", renderTE);
+seg("teBn", ["any","agree","noneutral"], ["Any","D W M agree","Skip neutral monthly"], "teBn", renderTE);
+seg("teCap", [1,0.35], ["$1B+","$350M+"], "teCap", renderTE);
+seg("teOpt", ["any","opt","oi"], ["Any","Optionable","OI 1,000+"], "teOpt", renderTE);
+$("teSec").onchange = e => { state.teSector = e.target.value; renderTE(); };
+$("teq").oninput = e => { state.teq = e.target.value.trim().toUpperCase(); renderTE(); };
+["cH","cL","cP"].forEach(id => $(id).oninput = calcEdges);
+calcEdges();
 window.addEventListener("hashchange", showTab);
 showTab();
 $("pbSec").onchange = e => { state.pbSector = e.target.value; renderPullbacks(); };

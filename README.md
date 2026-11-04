@@ -48,6 +48,16 @@ Open it with the **Std Dev Channel** tab or the link `#stddev`. It ports the thi
 * Filters for channel slope (flat, rising, falling, not falling), green candle, price, cap, volume and sector. Columns: deviation today and yesterday, channel slope, bands, middle line (target), distance to it, 20% stop, top down score, RS and JT.
 * How to trade it at the bottom uses the deviation channel backtest results.
 
+## Trendy Edge tab
+
+Open it with the **Trendy Edge** tab or `#edges`. Sub views:
+
+* **Daily, Weekly, Monthly edge and Yearly blue edge (LEAP):** port of the Tr3ndy Edges study. Levels from the prior bar: lower edge 11.3% of the range, decelerator 38.2%, mid 50%, accelerator 61.8%, upper edge 88.7%. Long setups on this daily bar or the one before: **Edge reversal** (minor low or inside and up at the lower edge, target the upper edge), **Edge rejection** (under the lower edge, closed back above, target the decelerator), **Accelerator hold** (bullish banner, pullback holds the accelerator, stop a close under the mid, target the upper edge), **Breakout retest** (last high broken, retested and held, trail). Setups at their target or in the Extreme bullish zone are dropped. Banners for D, W, M, Y on every row, with a D W M agree filter.
+* **AC/DC Bull:** the thinkorswim AC/DC BULL scan: monthly close inside last month's 38.2 to 61.8 pocket and weekly close at or above last week's 38.2 line, market cap $1B+, option open interest 1,000+ filter, Health Care included, strongest trends first.
+* How to trade it: zone ladder, setup pictures and a level calculator. Rules are not backtested yet.
+
+Option open interest comes from Cboe delayed quotes, fetched slowly because Cboe rate limits, and cached for the day (`options_cache.json`, kept between GitHub runs with actions/cache). Optionable comes from the Cboe symbol directory. The scan downloads 2 years of daily bars so the yearly edge has all of last year.
+
 The universe is every U.S. listed stock in the Nasdaq screener, foreign ADRs included, minus warrants, units, rights, preferreds, notes, funds and ETFs (whole word matching, so names like UnitedHealth are kept).
 
 Sectors come from the S&P 500 list (GICS) where the stock is in it, the Nasdaq screener sector otherwise, and the best correlated sector ETF if neither has one.

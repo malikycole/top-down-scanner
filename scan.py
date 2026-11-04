@@ -37,7 +37,9 @@ MAX_OFF_HIGH = 25.0
 WIDE_MIN_CAP = 350_000_000
 WIDE_MIN_PRICE = 1.25
 MIN_SETUP_TO_LIST = 5  # stocks below this many checks are left out of the JSON
-MIN_OPT_DTE = 20       # option liquidity is read at the first expiration this many days out
+OPTIONS_CACHE = ROOT / "options_cache.json"
+MAX_OI_FETCH = 400     # open interest lookups per run; the rest wait for the next run (cache)
+MIN_OPT_DTE = 20      # option liquidity is read at the first expiration this many days out
 MIN_OPT_OI = 500       # open interest at that expiration for "liquid options"
 CHANNEL_BARS = 251    # std dev channel length: a 1 year daily chart, as in thinkorswim
 EMA21_ZONE = 0.01      # current price within 1% of the 21 EMA counts as at the 21 EMA
@@ -145,7 +147,8 @@ def download(symbols: list[str]) -> dict[str, pd.DataFrame]:
         batch = symbols[start:start + 300]
         for attempt in range(3):
             try:
-                raw = yf.download(batch, period="15mo", interval="1d", auto_adjust=True,
+                # 2 years so the yearly Tr3ndy edge always has all of last year
+                raw = yf.download(batch, period="2y", interval="1d", auto_adjust=True,
                                   group_by="ticker", threads=True, progress=False)
                 break
             except Exception as exc:  # noqa: BLE001
@@ -349,14 +352,228 @@ def std_channel(frame: pd.DataFrame) -> dict:
     }
 
 
+EDGE_TOL = {"D": 0.0, "W": 0.01, "M": 0.015, "Y": 0.02}   # how close to the lower edge counts as "at" it
+
+
+def _edge_levels(h: float, l: float) -> dict:
+    """Tr3ndy Edges levels off one prior bar (range r = h - l)."""
+    r = h - l
+    return {"le": h - r * 0.887, "ue": l + r * 0.887, "mid": l + r * 0.5,
+            "sbu": h - r * 0.236, "bu": h - r * 0.382, "be": l + r * 0.382, "sbe": l + r * 0.236}
+
+
+def _edge_label(c: float, lv: dict) -> int:
+    """Tr3ndy banner: 3 extreme bullish, 2 super bullish, 1 bullish, 0 neutral, -1 bearish,
+    -2 super bearish, -3 extreme bearish."""
+    if c >= lv["ue"]:
+        return 3
+    if c >= lv["sbu"]:
+        return 2
+    if c >= lv["bu"]:
+        return 1
+    if c <= lv["le"]:
+        return -3
+    if c <= lv["sbe"]:
+        return -2
+    if c <= lv["be"]:
+        return -1
+    return 0
+
+
+def tr3ndy_edges(frame: pd.DataFrame) -> dict:
+    """Port of the Tr3ndy Edges study (@beezy, trendytrading.co) with Malik's edge rules, long side.
+    Levels come from the prior daily, weekly, monthly and yearly (blue) bar: lower edge 11.3% of
+    the range, decelerator 38.2%, mid 50%, accelerator 61.8%, upper edge 88.7%. Setups, confirmed on
+    this daily bar or the one before:
+      Edge reversal     a minor low or inside and up whose low reached the lower edge; target the
+                        upper edge, stop the pattern low
+      Edge rejection    price traded under the lower edge and closed back above it; target the
+                        decelerator, stop under the wick low
+      Accelerator hold  banner bullish (not extreme), price pulled back to the accelerator and closed
+                        above it; target the upper edge, stop a close under the mid
+      Breakout retest   the prior high was broken earlier this period, price came back to it and held;
+                        stop back under the upper edge, target trail (weekly and up)"""
+    o, h, l, c = (frame[k].to_numpy() for k in ("Open", "High", "Low", "Close"))
+    agg = {"High": "max", "Low": "min", "Close": "last"}
+    prior = {}
+    for tf, rule in (("W", "W-FRI"), ("M", "ME"), ("Y", "YE")):
+        bars = frame.resample(rule).agg(agg).dropna()
+        if len(bars) < 2:
+            continue
+        if tf == "Y" and (bars.index[-2].year != frame.index[-1].year - 1
+                          or frame.index[0] > pd.Timestamp(bars.index[-2].year, 1, 10, tz=frame.index[0].tz)):
+            continue    # need the whole of last year
+        hi, lo = float(bars["High"].iloc[-2]), float(bars["Low"].iloc[-2])
+        prior[tf] = {**_edge_levels(hi, lo), "hi": hi}
+
+    def patterns(age: int) -> list[tuple[str, int, float]]:
+        """Reversal patterns confirmed by bar -1-age: (name, index of the low bar, pattern low)."""
+        up = -1 - age
+        mid, before = up - 1, up - 2
+        found = []
+        if l[mid] < l[before] and l[up] > l[mid] and c[up] > o[up] and c[up] > h[mid]:
+            found.append(("Minor low", mid, float(l[mid])))
+        if h[mid] <= h[before] and l[mid] >= l[before] and c[up] > h[mid]:
+            found.append(("Inside and up", before, float(min(l[before], l[mid]))))
+        return found
+
+    period = {"W": frame.index.to_period("W-FRI"), "M": frame.index.to_period("M"), "Y": frame.index.to_period("Y")}
+    banners, setups = {}, {}
+    for tf in ("D", "W", "M", "Y"):
+        if tf == "D":
+            lv = {**_edge_levels(h[-2], l[-2]), "hi": float(h[-2])}
+        elif tf in prior:
+            lv = prior[tf]
+        else:
+            continue
+        lbl = _edge_label(c[-1], lv)
+        banners[tf] = lbl
+        tol = EDGE_TOL[tf]
+        same = (lambda i: True) if tf == "D" else (lambda i: period[tf][i] == period[tf][-1])
+        found = []
+
+        # Edge reversal: minor low or inside and up at the lower edge
+        for a in (0, 1):
+            names, plow = [], None
+            for name, low_bar, pl in patterns(a):
+                if tf != "D" and not same(low_bar):
+                    continue        # the low has to be made against this period's edge
+                edge = _edge_levels(h[low_bar - 1], l[low_bar - 1])["le"] if tf == "D" else lv["le"]
+                if pl <= edge * (1 + tol):
+                    names.append(name)
+                    plow = pl if plow is None else min(plow, pl)
+            if names:
+                found.append({"n": "Edge reversal", "pat": names, "age": a, "stop": plow, "tgt": lv["ue"]})
+                break
+        # Edge rejection: under the lower edge, closed back above it (today or yesterday)
+        for a in (0, 1):
+            i = -1 - a
+            # the daily edge for bar i comes from the bar before it; longer edges from the prior period
+            bl = _edge_levels(h[i - 1], l[i - 1]) if tf == "D" else lv
+            if same(i) and l[i] < bl["le"] and c[i] > bl["le"] and c[-1] > bl["le"]:
+                found.append({"n": "Edge rejection", "age": a, "stop": float(l[i]), "tgt": bl["be"]})
+                break
+        # Accelerator hold: bullish banner, pulled back to the accelerator and closed above it
+        if lbl in (1, 2) and l[-1] <= lv["bu"] * (1 + max(tol, 0.003)) and c[-1] >= lv["bu"]:
+            found.append({"n": "Accelerator hold", "age": 0, "stop": lv["mid"], "tgt": lv["ue"]})
+        # Breakout retest: prior high broken earlier this period, back to it and holding
+        if tf != "D":
+            idx = [i for i in range(-len(c), -1) if same(i)]
+            if idx and max(h[i] for i in idx) > lv["hi"] and l[-1] <= lv["hi"] * (1 + max(tol, 0.005)) and c[-1] > lv["hi"]:
+                found.append({"n": "Breakout retest", "age": 0, "stop": lv["ue"], "tgt": None})
+        # do not chase: drop longs already at their target or in the extreme bullish zone
+        # (the breakout retest lives above the edge by design)
+        found = [f for f in found if f["n"] == "Breakout retest"
+                 or (lbl != 3 and (f["tgt"] is None or c[-1] < f["tgt"]))]
+        if found:
+            for f in found:
+                f["stop"] = round(f["stop"], 2)
+                f["tgt"] = round(f["tgt"], 2) if f["tgt"] is not None else None
+            setups[tf] = {"set": found, "le": round(lv["le"], 2), "be": round(lv["be"], 2), "mid": round(lv["mid"], 2),
+                          "bu": round(lv["bu"], 2), "ue": round(lv["ue"], 2), "hi": round(lv["hi"], 2)}
+    return {"bn": banners, "tf": setups}
+
+
+def _fib_pocket(bar: pd.Series) -> tuple[float, float, float]:
+    """AC/DC levels off one bar: upper = high - 38.2% of range, mid = 50%, lower = 61.8%."""
+    h, l = float(bar["High"]), float(bar["Low"])
+    return h - (h - l) * 0.382, h - (h - l) * 0.5, h - (h - l) * 0.618
+
+
+def acdc(frame: pd.DataFrame) -> dict:
+    """Port of the AC/DC BULL thinkorswim scan. Monthly study: this month's close inside the
+    prior month's 38.2 to 61.8 pocket. Weekly study: this week's close at or above the prior
+    week's 38.2 line (upper). Bars are built from daily data, the current bar is the live one."""
+    agg = {"Open": "first", "High": "max", "Low": "min", "Close": "last"}
+    m = frame.resample("ME").agg(agg).dropna()
+    w = frame.resample("W-FRI").agg(agg).dropna()
+    if len(m) < 2 or len(w) < 2:
+        return {"pocket": False, "wbull": False}
+    c = float(frame["Close"].iloc[-1])
+    mu, mm, ml = _fib_pocket(m.iloc[-2])
+    wu, wm, wl = _fib_pocket(w.iloc[-2])
+
+    # Trend strength 0 to 6, strongest bull trends first (same idea as the Morning Star AC/DC scan)
+    cl, hi, lo = frame["Close"], frame["High"], frame["Low"]
+    e = {n: float(cl.ewm(span=n, adjust=False).mean().iloc[-1]) for n in (8, 21, 50, 200)}
+    up, dn = hi.diff(), -lo.diff()
+    plus_dm = np.where((up > dn) & (up > 0), up, 0.0)
+    minus_dm = np.where((dn > up) & (dn > 0), dn, 0.0)
+    tr = pd.concat([hi - lo, (hi - cl.shift()).abs(), (lo - cl.shift()).abs()], axis=1).max(axis=1)
+    rma = lambda s: pd.Series(s, index=cl.index).ewm(alpha=1 / 14, adjust=False).mean()
+    atr = rma(tr)
+    pdi, mdi = 100 * rma(plus_dm) / atr, 100 * rma(minus_dm) / atr
+    adx = float(rma((100 * (pdi - mdi).abs() / (pdi + mdi)).fillna(0)).iloc[-1])
+    r1m = c / float(cl.iloc[-22]) - 1
+    strength = int(sum([c > e[21], e[8] > e[21], e[21] > e[50], e[50] > e[200], adx >= 20, r1m > 0]))
+    stacked = c > e[21] > e[50] > e[200]
+    return {
+        "pocket": bool(ml <= c <= mu), "wbull": bool(c >= wu),
+        "m_up": round(mu, 2), "m_mid": round(mm, 2), "m_lo": round(ml, 2),
+        "m_hi": round(float(m.iloc[-2]["High"]), 2), "m_low": round(float(m.iloc[-2]["Low"]), 2),
+        "w_up": round(wu, 2), "w_hi": round(float(w.iloc[-2]["High"]), 2),
+        "pos": round((c - ml) / (mu - ml), 2) if mu > ml else 0.0,   # 0 = at 61.8 line, 1 = at 38.2 line
+        "adx": round(adx, 1), "tstr": strength,
+        "tlabel": "Strong" if strength >= 5 and stacked else "Building" if strength >= 3 else "Weak",
+    }
+
+
+def optionable_symbols() -> tuple[set, set]:
+    """Every optionable symbol and the ones with weekly options, from Cboe's symbol directory."""
+    def symbols(url: str) -> set:
+        text = _get(url)
+        return {line.split('","')[1].strip().replace(".", "-") for line in text.splitlines()[1:] if '","' in line}
+    try:
+        return (symbols("https://www.cboe.com/us/options/symboldir/equity_index_options/?download=csv"),
+                symbols("https://www.cboe.com/us/options/symboldir/weeklys_options/?download=csv"))
+    except Exception as exc:  # noqa: BLE001
+        print(f"optionable directory failed: {exc}")
+        return set(), set()
+
+
+def attach_options(*row_lists: list) -> None:
+    """Optionable (directory) on every row; open interest from Cboe quotes, fetched slowly to stay
+    under Cboe's rate limit and cached for the day (open interest only updates once a day)."""
+    listed, weekly = optionable_symbols()
+    cache = {}
+    if OPTIONS_CACHE.exists():
+        saved = json.loads(OPTIONS_CACHE.read_text())
+        if saved.get("date") == str(pd.Timestamp.now().date()):
+            cache = saved["data"]
+    fetched, blocked = 0, False
+    for rows in row_lists:
+        for row in rows:
+            t = row["t"]
+            if t not in cache and listed and t in listed and fetched < MAX_OI_FETCH and not blocked:
+                info = options_info(t)
+                time.sleep(0.4)
+                fetched += 1
+                if info:
+                    cache[t] = info
+                else:
+                    blocked = True     # Cboe is rate limiting: stop asking, keep what is cached
+            row.update(cache.get(t, {}))
+            if listed:
+                row["opt"] = t in listed
+                row["wk"] = t in weekly
+    OPTIONS_CACHE.write_text(json.dumps({"date": str(pd.Timestamp.now().date()), "data": cache}))
+    print(f"options: {fetched} fetched, {len(cache)} cached{', stopped by Cboe rate limit' if blocked else ''}")
+
+
 def options_info(ticker: str) -> dict:
     """Optionable and option liquidity from Cboe's free delayed quotes. Liquidity follows the
     thinkorswim scans: open interest MIN_OPT_OI+ at the first expiration MIN_OPT_DTE+ days out.
     The bid/ask spread of the call closest to the money there is reported for reference."""
     from curl_cffi import requests
     try:
-        r = requests.get(f"https://cdn.cboe.com/api/global/delayed_quotes/options/{ticker.replace('-', '.')}.json",
-                         impersonate="chrome", timeout=20)
+        url = f"https://cdn.cboe.com/api/global/delayed_quotes/options/{ticker.replace('-', '.')}.json"
+        for wait in (0, 5, 15):        # Cboe answers 429 when asked too fast: back off and retry
+            time.sleep(wait)
+            r = requests.get(url, impersonate="chrome", timeout=20)
+            if r.status_code != 429:
+                break
+        if r.status_code == 429:
+            return {}                  # unknown this run; optionable still comes from the directory
         if r.status_code != 200:
             return {"opt": False}
         data = r.json()["data"]
@@ -479,7 +696,7 @@ def scan() -> dict:
         passed = int(sum(checks))
         base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
         stocks.append({
-            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame),
+            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame),
             "cap": round(float(rec.cap) / 1e9, 2), "core": core,
             "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
             "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
@@ -504,12 +721,20 @@ def scan() -> dict:
     sd_rows = [{**{k: s[k] for k in keep}, **s["sdc"], "vol1": s["b3"]["vol1"]}
                for s in stocks if abs(s["sdc"]["dev"]) >= 2.5]
     sd_rows.sort(key=lambda s: s["dev"])
-    from concurrent.futures import ThreadPoolExecutor
-    with ThreadPoolExecutor(8) as pool:
-        for row, info in zip(sd_rows, pool.map(options_info, [r["t"] for r in sd_rows])):
-            row.update(info)
+    # Trendy Edge tab: AC/DC BULL, monthly pocket and weekly push, market cap $1B+ (no price floor)
+    acdc_rows = [{**{k: s[k] for k in keep}, **s["acdc"], "vol1": s["b3"]["vol1"]} for s in stocks
+                 if s["cap"] >= 1 and s["acdc"]["pocket"] and s["acdc"]["wbull"]]
+    acdc_rows.sort(key=lambda s: (s["tstr"], s["adx"], s["rs"]), reverse=True)
+    # Tr3ndy Edges views: stocks at a daily, weekly, monthly or yearly lower edge, cap $1B+
+    keep_e = ("t", "n", "etf", "px", "day", "rs", "pass", "sec_state", "momo", "wave", "cap")
+    edge_rows = [{**{k: s[k] for k in keep_e}, "ed": s["edges"], "vol1": s["b3"]["vol1"]} for s in stocks
+                 if s["cap"] >= 0.35 and s["edges"]["tf"]]
+    # options: std dev and AC/DC first, then edge setups from the yearly down to the daily
+    edge_rows.sort(key=lambda r: [tf in r["ed"]["tf"] for tf in "YMWD"], reverse=True)
+    attach_options(sd_rows, acdc_rows, edge_rows)
+    edge_rows.sort(key=lambda r: r["rs"], reverse=True)
     for s in stocks:
-        del s["b3"], s["sdc"]
+        del s["b3"], s["sdc"], s["acdc"], s["edges"]
     wide_count = len(stocks)
     stocks = [s for s in stocks if s.pop("core")]
     listed = [s for s in stocks if s["pass"] >= MIN_SETUP_TO_LIST]
@@ -529,7 +754,7 @@ def scan() -> dict:
                    "sma50": round(float(sma50), 2), "sma200": round(float(sma200), 2)},
         "indexes": index_rows, "leader_index": leader_index,
         "sectors": sector_rows, "leader_sector": sector_rows[0]["ticker"],
-        "stocks": listed, "big3": big3_rows, "stddev": sd_rows,
+        "stocks": listed, "big3": big3_rows, "stddev": sd_rows, "acdc": acdc_rows, "edges": edge_rows,
     }
 
 
