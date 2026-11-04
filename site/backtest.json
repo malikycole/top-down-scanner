@@ -895,6 +895,258 @@
     "win": 39.1,
     "avg": 0.46
    }
+  },
+  "Squeeze Pro exit: 50 SMA only": {
+   "n": 73178,
+   "win": 36.7,
+   "avg": 0.5,
+   "avg_win": 5.62,
+   "avg_loss": -2.47,
+   "pf": 1.32,
+   "bars": 15.4,
+   "worst": -48.3,
+   "best": 295.7,
+   "old": {
+    "n": 31095,
+    "win": 38.4,
+    "avg": 0.61
+   },
+   "new": {
+    "n": 42083,
+    "win": 35.4,
+    "avg": 0.42
+   }
+  },
+  "Squeeze Pro exit: 21 EMA after fire": {
+   "n": 85824,
+   "win": 39.0,
+   "avg": 0.34,
+   "avg_win": 4.69,
+   "avg_loss": -2.44,
+   "pf": 1.23,
+   "bars": 11.4,
+   "worst": -48.3,
+   "best": 260.3,
+   "old": {
+    "n": 36707,
+    "win": 40.6,
+    "avg": 0.41
+   },
+   "new": {
+    "n": 49117,
+    "win": 37.7,
+    "avg": 0.28
+   }
+  },
+  "Squeeze Pro exit: momentum < 0": {
+   "n": 81580,
+   "win": 38.0,
+   "avg": 0.39,
+   "avg_win": 5.04,
+   "avg_loss": -2.46,
+   "pf": 1.25,
+   "bars": 12.4,
+   "worst": -48.3,
+   "best": 289.0,
+   "old": {
+    "n": 34820,
+    "win": 39.8,
+    "avg": 0.48
+   },
+   "new": {
+    "n": 46760,
+    "win": 36.6,
+    "avg": 0.31
+   }
+  },
+  "Squeeze Pro exit: breakout trail": {
+   "n": 83872,
+   "win": 39.0,
+   "avg": 0.35,
+   "avg_win": 4.83,
+   "avg_loss": -2.51,
+   "pf": 1.23,
+   "bars": 11.9,
+   "worst": -48.3,
+   "best": 260.3,
+   "old": {
+    "n": 35776,
+    "win": 40.5,
+    "avg": 0.44
+   },
+   "new": {
+    "n": 48096,
+    "win": 37.8,
+    "avg": 0.29
+   }
+  },
+  "Squeeze Pro exit: 20% target": {
+   "n": 76861,
+   "win": 36.8,
+   "avg": 0.46,
+   "avg_win": 5.62,
+   "avg_loss": -2.55,
+   "pf": 1.28,
+   "bars": 13.3,
+   "worst": -48.3,
+   "best": 60.3,
+   "old": {
+    "n": 32356,
+    "win": 38.5,
+    "avg": 0.58
+   },
+   "new": {
+    "n": 44505,
+    "win": 35.6,
+    "avg": 0.37
+   }
+  },
+  "Squeeze Pro exit: 50 SMA only + beta 1+": {
+   "n": 32909,
+   "win": 35.7,
+   "avg": 0.69,
+   "avg_win": 7.11,
+   "avg_loss": -2.87,
+   "pf": 1.37,
+   "bars": 16.5,
+   "worst": -44.7,
+   "best": 295.7,
+   "old": {
+    "n": 16843,
+    "win": 37.2,
+    "avg": 0.58
+   },
+   "new": {
+    "n": 16066,
+    "win": 34.1,
+    "avg": 0.8
+   }
+  },
+  "Squeeze Pro exit: 21 EMA after fire + beta 1+": {
+   "n": 38522,
+   "win": 38.4,
+   "avg": 0.46,
+   "avg_win": 5.72,
+   "avg_loss": -2.82,
+   "pf": 1.27,
+   "bars": 12.0,
+   "worst": -44.7,
+   "best": 260.3,
+   "old": {
+    "n": 19791,
+    "win": 39.6,
+    "avg": 0.37
+   },
+   "new": {
+    "n": 18731,
+    "win": 37.1,
+    "avg": 0.55
+   }
+  },
+  "Squeeze Pro exit: momentum < 0 + beta 1+": {
+   "n": 36617,
+   "win": 37.2,
+   "avg": 0.51,
+   "avg_win": 6.18,
+   "avg_loss": -2.85,
+   "pf": 1.28,
+   "bars": 13.1,
+   "worst": -44.7,
+   "best": 289.0,
+   "old": {
+    "n": 18801,
+    "win": 38.8,
+    "avg": 0.45
+   },
+   "new": {
+    "n": 17816,
+    "win": 35.5,
+    "avg": 0.56
+   }
+  },
+  "Squeeze Pro exit: breakout trail + beta 1+": {
+   "n": 37804,
+   "win": 38.6,
+   "avg": 0.47,
+   "avg_win": 5.84,
+   "avg_loss": -2.9,
+   "pf": 1.27,
+   "bars": 12.5,
+   "worst": -44.7,
+   "best": 260.3,
+   "old": {
+    "n": 19351,
+    "win": 39.6,
+    "avg": 0.4
+   },
+   "new": {
+    "n": 18453,
+    "win": 37.4,
+    "avg": 0.55
+   }
+  },
+  "Squeeze Pro exit: 20% target + beta 1+": {
+   "n": 34897,
+   "win": 36.0,
+   "avg": 0.59,
+   "avg_win": 6.88,
+   "avg_loss": -2.95,
+   "pf": 1.31,
+   "bars": 13.6,
+   "worst": -44.7,
+   "best": 59.5,
+   "old": {
+    "n": 17621,
+    "win": 37.3,
+    "avg": 0.55
+   },
+   "new": {
+    "n": 17276,
+    "win": 34.6,
+    "avg": 0.63
+   }
+  },
+  "Squeeze Pro exit: hold 60 days, no stop": {
+   "n": 31304,
+   "win": 59.5,
+   "avg": 2.85,
+   "avg_win": 11.37,
+   "avg_loss": -9.66,
+   "pf": 1.73,
+   "bars": 60.0,
+   "worst": -80.5,
+   "best": 338.4,
+   "old": {
+    "n": 13231,
+    "win": 64.5,
+    "avg": 3.53
+   },
+   "new": {
+    "n": 18073,
+    "win": 55.8,
+    "avg": 2.35
+   }
+  },
+  "Squeeze Pro exit: hold 60 days, no stop + beta 1+": {
+   "n": 15460,
+   "win": 59.6,
+   "avg": 3.4,
+   "avg_win": 13.16,
+   "avg_loss": -10.98,
+   "pf": 1.77,
+   "bars": 60.0,
+   "worst": -80.5,
+   "best": 338.4,
+   "old": {
+    "n": 7538,
+    "win": 63.8,
+    "avg": 3.81
+   },
+   "new": {
+    "n": 7922,
+    "win": 55.6,
+    "avg": 3.02
+   }
   }
  },
  "baseline": {

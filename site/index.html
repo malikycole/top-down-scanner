@@ -704,10 +704,10 @@
         <li><b>Your entry.</b> Buy at the 21 EMA, or on a pullback to the 50 SMA that holds (Entry filter). Volume at least 150,000.</li>
         <li><b>Stop.</b> Under the 50 SMA (or the pullback low) on a 21 EMA entry; under the pullback low on a 50 SMA entry.</li>
         <li><b>Target.</b> A move through the 252 day high once the squeeze fires. Trail the rest.</li>
-        <li><b>Exit.</b> A common rule is out on the second dark blue momentum bar after the fire, or a close under the 21 EMA.</li>
+        <li><b>Exit.</b> A common rule is out on the second dark blue momentum bar after the fire, or a close under the 21 EMA. In the backtest no exit rule turned this setup into an edge.</li>
       </ol>
     </div>
-    <p class="note">Stop, target and exit follow common Squeeze Pro practice; your study does not define them. Backtest 2008 to 2026 (Backtests tab): with these exits every variant trailed random buying by about 0.5% per trade, most likely because the second dark blue bar exit cuts winners short. Research tool only, not investment advice.</p>
+    <p class="note">Stop, target and exit follow common Squeeze Pro practice; your study does not define them. Backtest 2008 to 2026 (Backtests tab): every entry variant trailed random buying by about 0.5% per trade. Longer exits did not fix it: riding the 50 SMA, trailing the 21 EMA, holding until momentum turns negative, trailing after a breakout and a 20% target all trailed by 0.6% to 0.9%. Even holding 60 days with no stop made +2.9% against +5.5% for random buying. The setup itself is the weak part, not the exit, so treat it as a watchlist, not a buy signal. Research tool only, not investment advice.</p>
   </section>
   </div>
 
@@ -1248,7 +1248,7 @@ const BT_RULES = [
   ["Std Dev", "first day in the -2.5 to -4 zone (1 year regression channel). Target: the middle line. Stop: 20% under entry. Time limit 120 days."],
   ["Trendy Edge", "levels from the prior day, week, month or year. Edge reversal: stop the pattern low, target the upper edge. Edge rejection: stop the wick low, target the decelerator. Accelerator hold: stop a close under the mid, target the upper edge. Breakout retest: stop a close back under the upper edge, no target. Time limit: daily 10, weekly 20, monthly 40, yearly 120 days."],
   ["Moxie", "daily chart Moxie = weekly MACD (12, 26, 9) histogram as it stood that day (no peeking at the week's final close). Trampoline: first close back over the 50 SMA with Moxie up after a close under it; stop the dip low (or a close under the 50 SMA in the 50 SMA stop version); out the day after Moxie closes below zero; 40 day limit. Cross up: Moxie crosses above zero, out when it closes back below; 60 day limit. The hourly trampoline is not tested (free hourly history only covers about 2 years)."],
-  ["Squeeze Pro", "first day of: in a squeeze (Keltner 2.0 or tighter), price $20+, volume 150K+, within 10% of the 252 day high with no new high, plus each variant's filter. Out the next open after a close under the 50 SMA; after the squeeze fires, out after the second dark blue momentum bar or momentum below zero; 60 day limit."],
+  ["Squeeze Pro", "first day of: in a squeeze (Keltner 2.0 or tighter), price $20+, volume 150K+, within 10% of the 252 day high with no new high, plus each variant's filter. Out the next open after a close under the 50 SMA; after the squeeze fires, out after the second dark blue momentum bar or momentum below zero; 60 day limit. Exit tests (\"Squeeze Pro exit\"): same entry at the 21 EMA or 50 SMA hold, 50 SMA close stop and 120 day limit, plus one exit each; the no stop control just holds 60 days."],
   ["AC/DC Bull", "first day the monthly pocket and weekly push line up. Stop: a close under the monthly 61.8 line. Target: last month's high. Time limit 40 days. Stop and target are my plan; the scan itself has no exit rules."],
 ];
 let BT = null;
