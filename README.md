@@ -83,7 +83,7 @@ Then open http://localhost:5070
 
 ## Backtests tab
 
-`backtest/bt_scanner.py` tests every scanner setup on 1,755 U.S. stocks worth $2B+ from 2008 to 2026 (price history saved by the deviation channel backtests), signals with no lookahead, entry at the next open, each setup's own stop, target and time limit. `backtest/baseline.py` adds random entry: buy on any day and hold N days. The page ranks setups by edge over random buying (the setup's average trade minus what random buying made over the same number of days), which removes market drift and the survivorship of today's stock list. Rerun both scripts and copy `backtest/results.json` to `site/backtest.json` to refresh the tab.
+`backtest/bt_scanner.py` tests every scanner setup on 1,755 U.S. stocks worth $2B+ from 2008 to 2026 (price history saved by the deviation channel backtests), signals with no lookahead, entry at the next open, each setup's own stop, target and time limit. `backtest/baseline.py` adds random entry: buy on any day and hold N days. The page ranks setups by edge over random buying (the setup's average trade minus what random buying made over the same number of days), which removes market drift and the survivorship of today's stock list. `backtest/bt_moxie.py` adds the Moxie daily trampoline and cross up (weekly Moxie as it stood each day, no lookahead) to the same results file. Rerun the scripts and copy `backtest/results.json` to `site/backtest.json` to refresh the tab.
 
 ## Moxie tab
 

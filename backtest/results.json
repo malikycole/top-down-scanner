@@ -664,6 +664,90 @@
     "win": 37.1,
     "avg": 0.48
    }
+  },
+  "Moxie: daily trampoline": {
+   "n": 44960,
+   "win": 33.0,
+   "avg": 2.14,
+   "avg_win": 16.45,
+   "avg_loss": -4.89,
+   "pf": 1.65,
+   "bars": 19.0,
+   "worst": -83.3,
+   "best": 831.3,
+   "old": {
+    "n": 18921,
+    "win": 35.4,
+    "avg": 2.85
+   },
+   "new": {
+    "n": 26039,
+    "win": 31.2,
+    "avg": 1.63
+   }
+  },
+  "Moxie: trampoline, 50 SMA stop": {
+   "n": 59906,
+   "win": 30.6,
+   "avg": 1.22,
+   "avg_win": 10.96,
+   "avg_loss": -3.08,
+   "pf": 1.57,
+   "bars": 11.7,
+   "worst": -83.3,
+   "best": 831.3,
+   "old": {
+    "n": 24994,
+    "win": 32.5,
+    "avg": 1.77
+   },
+   "new": {
+    "n": 34912,
+    "win": 29.3,
+    "avg": 0.83
+   }
+  },
+  "Moxie: trampoline + trend": {
+   "n": 10520,
+   "win": 29.0,
+   "avg": 1.46,
+   "avg_win": 15.39,
+   "avg_loss": -4.22,
+   "pf": 1.49,
+   "bars": 17.4,
+   "worst": -80.0,
+   "best": 694.8,
+   "old": {
+    "n": 4268,
+    "win": 30.5,
+    "avg": 1.42
+   },
+   "new": {
+    "n": 6252,
+    "win": 27.9,
+    "avg": 1.49
+   }
+  },
+  "Moxie: cross up": {
+   "n": 85872,
+   "win": 34.7,
+   "avg": 1.85,
+   "avg_win": 13.74,
+   "avg_loss": -4.49,
+   "pf": 1.63,
+   "bars": 24.2,
+   "worst": -84.2,
+   "best": 5323.3,
+   "old": {
+    "n": 37562,
+    "win": 36.3,
+    "avg": 1.84
+   },
+   "new": {
+    "n": 48310,
+    "win": 33.5,
+    "avg": 1.85
+   }
   }
  },
  "baseline": {
