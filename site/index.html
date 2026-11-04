@@ -175,6 +175,16 @@
   .bars .val{text-align:right;font-weight:700}
   .grp{display:inline-block;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--chip-text)}
   .grp.Home{background:#38bdf8} .grp.Big3{background:#facc15} .grp.StdDev{background:#a78bfa} .grp.Edge{background:#4ade80} .grp.ACDC{background:#fb923c} .grp.Moxie{background:#f472b6} .grp.SqPro{background:#22d3ee}
+  .picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:10px}
+  .pickc{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .pickc.top{border-color:#22c55e;box-shadow:0 0 0 1px #22c55e inset}
+  .pickc .hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .pickc .sym{font-size:20px;font-weight:800} .pickc .sc{font-size:22px;font-weight:800;color:#4ade80}
+  .pickc .rk{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
+  .pickc .lv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0;font-size:12px;color:#94a3b8}
+  .pickc .lv b{display:block;font-size:14px;color:var(--text)}
+  .pickc ul{margin:6px 0 0;padding-left:16px;font-size:12px;line-height:1.5}
+  .pickc li.no{color:#fca5a5}
   .tmscans{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:10px}
   .tmscan{text-align:left;background:var(--panel2,#111827);border:1px solid #334155;border-radius:10px;padding:12px 14px;color:inherit;cursor:pointer;font:inherit}
   .tmscan:hover{border-color:#64748b}
@@ -439,6 +449,12 @@
       <div><span class="row-label" style="margin-right:6px">Sector</span><select id="sdSec"></select></div>
       <input type="search" id="sdq" placeholder="Find symbol">
     </div>
+  </section>
+
+  <section class="panel" id="sdPickPanel">
+    <p class="row-label">Top ranked by your rules <span>the buyers on screen right now, scored on your criteria. Change the filters above and the ranking follows.</span></p>
+    <div class="picks" id="sdPick"></div>
+    <p class="note">Score out of 100: reward to risk (distance to the middle line divided by distance to the stop, 3:1 or better = full 30), trend fit R&sup2; from 0.7 to 1.0 (25), green candle today (15), sector green, yellow or red (15), RS rank (15). A ranking of your own rules, not investment advice; check the chart before you trade.</p>
   </section>
 
   <section class="panel">
@@ -1201,6 +1217,40 @@ const SD_TEXT = {
   both: ["Buyers and sellers", "everything 2.5 or more deviations from the line, stretched furthest first"]
 };
 
+function sdPickScore(s){
+  const risk = s.stop != null ? (s.px - s.stop) / s.px * 100 : null;
+  const rr = risk > 0 ? s.to_mean / risk : 0;
+  const parts = {
+    rr: 30 * Math.max(0, Math.min(rr, 3)) / 3,
+    fit: s.r2 != null ? 25 * Math.max(0, Math.min((s.r2 - 0.7) / 0.3, 1)) : 0,
+    candle: s.green ? 15 : 0,
+    sector: s.sec_state === 2 ? 15 : s.sec_state === 1 ? 7 : 0,
+    rs: 15 * (s.rs || 0) / 99,
+  };
+  return {score: Math.round(Object.values(parts).reduce((a,b) => a + b, 0)), rr, risk, parts};
+}
+
+function renderSDPick(rows){
+  const buyers = rows.filter(s => s.dev < 0 && s.stop != null).map(s => ({...s, ...sdPickScore(s)})).sort((a,b) => b.score - a.score || b.rr - a.rr);
+  $("sdPickPanel").hidden = !buyers.length;
+  if (!buyers.length) { $("sdPick").innerHTML = ""; return; }
+  const secTxt = {2:"Sector green (leading)", 1:"Sector yellow", 0:"Sector red (lagging)"};
+  $("sdPick").innerHTML = buyers.slice(0, 3).map((s,i) => `
+    <div class="pickc ${i===0?"top":""}">
+      <div class="hd"><div><div class="rk">${i===0?"Top ranked":"#"+(i+1)}</div><a class="sym" href="${chart(s.t)}" target="_blank" rel="noopener">${s.t}</a></div><div class="sc">${s.score}<small style="font-size:12px;color:#94a3b8">/100</small></div></div>
+      <div class="nm">${esc(s.n)}</div>
+      <div class="lv"><div>Price<b>${money(s.px)}</b></div><div>Target (line)<b>${money(s.mean)}</b></div><div>Stop<b>${money(s.stop)}</b></div>
+        <div>Upside<b class="pos">+${s.to_mean.toFixed(1)}%</b></div><div>Risk<b class="neg">-${s.risk.toFixed(1)}%</b></div><div>Reward : risk<b>${s.rr.toFixed(1)} : 1</b></div></div>
+      <ul>
+        <li>Deviation ${s.dev.toFixed(2)}, low of 3 days ${s.lo3x != null ? s.lo3x.toFixed(2) : "&ndash;"}</li>
+        <li class="${s.r2 >= 0.8 ? "" : s.r2 >= 0.7 ? "" : "no"}">Trend fit R&sup2; ${s.r2 != null ? s.r2.toFixed(2) : "&ndash;"}${s.r2 >= 0.8 ? " (tight)" : ""}</li>
+        <li class="${s.green ? "" : "no"}">${s.green ? "Green candle today" : "Red candle today (up close only)"}</li>
+        <li class="${s.sec_state === 2 ? "" : "no"}">${secTxt[s.sec_state] ?? "Sector unknown"} &middot; RS ${s.rs}</li>
+        <li class="${s.liq ? "" : s.opt ? "" : "no"}">${s.liq ? "Liquid options" : s.opt ? "Optionable, thin open interest" : s.opt === false ? "No options (stock only)" : "Options unknown"}</li>
+      </ul>
+    </div>`).join("");
+}
+
 function renderSD(){
   const d = state.data;
   if (!d.stddev) return;
@@ -1246,6 +1296,7 @@ function renderSD(){
     });
   const unit = se ? "standard errors" : "deviations";
   if (qual) { $("sdTitle").textContent = `Qualified ${se ? "Std Error" : "Std Dev"} uptrend pullbacks`; $("sdSub").textContent = `uptrend, pulled back to -${lo} to -4 ${unit}, every close held above -4, closing up`; }
+  renderSDPick(rows);
   const k = state.sdSort, dir = state.sdDir;
   rows.sort((a,b) => {
     const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
