@@ -1256,7 +1256,8 @@ function renderSD(){
   if (!d.stddev) return;
   $("sdctx").innerHTML = `<span><b>${(d.scanned_wide || d.scanned).toLocaleString()}</b> stocks checked (price $1.25+, cap $350M+)</span><span>&middot;</span>
     <span>Data through <b>${d.data_date}</b></span>`;
-  let base = d.stddev.filter(s => s.px >= state.sdPx && s.cap >= state.sdCap && s.vol1 >= state.sdVol);
+  // volume: today's volume or the 50 day average, so the filter does not empty the list every morning
+  let base = d.stddev.filter(s => s.px >= state.sdPx && s.cap >= state.sdCap && Math.max(s.vol1 || 0, s.vol || 0) >= state.sdVol);
   if (state.sdSector !== "all") base = base.filter(s => s.etf === state.sdSector);
   if (state.sdReg === "flat") base = base.filter(s => s.regime === "Flat");
   if (state.sdReg === "notdown") base = base.filter(s => !/down/.test(s.regime));
@@ -1893,7 +1894,14 @@ seg("b3Zone", ["any","zone"], ["Any","In zone"], "b3Zone", renderB3);
 seg("b3Jt", ["any","dg"], ["Any","Double green"], "b3Jt", renderB3);
 $("b3Sec").onchange = e => { state.b3Sector = e.target.value; renderB3(); };
 $("b3q").oninput = e => { state.b3q = e.target.value.trim().toUpperCase(); renderB3(); };
-seg("sdMode", ["sd","se"], ["Std Dev","Std Error"], "sdMode", renderSD);
+// each mode opens on its own trade: Std Dev = your flat channel buyer (anything in the zone, any trend),
+// Std Error = the qualified uptrend pullback
+seg("sdMode", ["sd","se"], ["Std Dev","Std Error"], "sdMode", () => {
+  [state.sdSetup, state.sdTrend] = state.sdMode === "sd" ? ["zone", 0] : ["qual", 0.7];
+  seg("sdSetup", ["qual","zone"], ["Qualified pullback","Any in the zone"], "sdSetup", renderSD);
+  seg("sdTrend", [0.7,0.85,-1,0], ["Strong (R&sup2; 0.7+)","Very strong (0.85+)","Any rising","Any"], "sdTrend", renderSD);
+  renderSD();
+});
 seg("sdSetup", ["qual","zone"], ["Qualified pullback","Any in the zone"], "sdSetup", renderSD);
 seg("sdTrend", [0.7,0.85,-1,0], ["Strong (R&sup2; 0.7+)","Very strong (0.85+)","Any rising","Any"], "sdTrend", renderSD);
 seg("sdShow", ["buy","sell","both"], ["Buyers","Sellers","Both"], "sdShow", renderSD);
