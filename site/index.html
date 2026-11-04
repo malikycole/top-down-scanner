@@ -357,6 +357,7 @@
         <span class="row-label" style="margin-right:6px">JT Trend</span>
         <span class="seg" id="b3Jt"></span>
       </div>
+      <div><span class="row-label" style="margin-right:6px">Options</span><span class="seg" id="b3Opt"></span></div>
       <div>
         <span class="row-label" style="margin-right:6px">Sector</span>
         <select id="b3Sec"></select>
@@ -621,6 +622,7 @@
       <div><span class="row-label" style="margin-right:6px">Price</span><span class="seg" id="mxPx"></span></div>
       <div><span class="row-label" style="margin-right:6px">Volume</span><span class="seg" id="mxVol"></span></div>
       <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="mxCap"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Options</span><span class="seg" id="mxOpt"></span></div>
       <div><span class="row-label" style="margin-right:6px">Sector</span><select id="mxSec"></select></div>
       <input type="search" id="mxq" placeholder="Find symbol">
       <span class="count" id="mxCount"></span>
@@ -680,6 +682,7 @@
       <div><span class="row-label" style="margin-right:6px">Market cap</span><span class="seg" id="sqCap"></span></div>
       <div><span class="row-label" style="margin-right:6px">Beta</span><span class="seg" id="sqBeta"></span></div>
       <div><span class="row-label" style="margin-right:6px">JT Trend</span><span class="seg" id="sqJt"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Options</span><span class="seg" id="sqOpt"></span></div>
       <div><span class="row-label" style="margin-right:6px">Sector</span><select id="sqSec"></select></div>
       <input type="search" id="sqq" placeholder="Find symbol">
       <span class="count" id="sqCount"></span>
@@ -804,6 +807,7 @@
       <div><span class="row-label" style="margin-right:6px">Price</span><span class="seg" id="tmPx"></span></div>
       <div><span class="row-label" style="margin-right:6px">Volume (20 EMA)</span><span class="seg" id="tmVol"></span></div>
       <div><span class="row-label" style="margin-right:6px">JT Trend</span><span class="seg" id="tmJt"></span></div>
+      <div><span class="row-label" style="margin-right:6px">Options</span><span class="seg" id="tmOpt"></span></div>
       <div><span class="row-label" style="margin-right:6px">Sector</span><select id="tmSec"></select></div>
       <input type="search" id="tmq" placeholder="Find symbol">
       <span class="count" id="tmCount"></span>
@@ -856,6 +860,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   sdSort:"stretch", sdDir:-1,
   teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
+  b3Opt:"any", mxOpt:"any", sqOpt:"any", tmOpt:"any",
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
   tmScan:"htsq", tmSqInd:"pro", tmSqLvl:"2", tmEntry:"any", tmMom:"any", tmCap:5, tmPx:5, tmVol:500000, tmJt:"any", tmSector:"all", tmq:"", tmSort:"default", tmDir:-1,
   suLvl:"ideal", suEntry:"either", suMom:"any", suOpt:"liq", suPx:20, suVol:0, suCap:2, suBeta:0, suJt:"any", suSector:"all", suq:"", suSort:"default", suDir:-1,
@@ -1101,6 +1106,8 @@ function b3Base(){
   if (state.b3Td === "sector") rows = rows.filter(s => long ? greens.has(s.etf) : reds.has(s.etf));
   if (state.b3Td === "strong") rows = rows.filter(s => long ? greens.has(s.etf) && s.pass >= 6 : reds.has(s.etf));
   if (state.b3Sector !== "all") rows = rows.filter(s => s.etf === state.b3Sector);
+  if (state.b3Opt === "opt") rows = rows.filter(s => s.opt);
+  if (state.b3Opt === "none") rows = rows.filter(s => s.opt === false);
   return rows;
 }
 
@@ -1207,6 +1214,7 @@ function renderSD(){
   if (state.sdReg === "falling") base = base.filter(s => /down/.test(s.regime));
   if (state.sdOpt === "opt") base = base.filter(s => s.opt);
   if (state.sdOpt === "liq") base = base.filter(s => s.liq);
+  if (state.sdOpt === "none") base = base.filter(s => s.opt === false);
   if (state.sdCandle === "green") base = base.filter(s => s.green);
   if (state.sdq) base = base.filter(s => s.t.includes(state.sdq) || s.n.toUpperCase().includes(state.sdq));
   const lim = state.sdRange === "zone" ? 4 : Infinity;
@@ -1296,6 +1304,7 @@ const optCell = s => s.opt === undefined ? "&ndash;" : !s.opt ? `<span class="zo
 function teOptPass(s){
   if (state.teOpt === "opt") return s.opt;
   if (state.teOpt === "oi") return (s.oi_all || 0) >= 1000;
+  if (state.teOpt === "none") return s.opt === false;
   return true;
 }
 
@@ -1499,6 +1508,8 @@ function mxBase(){
   const d = state.data;
   let rows = (d.moxie || []).filter(s => s.px >= state.mxPx && s.vol1 >= state.mxVol && s.cap >= state.mxCap);
   if (state.mxSector !== "all") rows = rows.filter(s => s.etf === state.mxSector);
+  if (state.mxOpt === "opt") rows = rows.filter(s => s.opt);
+  if (state.mxOpt === "none") rows = rows.filter(s => s.opt === false);
   if (state.mxTrend === "up") rows = rows.filter(s => s.trend === 1);
   if (state.mxq) rows = rows.filter(s => s.t.includes(state.mxq) || s.n.toUpperCase().includes(state.mxq));
   return rows;
@@ -1578,6 +1589,8 @@ function sqBase(){
   const d = state.data;
   let rows = (d.sqpro || []).filter(s => s.px >= state.sqPx && s.vol1 >= state.sqVol && s.cap >= state.sqCap && s.off_hi <= state.sqHi && !s.new_hi);
   if (state.sqSector !== "all") rows = rows.filter(s => s.etf === state.sqSector);
+  if (state.sqOpt === "opt") rows = rows.filter(s => s.opt);
+  if (state.sqOpt === "none") rows = rows.filter(s => s.opt === false);
   if (state.sqEntry === "e21") rows = rows.filter(s => Math.abs(s.e21d) <= 1);
   if (state.sqEntry === "s50") rows = rows.filter(s => s.resp50);
   if (state.sqEntry === "either") rows = rows.filter(s => Math.abs(s.e21d) <= 1 || s.resp50);
@@ -1646,6 +1659,7 @@ function suBase(){
   if (state.suMom === "cyan") rows = rows.filter(s => s.mom_c === "cyan");
   if (state.suOpt === "opt") rows = rows.filter(s => s.opt);
   if (state.suOpt === "liq") rows = rows.filter(s => s.liq);
+  if (state.suOpt === "none") rows = rows.filter(s => s.opt === false);
   if (state.suBeta > 0) rows = rows.filter(s => s.beta != null && s.beta >= state.suBeta);
   if (state.suJt === "dg") rows = rows.filter(s => s.wave === 1);
   if (state.suq) rows = rows.filter(s => s.t.includes(state.suq) || s.n.toUpperCase().includes(state.suq));
@@ -1718,6 +1732,8 @@ function tmBase(){
   const d = state.data;
   let rows = (d.truemo || []).filter(s => s.cap >= state.tmCap && s.px >= state.tmPx && s.vol_ema20 >= state.tmVol);
   if (state.tmSector !== "all") rows = rows.filter(s => s.etf === state.tmSector);
+  if (state.tmOpt === "opt") rows = rows.filter(s => s.opt);
+  if (state.tmOpt === "none") rows = rows.filter(s => s.opt === false);
   if (state.tmEntry === "e21") rows = rows.filter(s => Math.abs(s.e21d) <= 1);
   if (state.tmEntry === "s50") rows = rows.filter(s => s.resp50);
   if (state.tmEntry === "either") rows = rows.filter(s => Math.abs(s.e21d) <= 1 || s.resp50);
@@ -1831,7 +1847,7 @@ seg("sdTrend", [0.7,0.85,-1,0], ["Strong (R&sup2; 0.7+)","Very strong (0.85+)","
 seg("sdShow", ["buy","sell","both"], ["Buyers","Sellers","Both"], "sdShow", renderSD);
 seg("sdRange", ["zone","all"], ["2.5 to 4","All past 2.5"], "sdRange", renderSD);
 seg("sdReg", ["any","flat","rising","falling","notdown"], ["Any","Flat","Rising","Falling","Not falling"], "sdReg", renderSD);
-seg("sdOpt", ["any","opt","liq"], ["Any","Optionable","Liquid options"], "sdOpt", renderSD);
+seg("sdOpt", ["any","opt","liq","none"], ["Any","Optionable","Liquid options","No options"], "sdOpt", renderSD);
 seg("sdPx", [1.25,4,10], ["$1.25+","$4+","$10+"], "sdPx", renderSD);
 seg("sdCap", [0.35,1,10], ["$350M+","$1B+","$10B+"], "sdCap", renderSD);
 seg("sdVol", [500000,200000,0], ["500K+","200K+","Any"], "sdVol", renderSD);
@@ -1842,7 +1858,7 @@ seg("teSet", ["Edge reversal","Edge rejection","Accelerator hold","Breakout rete
 seg("tePat", ["any","Minor low","Inside and up"], ["Any","Minor low","Inside and up"], "tePat", renderTE);
 seg("teBn", ["any","agree","noneutral"], ["Any","D W M agree","Skip neutral monthly"], "teBn", renderTE);
 seg("teCap", [1,0.35], ["$1B+","$350M+"], "teCap", renderTE);
-seg("teOpt", ["any","opt","oi"], ["Any","Optionable","OI 1,000+"], "teOpt", renderTE);
+seg("teOpt", ["any","opt","oi","none"], ["Any","Optionable","OI 1,000+","No options"], "teOpt", renderTE);
 $("teSec").onchange = e => { state.teSector = e.target.value; renderTE(); };
 $("teq").oninput = e => { state.teq = e.target.value.trim().toUpperCase(); renderTE(); };
 ["cH","cL","cP"].forEach(id => $(id).oninput = calcEdges);
@@ -1869,7 +1885,7 @@ $("sqSec").onchange = e => { state.sqSector = e.target.value; renderSQ(); };
 $("sqq").oninput = e => { state.sqq = e.target.value.trim().toUpperCase(); renderSQ(); };
 seg("suEntry", ["either","e21","s50","any"], ["Either","At 21 EMA","50 SMA hold","Any"], "suEntry", renderSU);
 seg("suMom", ["any","pos","cyan"], ["Any","Above zero","Cyan (rising)"], "suMom", renderSU);
-seg("suOpt", ["liq","opt","any"], ["OI 500+","Optionable","Any"], "suOpt", renderSU);
+seg("suOpt", ["liq","opt","any","none"], ["OI 500+","Optionable","Any","No options"], "suOpt", renderSU);
 seg("suPx", [20,10,50], ["$20+","$10+","$50+"], "suPx", renderSU);
 seg("suVol", [0,150000,500000,1000000], ["Any","150K+","500K+","1M+"], "suVol", renderSU);
 seg("suCap", [2,1,10], ["$2B+","$1B+","$10B+"], "suCap", renderSU);
@@ -1887,6 +1903,10 @@ seg("tmVol", [500000,1000000,0], ["500K+","1M+","Any"], "tmVol", renderTM);
 seg("tmJt", ["any","dg"], ["Any","Double green"], "tmJt", renderTM);
 $("tmSec").onchange = e => { state.tmSector = e.target.value; renderTM(); };
 $("tmq").oninput = e => { state.tmq = e.target.value.trim().toUpperCase(); renderTM(); };
+seg("b3Opt", ["any","opt","none"], ["Any","Optionable","No options"], "b3Opt", renderB3);
+seg("mxOpt", ["any","opt","none"], ["Any","Optionable","No options"], "mxOpt", renderMX);
+seg("sqOpt", ["any","opt","none"], ["Any","Optionable","No options"], "sqOpt", renderSQ);
+seg("tmOpt", ["any","opt","none"], ["Any","Optionable","No options"], "tmOpt", renderTM);
 loadBT();
 window.addEventListener("hashchange", showTab);
 showTab();

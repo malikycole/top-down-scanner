@@ -1066,6 +1066,12 @@ def scan() -> dict:
                             "sqp": s["sqp"]["lvl"], "squ": s["squ"]["lvl"], "squ_ideal": s["squ"]["ideal"],
                             "mom_p": s["sqp"]["mom"], "momc_p": s["sqp"]["mom_c"], "mom_u": s["squ"]["mom"], "momc_u": s["squ"]["mom_c"]})
     print(f"true momentum: {len(weekly)} weekly series in {time.time() - t0:.0f}s, {len(tm_rows)} rows")
+    # optionable or not on the tabs without open interest lookups (directory only, no extra Cboe calls)
+    listed_opt, _ = optionable_symbols()
+    if listed_opt:
+        for rows in (big3_rows, mox_rows, tm_rows):
+            for r in rows:
+                r.setdefault("opt", r["t"] in listed_opt)
     lap("true momentum")
     for s in stocks:
         del s["b3"], s["sdc"], s["acdc"], s["edges"], s["mx"], s["sqp"], s["squ"]
