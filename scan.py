@@ -934,8 +934,10 @@ def aligned_closes(stock: pd.DataFrame, ref: pd.DataFrame) -> tuple[np.ndarray, 
 _G: dict = {}     # shared read only inputs for the per stock workers (inherited by forked processes)
 
 
-def _stock_row(rec):
-    """Every study for one stock. Returns (row, blend or None) or None when the stock is skipped."""
+def _stock_row(i: int):
+    """Every study for one stock (by its index, so nothing unpicklable crosses to the workers).
+    Returns (row, blend or None) or None when the stock is skipped."""
+    rec = _G["recs"][i]
     frames, etf_returns, sector_state, sector_rank = _G["frames"], _G["etf_returns"], _G["sector_state"], _G["sector_rank"]
     frame = frames.get(rec.ticker)
     if frame is None or len(frame) < 253:
@@ -1025,15 +1027,19 @@ def scan() -> dict:
     sector_rank = {s["ticker"]: i + 1 for i, s in enumerate(sector_rows)}
 
     etf_returns = {t: frames[t] for t in SECTORS}
-    _G.update(frames=frames, etf_returns=etf_returns, sector_state=sector_state, sector_rank=sector_rank)
     recs = list(universe.itertuples(index=False))
+    _G.update(frames=frames, etf_returns=etf_returns, sector_state=sector_state, sector_rank=sector_rank, recs=recs)
+    idx = range(len(recs))
     try:
         import multiprocessing as mp
         ctx = mp.get_context("fork")          # Linux (GitHub): workers share the downloaded frames
         with ctx.Pool(max(1, (os.cpu_count() or 2))) as pool:
-            results = pool.map(_stock_row, recs, chunksize=40)
-    except (ValueError, OSError):             # no fork on Windows: run in this process
-        results = [_stock_row(r) for r in recs]
+            results = pool.map(_stock_row, idx, chunksize=40)
+        print(f"studies: {os.cpu_count()} processes")
+    except Exception as exc:  # noqa: BLE001  no fork (Windows) or a worker problem: run in this process
+        if not isinstance(exc, ValueError):
+            print(f"parallel studies failed, running serially: {type(exc).__name__}: {exc}")
+        results = [_stock_row(i) for i in idx]
     stocks, all_blends = [], []
     for res in results:
         if res is None:
