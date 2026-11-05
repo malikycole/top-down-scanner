@@ -2,3 +2,4 @@ site/data.json
 __pycache__/
 options_cache.json
 tm_history.pkl
+prices_cache.pkl

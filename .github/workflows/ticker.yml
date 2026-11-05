@@ -1,9 +1,9 @@
 name: Market hours ticker
 
 # GitHub drops many scheduled runs, so the scan workflow cannot rely on its own
-# 5 minute cron. This job starts once (several start times, in case some are
-# skipped), stays alive through the session and kicks off a scan every 5 minutes.
-# A scan takes about 5 to 7 minutes and GitHub keeps at most one waiting, so scans run back to back.
+# Market hours ticker. This job starts once (several start times, in case some are
+# skipped), stays alive through the session and asks for a scan every minute.
+# GitHub keeps at most one scan waiting behind the running one, so the next scan starts the moment one finishes.
 # scan.yml also restarts this ticker when a scan finishes in market hours and it is not running.
 on:
   schedule:
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 355
     steps:
-      - name: Start a scan every 5 minutes until after the close
+      - name: Keep a scan queued every minute until after the close
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -42,6 +42,6 @@ jobs:
           while [ "$(date +%s)" -lt "$stop" ] && [ $(( $(date +%s) - start )) -lt 20700 ]; do
             echo "$(date -u +%H:%M) starting scan"
             gh workflow run scan.yml --ref main || echo "dispatch failed, will retry next tick"
-            sleep 300
+            sleep 60
           done
           echo "session over"

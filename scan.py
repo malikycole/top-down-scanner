@@ -13,6 +13,7 @@ Educational research tool only. Not investment advice.
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 from datetime import datetime, timezone
@@ -40,8 +41,9 @@ WIDE_MIN_CAP = 350_000_000
 WIDE_MIN_PRICE = 1.25
 MIN_SETUP_TO_LIST = 5  # stocks below this many checks are left out of the JSON
 OPTIONS_CACHE = ROOT / "options_cache.json"
-TM_CACHE = ROOT / "tm_history.pkl"      # weekly + monthly closes, downloaded once a day
-MAX_OI_FETCH = 400     # open interest lookups per run; the rest wait for the next run (cache)
+TM_CACHE = ROOT / "tm_history.pkl"
+PRICE_CACHE = ROOT / "prices_cache.pkl"   # 2 years of daily bars, downloaded once a day      # weekly + monthly closes, downloaded once a day
+MAX_OI_FETCH = 30     # open interest lookups per run; the rest wait for the next run (cache)
 MIN_OPT_DTE = 20      # option liquidity is read at the first expiration this many days out
 MIN_OPT_OI = 500       # open interest at that expiration for "liquid options"
 CHANNEL_BARS = 251    # std dev channel length: a 1 year daily chart, as in thinkorswim
@@ -145,13 +147,43 @@ def load_universe() -> pd.DataFrame:
 # ---------------------------------------------------------------- data
 
 def download(symbols: list[str]) -> dict[str, pd.DataFrame]:
+    """Daily bars. The full 2 years download once a day (first run) and are cached; later runs
+    only fetch the last 5 days and replace those bars, which is all that changes intraday."""
+    import pickle
+    today = str(pd.Timestamp.now(tz="America/New_York").date())
+    cached: dict = {}
+    if PRICE_CACHE.exists():
+        try:
+            saved = pickle.loads(PRICE_CACHE.read_bytes())
+            if saved.get("date") == today:
+                cached = saved["frames"]
+        except Exception as exc:  # noqa: BLE001
+            print(f"price cache unreadable: {exc}")
+    if not cached:
+        frames = _download(symbols, "2y", 200)
+        PRICE_CACHE.write_bytes(pickle.dumps({"date": today, "frames": frames}, protocol=pickle.HIGHEST_PROTOCOL))
+        print(f"prices: full download, {len(frames)} cached")
+        return frames
+    missing = [t for t in symbols if t not in cached]
+    recent = _download([t for t in symbols if t in cached], "5d", 1)
+    frames = {}
+    for t, old in cached.items():
+        new = recent.get(t)
+        frames[t] = old if new is None or not len(new) else pd.concat([old[old.index < new.index[0]], new])
+    if missing:
+        frames.update(_download(missing, "2y", 200))
+    print(f"prices: cache + last 5 days for {len(recent)}, {len(missing)} new")
+    return frames
+
+
+def _download(symbols: list[str], period: str, min_bars: int) -> dict[str, pd.DataFrame]:
     frames: dict[str, pd.DataFrame] = {}
     for start in range(0, len(symbols), 300):
         batch = symbols[start:start + 300]
         for attempt in range(3):
             try:
                 # 2 years so the yearly Tr3ndy edge always has all of last year
-                raw = yf.download(batch, period="2y", interval="1d", auto_adjust=True,
+                raw = yf.download(batch, period=period, interval="1d", auto_adjust=True,
                                   group_by="ticker", threads=True, progress=False)
                 break
             except Exception as exc:  # noqa: BLE001
@@ -164,7 +196,7 @@ def download(symbols: list[str]) -> dict[str, pd.DataFrame]:
                 frame = raw[ticker].dropna(subset=["Close", "High", "Volume"])
             except KeyError:
                 continue
-            if len(frame) >= 200:
+            if len(frame) >= min_bars:
                 frames[ticker] = frame
     return frames
 
@@ -805,14 +837,16 @@ def attach_options(*row_lists: list, limit: int = MAX_OI_FETCH) -> None:
                 cache = saved["data"]
         _OPT_RUN["cache"], _OPT_RUN["blocked"] = cache, False
     cache = _OPT_RUN["cache"]
+    _OPT_RUN.setdefault("fetched", 0)
     fetched, blocked = 0, _OPT_RUN["blocked"]     # once Cboe blocks, later calls skip straight to the cache
     for rows in row_lists:
         for row in rows:
             t = row["t"]
-            if t not in cache and listed and t in listed and fetched < limit and not blocked:
+            if t not in cache and listed and t in listed and _OPT_RUN["fetched"] < MAX_OI_FETCH and not blocked:
                 info = options_info(t)
-                time.sleep(0.4)
+                time.sleep(0.25)
                 fetched += 1
+                _OPT_RUN["fetched"] += 1
                 if info:
                     cache[t] = info
                 else:
@@ -833,11 +867,7 @@ def options_info(ticker: str) -> dict:
     from curl_cffi import requests
     try:
         url = f"https://cdn.cboe.com/api/global/delayed_quotes/options/{ticker.replace('-', '.')}.json"
-        for wait in (0, 5, 15):        # Cboe answers 429 when asked too fast: back off and retry
-            time.sleep(wait)
-            r = requests.get(url, impersonate="chrome", timeout=20)
-            if r.status_code != 429:
-                break
+        r = requests.get(url, impersonate="chrome", timeout=20)   # on 429 stop for this run (no waiting)
         if r.status_code == 429:
             return {}                  # unknown this run; optionable still comes from the directory
         if r.status_code != 200:
@@ -901,6 +931,56 @@ def aligned_closes(stock: pd.DataFrame, ref: pd.DataFrame) -> tuple[np.ndarray, 
 
 # ---------------------------------------------------------------- scan
 
+_G: dict = {}     # shared read only inputs for the per stock workers (inherited by forked processes)
+
+
+def _stock_row(rec):
+    """Every study for one stock. Returns (row, blend or None) or None when the stock is skipped."""
+    frames, etf_returns, sector_state, sector_rank = _G["frames"], _G["etf_returns"], _G["sector_state"], _G["sector_rank"]
+    frame = frames.get(rec.ticker)
+    if frame is None or len(frame) < 253:
+        return None
+    c = frame["Close"].to_numpy()
+    core = str(rec.core) in ("True", "true", "1")
+    etf = rec.etf if rec.etf in SECTORS else ""
+    if not etf:  # unknown sector: assign the sector ETF it moves with most
+        fits = {e: corr(*map(returns, aligned_closes(frame, etf_returns[e]))) for e in SECTORS}
+        etf = max(fits, key=fits.get)
+    sc, ec = aligned_closes(frame, etf_returns[etf])
+    if len(sc) < 253:
+        return None
+    stock_r, etf_r = blend(sc), blend(ec)
+    rs_line = sc / ec
+    e21, s50, s200 = ema(sc, 21), sc[-50:].mean(), sc[-200:].mean()
+    high52 = float(frame["High"].to_numpy()[-252:].max())
+    off_high = (1 - c[-1] / high52) * 100
+    avg_vol = float(frame["Volume"].to_numpy()[-50:].mean())
+    r_corr = corr(returns(sc), returns(ec))
+    checks = [
+        stock_r > etf_r,
+        sc[-1] / sc[-22] > ec[-1] / ec[-22],
+        sc[-1] / sc[-64] > ec[-1] / ec[-64],
+        rs_line[-1] > rs_line[-50:].mean(),
+        sc[-1] > e21 > s50 > s200,
+        r_corr >= MIN_CORRELATION,
+        off_high <= MAX_OFF_HIGH,
+        c[-1] >= MIN_PRICE and avg_vol >= MIN_AVG_VOLUME,
+    ]
+    passed = int(sum(checks))
+    base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
+    return ({
+        **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame), "sqp": {**squeeze_pro(frame), "beta": beta_vs(frame, frames["SPY"])}, "squ": squeeze_ultra(frame),
+        "cap": round(float(rec.cap) / 1e9, 2), "core": core,
+        "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
+        "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
+        "vs_sec": round((stock_r - etf_r) * 100, 2), "str": round(stock_r * 100, 2),
+        "r1m": round((c[-1] / c[-22] - 1) * 100, 1), "r3m": round((c[-1] / c[-64] - 1) * 100, 1),
+        "off": round(off_high, 1), "corr": round(r_corr, 2), "vol": int(avg_vol),
+        "chk": [int(x) for x in checks], "pass": passed,
+        "sec_state": sector_state[etf], "sec_rank": sector_rank[etf],
+    }, blend(c) if core else None)
+
+
 def scan() -> dict:
     started = time.time()
     mark = [started]
@@ -945,53 +1025,22 @@ def scan() -> dict:
     sector_rank = {s["ticker"]: i + 1 for i, s in enumerate(sector_rows)}
 
     etf_returns = {t: frames[t] for t in SECTORS}
+    _G.update(frames=frames, etf_returns=etf_returns, sector_state=sector_state, sector_rank=sector_rank)
+    recs = list(universe.itertuples(index=False))
+    try:
+        import multiprocessing as mp
+        ctx = mp.get_context("fork")          # Linux (GitHub): workers share the downloaded frames
+        with ctx.Pool(max(1, (os.cpu_count() or 2))) as pool:
+            results = pool.map(_stock_row, recs, chunksize=40)
+    except (ValueError, OSError):             # no fork on Windows: run in this process
+        results = [_stock_row(r) for r in recs]
     stocks, all_blends = [], []
-    for rec in universe.itertuples(index=False):
-        frame = frames.get(rec.ticker)
-        if frame is None or len(frame) < 253:
+    for res in results:
+        if res is None:
             continue
-        c = frame["Close"].to_numpy()
-        core = str(rec.core) in ("True", "true", "1")
-        if core:
-            all_blends.append(blend(c))
-        etf = rec.etf if rec.etf in SECTORS else ""
-        if not etf:  # unknown sector: assign the sector ETF it moves with most
-            fits = {e: corr(*map(returns, aligned_closes(frame, etf_returns[e]))) for e in SECTORS}
-            etf = max(fits, key=fits.get)
-        sc, ec = aligned_closes(frame, etf_returns[etf])
-        if len(sc) < 253:
-            continue
-        stock_r, etf_r = blend(sc), blend(ec)
-        rs_line = sc / ec
-        e21, s50, s200 = ema(sc, 21), sc[-50:].mean(), sc[-200:].mean()
-        high52 = float(frame["High"].to_numpy()[-252:].max())
-        off_high = (1 - c[-1] / high52) * 100
-        avg_vol = float(frame["Volume"].to_numpy()[-50:].mean())
-        r_corr = corr(returns(sc), returns(ec))
-        checks = [
-            stock_r > etf_r,
-            sc[-1] / sc[-22] > ec[-1] / ec[-22],
-            sc[-1] / sc[-64] > ec[-1] / ec[-64],
-            rs_line[-1] > rs_line[-50:].mean(),
-            sc[-1] > e21 > s50 > s200,
-            r_corr >= MIN_CORRELATION,
-            off_high <= MAX_OFF_HIGH,
-            c[-1] >= MIN_PRICE and avg_vol >= MIN_AVG_VOLUME,
-        ]
-        passed = int(sum(checks))
-        base_trend = bool(sc[-1] > s50 > s200)  # pullbacks may dip under the 21 EMA, not the 50
-        stocks.append({
-            **pullback_triggers(frame), **jt_trends(frame), "base": base_trend, "b3": big3(frame), "sdc": std_channel(frame), "acdc": acdc(frame), "edges": tr3ndy_edges(frame), "mx": moxie_daily(frame), "sqp": {**squeeze_pro(frame), "beta": beta_vs(frame, frames["SPY"])}, "squ": squeeze_ultra(frame),
-            "cap": round(float(rec.cap) / 1e9, 2), "core": core,
-            "t": rec.ticker, "n": rec.name, "etf": etf, "sp": bool(rec.sp500),
-            "px": round(float(c[-1]), 2), "day": round((c[-1] / c[-2] - 1) * 100, 2),
-            "vs_sec": round((stock_r - etf_r) * 100, 2), "str": round(stock_r * 100, 2),
-            "r1m": round((c[-1] / c[-22] - 1) * 100, 1), "r3m": round((c[-1] / c[-64] - 1) * 100, 1),
-            "off": round(off_high, 1), "corr": round(r_corr, 2), "vol": int(avg_vol),
-            "chk": [int(x) for x in checks], "pass": passed,
-            "sec_state": sector_state[etf], "sec_rank": sector_rank[etf],
-        })
-
+        stocks.append(res[0])
+        if res[1] is not None:
+            all_blends.append(res[1])
     lap("per stock studies")
     # RS rating 1 to 99: percentile of each stock's strength across the whole universe
     ranked = np.sort(np.array(all_blends))

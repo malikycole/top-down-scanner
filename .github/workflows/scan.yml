@@ -40,11 +40,21 @@ jobs:
 
       # Option open interest is fetched slowly (Cboe rate limit) and kept for the day,
       # so each run restores the latest cache and only looks up what is missing
+      - id: day
+        run: echo "day=$(TZ=America/New_York date +%F)" >> "$GITHUB_OUTPUT"
+
+      # Price and weekly / monthly history: downloaded by the first run of the day, reused by every
+      # later run (only the last 5 days are fetched again)
       - uses: actions/cache@v4
         with:
           path: |
-            options_cache.json
+            prices_cache.pkl
             tm_history.pkl
+          key: history-${{ steps.day.outputs.day }}
+
+      - uses: actions/cache@v4
+        with:
+          path: options_cache.json
           key: options-${{ github.run_id }}
           restore-keys: options-
 
