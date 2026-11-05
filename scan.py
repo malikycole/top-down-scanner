@@ -163,6 +163,7 @@ def download(symbols: list[str]) -> dict[str, pd.DataFrame]:
         frames = _download(symbols, "2y", 200)
         PRICE_CACHE.write_bytes(pickle.dumps({"date": today, "frames": frames}, protocol=pickle.HIGHEST_PROTOCOL))
         print(f"prices: full download, {len(frames)} cached")
+        _G["price_mode"] = "full"
         return frames
     missing = [t for t in symbols if t not in cached]
     recent = _download([t for t in symbols if t in cached], "5d", 1)
@@ -173,6 +174,7 @@ def download(symbols: list[str]) -> dict[str, pd.DataFrame]:
     if missing:
         frames.update(_download(missing, "2y", 200))
     print(f"prices: cache + last 5 days for {len(recent)}, {len(missing)} new")
+    _G["price_mode"] = f"cache + 5 days ({len(missing)} new)"
     return frames
 
 
@@ -184,7 +186,7 @@ def _download(symbols: list[str], period: str, min_bars: int) -> dict[str, pd.Da
             try:
                 # 2 years so the yearly Tr3ndy edge always has all of last year
                 raw = yf.download(batch, period=period, interval="1d", auto_adjust=True,
-                                  group_by="ticker", threads=True, progress=False)
+                                  group_by="ticker", threads=32, progress=False)
                 break
             except Exception as exc:  # noqa: BLE001
                 print(f"batch {start} attempt {attempt + 1} failed: {exc}")
@@ -1142,7 +1144,7 @@ def scan() -> dict:
     return {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "data_date": str(pd.Timestamp(last_bar).date()),
-        "seconds": round(time.time() - started, 1), "timing": timing, "cpus": os.cpu_count(),
+        "seconds": round(time.time() - started, 1), "timing": timing, "cpus": os.cpu_count(), "price_mode": _G.get("price_mode"),
         "universe_size": int(universe["core"].astype(str).isin(["True", "true", "1"]).sum()), "scanned": len(stocks),
         "scanned_wide": wide_count,
         "settings": {"min_cap": MIN_CAP, "min_price": MIN_PRICE, "min_avg_volume": MIN_AVG_VOLUME,
