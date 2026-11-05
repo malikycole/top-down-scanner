@@ -369,6 +369,7 @@
         <span class="row-label" style="margin-right:6px">JT Trend</span>
         <span class="seg" id="b3Jt"></span>
       </div>
+      <div><span class="row-label" style="margin-right:6px">Momentum</span><span class="seg" id="b3Mom"></span></div>
       <div><span class="row-label" style="margin-right:6px">Options</span><span class="seg" id="b3Opt"></span></div>
       <div>
         <span class="row-label" style="margin-right:6px">Sector</span>
@@ -882,7 +883,7 @@ const state = { data:null, sector:"green", min:7, near:0.1, jt:"any", q:"", sort
   sdSort:"stretch", sdDir:-1,
   teTrend:"any", teAcc:0.25, teView:"M", teSet:"Edge reversal", tePat:"any", teBn:"any", teCap:1, teOpt:"any", teSector:"all", teq:"", teSort:"default", teDir:-1,
   btGrp:"all", btRank:"edge", btMin:200,
-  b3Opt:"any", mxOpt:"any", sqOpt:"any", tmOpt:"any",
+  b3Mom:"any", b3Opt:"any", mxOpt:"any", sqOpt:"any", tmOpt:"any",
   mxView:"H", mxState:"any", mxTrend:"any", mxPx:1.25, mxVol:500000, mxCap:0.35, mxSector:"all", mxq:"", mxSort:"default", mxDir:-1,
   tmScan:"htsq", tmSqInd:"pro", tmSqLvl:"2", tmEntry:"any", tmMom:"any", tmCap:5, tmPx:5, tmVol:500000, tmJt:"any", tmSector:"all", tmq:"", tmSort:"default", tmDir:-1,
   suLvl:"ideal", suEntry:"either", suMom:"any", suOpt:"liq", suPx:20, suVol:0, suCap:2, suBeta:0, suJt:"any", suSector:"all", suq:"", suSort:"default", suDir:-1,
@@ -1128,6 +1129,8 @@ function b3Base(){
   if (state.b3Td === "sector") rows = rows.filter(s => long ? greens.has(s.etf) : reds.has(s.etf));
   if (state.b3Td === "strong") rows = rows.filter(s => long ? greens.has(s.etf) && s.pass >= 6 : reds.has(s.etf));
   if (state.b3Sector !== "all") rows = rows.filter(s => s.etf === state.b3Sector);
+  if (state.b3Mom === "pos") rows = rows.filter(s => s.hist > 0);
+  if (state.b3Mom === "cyan") rows = rows.filter(s => s.hist >= 0 && s.hist_up);
   if (state.b3Opt === "opt") rows = rows.filter(s => s.opt);
   if (state.b3Opt === "none") rows = rows.filter(s => s.opt === false);
   return rows;
@@ -1975,6 +1978,7 @@ seg("tmVol", [500000,1000000,0], ["500K+","1M+","Any"], "tmVol", renderTM);
 seg("tmJt", ["any","dg"], ["Any","Double green"], "tmJt", renderTM);
 $("tmSec").onchange = e => { state.tmSector = e.target.value; renderTM(); };
 $("tmq").oninput = e => { state.tmq = e.target.value.trim().toUpperCase(); renderTM(); };
+seg("b3Mom", ["any","pos","cyan"], ["Any","Above zero","Cyan (rising)"], "b3Mom", renderB3);
 seg("b3Opt", ["any","opt","none"], ["Any","Optionable","No options"], "b3Opt", renderB3);
 seg("mxOpt", ["any","opt","none"], ["Any","Optionable","No options"], "mxOpt", renderMX);
 seg("sqOpt", ["any","opt","none"], ["Any","Optionable","No options"], "sqOpt", renderSQ);
