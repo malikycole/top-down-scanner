@@ -1049,7 +1049,8 @@ def scan() -> dict:
         s["rs"] = int(min(99, max(1, round(pct * 99))))
     # Big 3 tab: every stock in a squeeze or carrying any Big 3 signal, with its top down context
     keep = ("t", "n", "etf", "px", "day", "vs_sec", "rs", "pass", "sec_state", "momo", "wave", "e21d", "cap", "vol")
-    big3_rows = [{**{k: s[k] for k in keep}, **s["b3"]} for s in stocks
+    big3_rows = [{**{k: s[k] for k in keep}, **s["b3"], "resp50": s["sqp"]["resp50"], "s50d": s["sqp"]["s50d"],
+                  "beta": s["sqp"]["beta"]} for s in stocks
                  if s["core"] and (s["b3"]["sqz"] or s["b3"]["sig"])]
     big3_rows.sort(key=lambda s: (s["bull"], s["score"], s["rs"]), reverse=True)
     # Std Dev Channel tab: every stock 2.5 or more deviations from its 1 year regression line
