@@ -986,10 +986,12 @@ def _stock_row(i: int):
 def scan() -> dict:
     started = time.time()
     mark = [started]
+    timing: dict = {}
 
-    def lap(name: str) -> None:        # phase timer, printed to the Actions log
+    def lap(name: str) -> None:        # phase timer, printed to the Actions log and saved in data.json
         now = time.time()
         print(f"[time] {name}: {now - mark[0]:.0f}s", flush=True)
+        timing[name] = round(now - mark[0], 1)
         mark[0] = now
 
     universe = load_universe()
@@ -1140,7 +1142,7 @@ def scan() -> dict:
     return {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "data_date": str(pd.Timestamp(last_bar).date()),
-        "seconds": round(time.time() - started, 1),
+        "seconds": round(time.time() - started, 1), "timing": timing, "cpus": os.cpu_count(),
         "universe_size": int(universe["core"].astype(str).isin(["True", "true", "1"]).sum()), "scanned": len(stocks),
         "scanned_wide": wide_count,
         "settings": {"min_cap": MIN_CAP, "min_price": MIN_PRICE, "min_avg_volume": MIN_AVG_VOLUME,
